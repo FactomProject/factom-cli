@@ -6,8 +6,8 @@ Synopsis
 	factom
 		-c [ChainID]	"hex encoded chainid for the entry"
 		-e [extid]		"external id for the entry"			# -e may be used multiple times
-		-h			"display help message"
-		-s			"path to the factomclient"			# default: localhost:8083
+		-h				"display help message"
+		-s				"path to the factomclient"			# default: localhost:8083
 
 Description
 ---
