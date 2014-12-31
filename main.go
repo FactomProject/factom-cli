@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -45,25 +45,31 @@ func main() {
 		return
 	}
 
-	data := make([]byte, 1024)
-	n, _ := os.Stdin.Read(data)
-	data = data[:n]
+	d := make([]byte, 1024)
+	n, _ := os.Stdin.Read(d)
+	d = d[:n]
 
 	e := new(entry)
 	e.ChainID = *cid
 	for _, v := range eids {
 		e.ExtIDs = append(e.ExtIDs, string(v))
 	}
-	e.Data = base64.StdEncoding.EncodeToString(data)
+	e.Data = base64.StdEncoding.EncodeToString(d)
 
-	body, err := json.Marshal(e)
+	b, err := json.Marshal(e)
 	if err != nil {
 		return
 	}
 	
-	_, err = http.Post(*server, "application/json", bytes.NewReader(body))
+	data := url.Values{
+		"datatype": {"entry"},
+		"format":   {"json"},
+		"entry":    {string(b)},
+	}
+	
+	_, err = http.PostForm(*server, data)
 	if err != nil {
-		return
+		fmt.Println("Error: ", err)
 	}
 
 	return
