@@ -31,10 +31,10 @@ func (e *extids) Set(s string) error {
 
 func main() {
 	var (
-		help   = flag.Bool("h", false, usage)
-		cid    = flag.String("c", "", "hex encoded chainid for the entry")
-		server = flag.String("s", "localhost:8083", "path to the factomclient")
-		eids   extids
+		help = flag.Bool("h", false, usage)
+		cid  = flag.String("c", "", "hex encoded chainid for the entry")
+		serv = flag.String("s", "localhost:8083", "path to the factomclient")
+		eids extids
 	)
 
 	flag.Var(&eids, "e", "external id for the entry")
@@ -44,6 +44,8 @@ func main() {
 		fmt.Println(usage)
 		return
 	}
+
+	server := "http://" + *serv + "/v1/submitentry"
 
 	d := make([]byte, 1024)
 	n, _ := os.Stdin.Read(d)
@@ -67,7 +69,7 @@ func main() {
 		"entry":    {string(b)},
 	}
 	
-	_, err = http.PostForm(*server, data)
+	_, err = http.PostForm(server, data)
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
