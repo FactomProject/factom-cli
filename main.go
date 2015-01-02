@@ -33,7 +33,7 @@ func main() {
 	var (
 		help = flag.Bool("h", false, usage)
 		cid  = flag.String("c", "", "hex encoded chainid for the entry")
-		serv = flag.String("s", "localhost:8083", "path to the factomclient")
+		serv = flag.String("s", "localhost:8088", "path to the factomclient")
 		eids extids
 	)
 
@@ -46,6 +46,8 @@ func main() {
 	}
 
 	server := "http://" + *serv + "/v1/submitentry"
+
+	fmt.Println(server)
 
 	d := make([]byte, 1024)
 	n, _ := os.Stdin.Read(d)
