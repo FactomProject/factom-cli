@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -56,7 +56,7 @@ func main() {
 	for _, v := range eids {
 		e.ExtIDs = append(e.ExtIDs, string(v))
 	}
-	e.Data = base64.StdEncoding.EncodeToString(d)
+	e.Data = hex.EncodeToString(d)
 
 	b, err := json.Marshal(e)
 	if err != nil {
