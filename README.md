@@ -25,9 +25,9 @@ factom-cli takes data from the command arguments and stdin and constructs a json
 
 Examples
 ---
-Submiting arbitrary data to factom:
-	$ echo "Some data to save in factom" | factom-cli put -c <my chainid> -e mydata -e somekey
-Submitting a file:
-	$ factom-cli put -s "facom.org/demo" -c <my chainid> -e filename <file
-Create a new chain:
-	$ factom-cli mkchain -n "uuid;michaelschain" -e "first entry for uuid;michaelschain" -e "rules" <(echo only this key: abc123)
+	Submiting arbitrary data to factom:
+		$ echo "Some data to save in factom" | factom-cli put -c <my chainid> -e mydata -e somekey
+	Submitting a file:
+		$ factom-cli put -s "facom.org/demo" -c <my chainid> -e filename <file
+	Create a new chain:
+		$ factom-cli mkchain -n "uuid;michaelschain" -e "first entry for uuid;michaelschain" -e "rules" <(echo only this key: abc123)
