@@ -30,6 +30,3 @@ Examples
 	
 	# Submit a file
 	factom-cli put -s "facom.org/demo" -c <my chainid> -e filename <file
-
-	# Create a new chain
-	factom-cli mkchain -n "uuid;michaelschain" -e "first entry for uuid;michaelschain" -e "rules" <(echo only this key: abc123)
