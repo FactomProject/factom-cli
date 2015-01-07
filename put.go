@@ -27,7 +27,7 @@ func (e *extids) Set(s string) error {
 	return nil
 }
 
-func put() {
+func put() {	
 	var (
 		cid  = flag.String("c", "", "hex encoded chainid for the entry")
 		serv = flag.String("s", "localhost:8088", "path to the factomclient")
