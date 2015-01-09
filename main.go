@@ -71,7 +71,7 @@ func main() {
 		"entry":    {string(b)},
 	}
 	
-	_, err := http.PostForm(server, data)
+	_, err = http.PostForm(server, data)
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
