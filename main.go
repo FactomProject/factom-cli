@@ -47,8 +47,6 @@ func main() {
 
 	server := "http://" + *serv + "/v1/submitentry"
 
-	fmt.Println(server)
-
 	d := make([]byte, 1024)
 	n, _ := os.Stdin.Read(d)
 	d = d[:n]
