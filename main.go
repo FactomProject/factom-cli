@@ -45,7 +45,7 @@ func main() {
 		return
 	}
 
-	server := "http://" + *serv + "/v1/submitentry"
+	server := "http://" + *serv + "/v1/addentry"
 
 	d := make([]byte, 1024)
 	n, _ := os.Stdin.Read(d)
