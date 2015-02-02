@@ -27,35 +27,39 @@ func (e *extids) Set(s string) error {
 	return nil
 }
 
-func put() {	
+func put(args []string) error {
+	os.Args = args
+	
 	var (
 		cid  = flag.String("c", "", "hex encoded chainid for the entry")
 		serv = flag.String("s", "localhost:8088", "path to the factomclient")
 		eids extids
 	)
-
 	flag.Var(&eids, "e", "external id for the entry")
 	flag.Parse()
 	
 	server := "http://" + *serv + "/v1/submitentry"
 
-	d := make([]byte, 1024)
-	n, err := os.Stdin.Read(d)
-	if err != nil {
-		fmt.Println("put(): ", err)
-	}
-	d = d[:n]
-
 	e := new(jsonentry)
+
 	e.ChainID = *cid
-	for _, v := range eids {
-		e.ExtIDs = append(e.ExtIDs, string(v))
+	e.ExtIDs = append(e.ExtIDs, eids...)
+//	for _, v := range eids {
+//		e.ExtIDs = append(e.ExtIDs, string(v))
+//	}
+
+	// need to find some way to read multiple lines (like from a file)
+	p := make([]byte, 1024)
+	n, err := os.Stdin.Read(p)
+	if err != nil {
+		return err
 	}
-	e.Data = hex.EncodeToString(d)
+	p = p[:n]
+	e.Data = hex.EncodeToString(p)
 
 	b, err := json.Marshal(e)
 	if err != nil {
-		fmt.Println("put(): ", err)
+		return err
 	}
 	
 	data := url.Values{
@@ -66,6 +70,8 @@ func put() {
 	
 	_, err = http.PostForm(server, data)
 	if err != nil {
-		fmt.Println("Error: ", err)
-	}	
+		return err
+	}
+
+	return nil
 }

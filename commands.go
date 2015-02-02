@@ -4,14 +4,18 @@ import (
 	"fmt"
 )
 
-func get() {
-	fmt.Println("get called")
+func buy(args []string) error {
+	return fmt.Errorf("buy called")
 }
 
-func help(s string) {
-	fmt.Println("help called with:", s)
+func get(args []string) error {
+	return fmt.Errorf("get called")
 }
 
-func mkchain() {
-	fmt.Println("mkchain called")
+func help(args []string) error {
+	return fmt.Errorf("help called with: %v", args)
+}
+
+func mkchain(args []string) error {
+	return fmt.Errorf("mkchain called")
 }

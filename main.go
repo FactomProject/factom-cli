@@ -1,26 +1,44 @@
 package main
 
 import (
+	"fmt"
 	"os"
 )
 
 func main() {
-	command := "help"
-	if len(os.Args) >= 2 {
-		command = os.Args[1]
+	if len(os.Args) == 1 {
+		os.Args = append(os.Args, "help")
 	}
-	switch(command) {
-	case "help":
-		a := "help"
-		if len(os.Args) >= 3 {
-			a = os.Args[2]
+	
+	args := os.Args[1:]
+
+	switch args[0] {
+	case "buy":
+		err := buy(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 		}
-		help(a)			
-	case "put":
-		put()
 	case "get":
-		get()
+		err := get(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	case "help":
+		err := help(args)			
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	case "mkchain":
-		mkchain()
+		err := mkchain(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	case "put":
+		err := put(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	default:
+		help(args)
 	}
 }
