@@ -18,6 +18,11 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
+	case "factoidtx":
+		err := factoidtx(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	case "get":
 		err := get(args)
 		if err != nil {
