@@ -4,10 +4,6 @@ import (
 	"fmt"
 )
 
-func buy(args []string) error {
-	return fmt.Errorf("buy called")
-}
-
 func get(args []string) error {
 	return fmt.Errorf("get called")
 }

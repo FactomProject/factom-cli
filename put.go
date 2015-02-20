@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -47,14 +48,22 @@ func put(args []string) error {
 //	for _, v := range eids {
 //		e.ExtIDs = append(e.ExtIDs, string(v))
 //	}
+//
+//	// need to find some way to read multiple lines (like from a file)
+//	p := make([]byte, 1024)
+//	n, err := os.Stdin.Read(p)
+//	if err != nil {
+//		return err
+//	}
+//	p = p[:n]
 
-	// need to find some way to read multiple lines (like from a file)
-	p := make([]byte, 1024)
-	n, err := os.Stdin.Read(p)
+	p, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		return err
 	}
-	p = p[:n]
+	if size := len(p); size > 10240 {
+		return fmt.Errorf("Entry of %d bytes is too large", size)
+	}
 	e.Data = hex.EncodeToString(p)
 
 	b, err := json.Marshal(e)
