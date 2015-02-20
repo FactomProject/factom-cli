@@ -17,8 +17,8 @@ func factoidtx(args []string) error {
 		wallet = flag.String("w", "", "Factoid wallet address")
 	)
 	flag.Parse()
-	
-	if len(args) < 2 {
+	args = flag.Args()
+	if len(args) < 1 {
 		return fmt.Errorf("the ammount of factoids to be transferd must be specified")
 	}
 	amt := args[1]
