@@ -13,7 +13,7 @@ func buy(args []string) error {
 	os.Args = args
 	
 	var (
-		amt string = "100"
+		amt string = "0"
 		serv = flag.String("s", "localhost:8088", "path to the factomclient")
 	)
 	flag.Parse()
