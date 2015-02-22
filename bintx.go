@@ -9,22 +9,21 @@ import (
 	"os"
 )
 
-func buy(args []string) error {
+func bintx(args []string) error {
 	os.Args = args
 	
 	var (
-		amt string = "0"
 		serv = flag.String("s", "localhost:8088", "path to the factomclient")
 	)
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return help("buy")
+		return help("bintx")
 	}
-	server := "http://" + *serv + "/v1/buycredit"
+	tx := args[0]
+	server := "http://" + *serv + "/v1/bintx"
 	data := url.Values{
-		"to":      {"wallet"},
-		"ammount": {amt},
+		"tx":      {tx},
 	}
 	
 	resp, err := http.PostForm(server, data)
