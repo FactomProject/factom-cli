@@ -21,7 +21,7 @@ func factoidtx(args []string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("the ammount of factoids to be transferd must be specified")
 	}
-	amt := args[1]
+	amt := args[0]
 	server := "http://" + *serv + "/v1/factoidtx"
 	data := url.Values{
 		"to":      {*wallet},
