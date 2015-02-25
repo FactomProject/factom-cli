@@ -15,10 +15,10 @@ import (
 
 func buy(args []string) error {
 	os.Args = args
-	
+
 	var (
-		amt string = "0"
-		serv = flag.String("s", "localhost:8088", "path to the factomclient")
+		amt  string = "0"
+		serv        = flag.String("s", "localhost:8088", "path to the factomclient")
 	)
 	flag.Parse()
 	args = flag.Args()
@@ -27,10 +27,10 @@ func buy(args []string) error {
 	}
 	server := "http://" + *serv + "/v1/buycredit"
 	data := url.Values{
-		"to":      {"wallet"},
-		"ammount": {amt},
+		"to":     {"wallet"},
+		"amount": {amt},
 	}
-	
+
 	resp, err := http.PostForm(server, data)
 	if err != nil {
 		return err

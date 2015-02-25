@@ -14,23 +14,32 @@ import (
 
 func factoidtx(args []string) error {
 	os.Args = args
-	
+
 	var (
-		serv = flag.String("s", "localhost:8088", "path to the factomclient")
+		serv   = flag.String("s", "localhost:8088", "path to the factomclient")
 		wallet = flag.String("w", "", "Factoid wallet address")
+		txid   = flag.String("t", "", "input txid")
+		idx    = flag.Int("i", 0, "input idx")
 	)
+
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return fmt.Errorf("the ammount of factoids to be transferd must be specified")
+		return fmt.Errorf("the amount of factoids to be transferd must be specified")
 	}
 	amt := args[0]
 	server := "http://" + *serv + "/v1/factoidtx"
 	data := url.Values{
-		"to":      {*wallet},
-		"ammount": {amt},
+		"to":     {*wallet},
+		"amount": {amt},
 	}
-	
+
+	fmt.Println("amt= ", amt)
+	fmt.Println(" to= ", *wallet)
+
+	fmt.Println("txid= ", *txid)
+	fmt.Println(" idx= ", *idx)
+
 	resp, err := http.PostForm(server, data)
 	if err != nil {
 		return err
