@@ -17,17 +17,22 @@ func buy(args []string) error {
 	os.Args = args
 
 	var (
-		amt  string = "0"
-		serv        = flag.String("s", "localhost:8088", "path to the factomclient")
+		amt, addr string = "0", "wallet"
+		serv             = flag.String("s", "localhost:8088", "path to the factomclient")
 	)
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
 		return man("buy")
 	}
+	amt = args[0]
+	if len(args) > 1 {
+		addr = args[1]
+	}
+
 	server := "http://" + *serv + "/v1/buycredit"
 	data := url.Values{
-		"to":     {"wallet"},
+		"to":     {addr},
 		"amount": {amt},
 	}
 
