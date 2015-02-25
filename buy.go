@@ -23,7 +23,7 @@ func buy(args []string) error {
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return help("buy")
+		return man("buy")
 	}
 	server := "http://" + *serv + "/v1/buycredit"
 	data := url.Values{

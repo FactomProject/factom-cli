@@ -5,7 +5,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 )
 
@@ -20,45 +20,39 @@ func main() {
 	case "bintx":
 		err := bintx(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	case "buy":
 		err := buy(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	case "factoidtx":
 		err := factoidtx(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	case "get":
 		err := get(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	case "help":
-		if len(args) < 2 {
-			err := help("help")			
-			if err != nil {
-				log.Fatalln(err)
-			}
-		}
-		err := help(args[1])			
+		err := help(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	case "mkchain":
 		err := mkchain(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	case "put":
 		err := put(args)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Fprintln(os.Stderr, err)
 		}
 	default:
-		help(args[0])
+		man("default")
 	}
 }
