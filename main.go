@@ -22,6 +22,11 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
+	case "balance":
+		err := balance(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	case "buy":
 		err := buy(args)
 		if err != nil {
