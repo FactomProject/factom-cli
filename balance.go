@@ -13,32 +13,36 @@ import (
 	"os"
 )
 
+// balance prints the current balance of the specified wallet
 func balance(args []string) error {
 	os.Args = args
 	serv := flag.String("s", "localhost:8088",
 		"Path to the factom api server")
-	server := "http://" + *serv + "/v1/entrycreditbalance"
 	flag.Parse()
 	args = flag.Args()
-	
+	server := "http://" + *serv + "/v1/creditbalance"
 	if len(args) == 0 {
-		args = []string{"ec"}
+		args = []string{"ec", "wallet"}
 	}
-	
+	if len(args) == 1 {
+		args = append(args, "wallet")
+	}
+	key := args[1]
+		
 	switch args[0] {
 	case "ec":
-		return ecBalance(args, server)
+		return ecBalance(key, server)
 	case "factoid":
-		return factoidBalance(args, server)
+		return factoidBalance(key, server)
 	default:
 		return man("balance")
 	}
 	panic("something went wrong with balance")
 }
 
-func ecBalance(args []string, server string) error {
+func ecBalance(pubkey, server string) error {
 	data := url.Values{
-		"pubkey": {"wallet"},
+		"pubkey": {pubkey},
 	}
 	
 	resp, err := http.PostForm(server, data)
@@ -50,9 +54,11 @@ func ecBalance(args []string, server string) error {
 	if err != nil {
 		return err
 	}
-	return fmt.Errorf("%s", p)
+	fmt.Println("Entry Credit Balance:", string(p))
+	
+	return nil
 }
 
-func factoidBalance(args []string, server string) error {
-	return fmt.Errorf("Deadend")
+func factoidBalance(pubkey, server string) error {
+	return fmt.Errorf("Factoid Balance: not implimented")
 }
