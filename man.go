@@ -8,8 +8,10 @@ import (
 	"fmt"
 )
 
+// man returns an usage error string for the specified sub command.
 func man(s string) error {
 	m := map[string]string{
+		"balance": "factom-cli balance [-s server ] ec|factoid [wallet]",
 		"buy": "factom-cli buy [-s server ] amt",
 		"factoidtx": "factom-cli factoidtx [-s server ] addr amt",
 		"get": "no help for get",
