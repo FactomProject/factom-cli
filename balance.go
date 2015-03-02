@@ -44,7 +44,8 @@ func balance(args []string) error {
 
 func ecBalance(pubkey, server string) error {
 	type balance struct {
-		publickey, credits string
+		Publickey string
+		Credits float64
 	}
 	
 	data := url.Values{
@@ -64,7 +65,7 @@ func ecBalance(pubkey, server string) error {
 		} else if err != nil {
 			return err
 		}
-		fmt.Println("Entry Credit Balance:", b.credits)
+		fmt.Println("Entry Credit Balance:", b.Credits)
 	}
 	
 //	p, err := ioutil.ReadAll(resp.Body)
