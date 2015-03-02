@@ -56,7 +56,7 @@ func TestPut(t *testing.T) {
 
 	select {
 	case err := <-c:
-		t.Errorf(err)
+		t.Errorf(err.Error())
 	default:
 		args := []string{
 			"put",
@@ -68,7 +68,7 @@ func TestPut(t *testing.T) {
 		
 		err := put(args)
 		if err != nil {
-			t.Errorf(err)
+			t.Errorf(err.Error())
 		}
 	}
 }

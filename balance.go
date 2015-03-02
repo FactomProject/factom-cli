@@ -5,9 +5,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
+//	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -41,6 +43,10 @@ func balance(args []string) error {
 }
 
 func ecBalance(pubkey, server string) error {
+	type balance struct {
+		publickey, credits string
+	}
+	
 	data := url.Values{
 		"pubkey": {pubkey},
 	}
@@ -50,12 +56,22 @@ func ecBalance(pubkey, server string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	p, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
+	dec := json.NewDecoder(resp.Body)
+	for {
+		var b *balance
+		if err := dec.Decode(&b); err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		}
+		fmt.Println("Entry Credit Balance:", b.credits)
 	}
-	fmt.Println("Entry Credit Balance:", string(p))
 	
+//	p, err := ioutil.ReadAll(resp.Body)
+//	if err != nil {
+//		return err
+//	}
+
 	return nil
 }
 
