@@ -16,7 +16,7 @@ var _ string = fmt.Sprint()
 var _ []string = os.Args
 
 func TestBalance(t *testing.T) {
-	fmt.Printf("TestJson\n===\n")
+	fmt.Printf("TestBalance\n===\n")
 	type balance struct {
 		Publickey string
 		Credits float64
