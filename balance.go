@@ -65,14 +65,9 @@ func ecBalance(pubkey, server string) error {
 		} else if err != nil {
 			return err
 		}
-		fmt.Println("Entry Credit Balance:", b.Credits)
+		fmt.Println("EC Balance:", b.Credits)
 	}
 	
-//	p, err := ioutil.ReadAll(resp.Body)
-//	if err != nil {
-//		return err
-//	}
-
 	return nil
 }
 

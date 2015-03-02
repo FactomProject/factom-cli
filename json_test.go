@@ -41,6 +41,6 @@ func TestBalance(t *testing.T) {
 		} else if err != nil {
 			t.Errorf(err.Error())
 		}
-		fmt.Println("Entry Credit Balance:", bal.Credits)
+		fmt.Println("EC Balance:", bal.Credits)
 	}
 }
