@@ -4,6 +4,7 @@ Factom Command Line Interface
 Synopsis
 ---
 	factom-cli [options] [subcommand]
+		-h						"print usage information"
 		-s [server]				"address for the api server"
 		-w [wallet]				"address for the wallet"
 		
