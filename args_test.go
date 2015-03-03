@@ -10,7 +10,7 @@ import (
 )
 
 // anonymous declarations to squash import errors for testing
-var _ = flag.Bool("b", false, "")
+var _ = flag.Bool("bool", false, "")
 var _ string = fmt.Sprint()
 var _ []string = os.Args
 
@@ -36,17 +36,21 @@ func TestMain(t *testing.T) {
 
 func TestTmp(t *testing.T) {
 	fmt.Printf("TestTmp\n===\n")
-	os.Args = []string{"test", "-h", "something"}
-	var h = flag.Bool("h", false, "help")
+	var (
+		b = flag.Bool("b", false, "boolflag")
+		a = flag.Bool("a", false, "a flag")
+	)
+	os.Args = []string{"test", "-b", "something", "-a", "amt"}
 	flag.Parse()
-	if *h {
-		fmt.Println("got help flag")
-	}
-	fmt.Println(os.Args)
+	_ = a
+	_ = b
+	args := flag.Args()
+	fmt.Println(args)
 	fmt.Println()
 }
 
 func TestPut(t *testing.T) {
+	fmt.Printf("TestPut\n===\n")
 	c := make(chan error)
 	go func() {
 		c <- server()
