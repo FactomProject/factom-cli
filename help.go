@@ -11,13 +11,13 @@ import (
 
 func help(args []string) error {
 	os.Args = args
-	
+
 	flag.Parse()
 	args = flag.Args()
 	s := "default"
 	if len(args) > 0 {
 		s = args[0]
 	}
-	
+
 	return man(s)
 }

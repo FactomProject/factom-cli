@@ -6,36 +6,27 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
-//	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 // balance prints the current balance of the specified wallet
 func balance(args []string) error {
-	os.Args = args
-	serv := flag.String("s", "localhost:8088",
-		"Path to the factom api server")
-	flag.Parse()
-	args = flag.Args()
-	server := "http://" + *serv + "/v1/creditbalance"
-	if len(args) == 0 {
-		args = []string{"ec", "wallet"}
-	}
+	api := "http://" + server + "/v1/creditbalance"
+	key := wallet
+
 	if len(args) == 1 {
-		args = append(args, "wallet")
+		args = append(args, "ec")
 	}
-	key := args[1]
-		
+	args = args[1:]
+
 	switch args[0] {
 	case "ec":
-		return ecBalance(key, server)
+		return ecBalance(key, api)
 	case "factoid":
-		return factoidBalance(key, server)
+		return factoidBalance(key, api)
 	default:
 		return man("balance")
 	}
@@ -45,13 +36,13 @@ func balance(args []string) error {
 func ecBalance(pubkey, server string) error {
 	type balance struct {
 		Publickey string
-		Credits float64
+		Credits   float64
 	}
-	
+
 	data := url.Values{
 		"pubkey": {pubkey},
 	}
-	
+
 	resp, err := http.PostForm(server, data)
 	if err != nil {
 		return err
@@ -67,7 +58,7 @@ func ecBalance(pubkey, server string) error {
 		}
 		fmt.Println("EC Balance:", b.Credits)
 	}
-	
+
 	return nil
 }
 

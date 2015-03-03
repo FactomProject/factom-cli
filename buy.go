@@ -5,38 +5,30 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 func buy(args []string) error {
-	os.Args = args
-
 	var (
-		amt, addr string = "0", "wallet"
-		serv             = flag.String("s", "localhost:8088", "path to the factomclient")
+		amt  string
+		addr string = wallet
+		api         = "http://" + server + "/v1/buycredit"
 	)
-	flag.Parse()
-	args = flag.Args()
-	if len(args) < 1 {
+	if len(args) == 1 {
 		return man("buy")
 	}
+	args = args[1:]
 	amt = args[0]
-	if len(args) > 1 {
-		addr = args[1]
-	}
 
-	server := "http://" + *serv + "/v1/buycredit"
 	data := url.Values{
 		"to":     {addr},
 		"amount": {amt},
 	}
 
-	resp, err := http.PostForm(server, data)
+	resp, err := http.PostForm(api, data)
 	if err != nil {
 		return err
 	}

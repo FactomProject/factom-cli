@@ -5,16 +5,36 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
+var (
+	server = "localhost:8088"
+	wallet = "wallet"
+)
+
 func main() {
-	if len(os.Args) == 1 {
-		os.Args = append(os.Args, "help")
+	var (
+		hflag = flag.Bool("h", false, "help")
+		sflag = flag.String("s", "", "address of api server")
+		wflag = flag.String("w", "", "wallet address")
+	)
+	flag.Parse()
+	args := flag.Args()
+	if *sflag != "" {
+		server = *sflag
 	}
-	
-	args := os.Args[1:]
+	if *wflag != "" {
+		wallet = *wflag
+	}
+	if *hflag {
+		args = []string{"help"}
+	}
+	if len(args) == 0 {
+		args = append(args, "help")
+	}
 
 	switch args[0] {
 	case "bintx":
