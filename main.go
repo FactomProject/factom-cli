@@ -11,11 +11,16 @@ import (
 )
 
 var (
-	server = "localhost:8088"
-	wallet = "wallet"
+	server string
+	wallet string
 )
 
 func main() {
+	cfg := ReadConfig().Main
+	server = cfg.Server
+	wallet = cfg.Wallet
+	
+	// command line flags overwirte conf file
 	var (
 		hflag = flag.Bool("h", false, "help")
 		sflag = flag.String("s", "", "address of api server")
