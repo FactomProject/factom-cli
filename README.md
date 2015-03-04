@@ -46,7 +46,4 @@ Examples
 
 Files
 ---
-factom-cli.conf	"factom-cli will try and read the conf file from $HOME/.factom/"
-				"If the conf file does not exist it will use the default"
-				"configuration. Command line flags will overwrite the"
-				"configurations."
+	factom-cli.conf	"factom-cli will try and read the conf file from $HOME/.factom/ If the conf file does not exist it will use the default configuration. Command line flags will overwrite the configurations."
