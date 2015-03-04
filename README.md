@@ -26,7 +26,8 @@ Synopsis
 			-e externalid		"externalid for the first entry
 
 		put						"read data from stdin and write to factom"
-			-e [externalid]		"specify an exteral id for the factom entry. -e" 								"can be used multiple times"
+			-e [externalid]		"specify an exteral id for the factom entry."
+								"-e can be used multiple times"
 			-c [chainid]		"spesify the chain that the entry belongs to"
 			
 Description
