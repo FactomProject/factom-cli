@@ -15,7 +15,7 @@ Synopsis
 		buy
 			amt #n				"buy n entry credits for 'wallet'"
 
-		fatoidtx [dest] [amt]	"create and submit a factoid transaction"
+		fatoidtx [addr] [amt]	"create and submit a factoid transaction"
 
 		get						"not yet defined"
 
@@ -29,12 +29,9 @@ Synopsis
 			-e [externalid]		"specify an exteral id for the factom entry. -e" 								"can be used multiple times"
 			-c [chainid]		"spesify the chain that the entry belongs to"
 			
-		
-			
-			
 Description
 ---
-factom-cli takes data from the command arguments and stdin and constructs a json message to send to the factomclient.
+factom-cli is the command line interface to the factom api
 
 Examples
 ---
@@ -45,4 +42,11 @@ Examples
 	factom-cli -s "facom.org/demo" put -c [chainid] -e filename <file
 	
 	factom-cli balance ec
-	factom-cli factoidtx [wallet] 100
+	factom-cli factoidtx [address] 100
+
+Files
+---
+factom-cli.conf	"factom-cli will try and read the conf file from $HOME/.factom/"
+				"If the conf file does not exist it will use the default"
+				"configuration. Command line flags will overwrite the"
+				"configurations."
