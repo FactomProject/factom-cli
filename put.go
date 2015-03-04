@@ -15,12 +15,6 @@ import (
 	"os"
 )
 
-type jsonentry struct {
-	ChainID string
-	ExtIDs  []string
-	Data    string
-}
-
 type extids []string
 
 func (e *extids) String() string {
@@ -33,6 +27,12 @@ func (e *extids) Set(s string) error {
 }
 
 func put(args []string) error {
+	type jsonentry struct {
+		ChainID string
+		ExtIDs  []string
+		Data    string
+	}
+	
 	api := "http://" + server + "/v1/submitentry"
 
 	os.Args = args
@@ -44,20 +44,18 @@ func put(args []string) error {
 	flag.Parse()
 
 	e := new(jsonentry)
-
-	e.ChainID = *cid
+	
+	econf := ReadConfig().Entry
+	if econf.Chainid != "" {
+		e.ChainID = econf.Chainid
+	}
+	if *cid != "" {
+		e.ChainID = *cid
+	}
+	if econf.Extid != "" {
+		e.ExtIDs = append(e.ExtIDs, econf.Extid)
+	}
 	e.ExtIDs = append(e.ExtIDs, eids...)
-	//	for _, v := range eids {
-	//		e.ExtIDs = append(e.ExtIDs, string(v))
-	//	}
-	//
-	//	// need to find some way to read multiple lines (like from a file)
-	//	p := make([]byte, 1024)
-	//	n, err := os.Stdin.Read(p)
-	//	if err != nil {
-	//		return err
-	//	}
-	//	p = p[:n]
 
 	p, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
