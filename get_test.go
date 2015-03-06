@@ -11,7 +11,13 @@ import (
 
 var _ = fmt.Sprint("")
 
+var (
+	cfg = ReadConfig().Main
+)
+
 func TestGet(t *testing.T) {
+	server = cfg.Server
+	wallet = cfg.Wallet
 	fmt.Printf("Get\n===\n")
 	args := []string{"get"}
 	err := get(args)
@@ -21,6 +27,8 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetDBlocks(t *testing.T) {
+	server = cfg.Server
+	wallet = cfg.Wallet
 	fmt.Printf("GetDBlocks\n===\n")
 	args := []string{"get", "dblocks", "0", "1"}
 	err := get(args)
@@ -28,3 +36,4 @@ func TestGetDBlocks(t *testing.T) {
 		fmt.Println(err)
 	}
 }
+
