@@ -37,14 +37,15 @@ const usage = `factom-cli [options] [subcommand]
 // man returns an usage error string for the specified sub command.
 func man(s string) error {
 	m := map[string]string{
-		"balance":   "factom-cli balance ec|factoid [wallet]",
-		"buy":       "factom-cli buy amt",
-		"factoidtx": "factom-cli factoidtx addr amt",
-		"get":       "no help for get",
-		"help":      "factom-cli help [subcommand]",
-		"mkchain":   "factom-cli mkchain [-e extid ...] name",
-		"put":       "factom-cli put [-e extid ...] <stdin>",
-		"default":   usage,
+		"balance":    "factom-cli balance ec|factoid [wallet]",
+		"buy":        "factom-cli buy amt",
+		"factoidtx":  "factom-cli factoidtx addr amt",
+		"get":        "factom-cli get height|dblocks|eblocks|entry",
+		"getDBlocks": "factom-cli get blocks #from #to",
+		"help":       "factom-cli help [subcommand]",
+		"mkchain":    "factom-cli mkchain [-e extid ...] name",
+		"put":        "factom-cli put [-e extid ...] <stdin>",
+		"default":    usage,
 	}
 
 	if m[s] != "" {

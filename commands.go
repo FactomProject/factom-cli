@@ -12,10 +12,6 @@ import (
 //	return fmt.Errorf("bintx called")
 //}
 
-func get(args []string) error {
-	return fmt.Errorf("get called")
-}
-
 func mkchain(args []string) error {
 	return fmt.Errorf("mkchain called")
 }
