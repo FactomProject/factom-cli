@@ -17,7 +17,12 @@ Synopsis
 
 		fatoidtx [addr] [amt]	"create and submit a factoid transaction"
 
-		get						"not yet defined"
+		get
+			height				"get current height of dblock chain"
+			dblocks #from #to	"get dblocks by range"
+			eblock "merkelroot"	"get eblock by merkel root"
+			entry "hash"		"get entry by hash"
+			
 
 		help [command]			"print help message for the sub-command"
 

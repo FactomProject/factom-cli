@@ -18,22 +18,19 @@ var (
 func TestGet(t *testing.T) {
 	server = cfg.Server
 	wallet = cfg.Wallet
-	fmt.Printf("Get\n===\n")
-	args := []string{"get"}
-	err := get(args)
-	if err != nil {
-		fmt.Println(err)
+	subs := map[string][]string{
+		"get":     {"get"},
+		"height":  {"get", "height"},
+		"dblocks": {"get", "dblocks", "0", "1"},
+		"eblock":  {"get", "eblock", "merkel"},
+		"entry":   {"get", "entry", "abcd"},
+	}
+	for i, v := range subs {
+		fmt.Printf("%s\n===\n", i)
+		err := get(v)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println()
 	}
 }
-
-func TestGetDBlocks(t *testing.T) {
-	server = cfg.Server
-	wallet = cfg.Wallet
-	fmt.Printf("GetDBlocks\n===\n")
-	args := []string{"get", "dblocks", "0", "1"}
-	err := get(args)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
