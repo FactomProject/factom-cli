@@ -55,7 +55,10 @@ func put(args []string) error {
 	if econf.Extid != "" {
 		e.ExtIDs = append(e.ExtIDs, econf.Extid)
 	}
-	e.ExtIDs = append(e.ExtIDs, eids...)
+	
+	for _, v := range eids {
+		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
+	}
 
 	p, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
