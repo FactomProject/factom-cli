@@ -7,9 +7,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
+	"strconv"
+	
+	"github.com/FactomProject/factom"
 )
 
 func get(args []string) error {
@@ -44,20 +45,21 @@ func getDBlocks(args []string) error {
 		return man("getDBlocks")
 	}
 
-	from, to := args[0], args[1]
-	api := fmt.Sprintf("http://%s/v1/dblocksbyrange/%s/%s", server, from, to)
-
-	resp, err := http.Get(api)
+	from, err := strconv.Atoi(args[0])
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	p, err := ioutil.ReadAll(resp.Body)
+	to, err := strconv.Atoi(args[1])
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(p))
-
+	
+	blocks, err := factom.GetDBlocks(from, to)
+	if err != nil {
+		return err
+	}
+	
+	fmt.Println(blocks)
 	return nil
 }
 
@@ -70,19 +72,12 @@ func getEBlock(args []string) error {
 	}
 
 	mr := args[0]
-	api := fmt.Sprintf("http://%s/v1/eblockbymr/%s", server, mr)
-
-	resp, err := http.Get(api)
+	eblock, err := factom.GetEBlock(mr)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	p, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(p))
 
+	fmt.Println(eblock)
 	return nil
 }
 
@@ -95,34 +90,21 @@ func getEntry(args []string) error {
 	}
 
 	hash := args[0]
-	api := fmt.Sprintf("http://%s/v1/entry/%s", server, hash)
-
-	resp, err := http.Get(api)
+	entry, err := factom.GetEntry(hash)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-	p, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(p))
-
+	
+	fmt.Println(entry)
 	return nil
 }
 
 func getHeight() error {
-	resp, err := http.Get("http://" + server + "/v1/dblockheight")
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	p, err := ioutil.ReadAll(resp.Body)
+	n, err := factom.GetBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(string(p))
-
+	fmt.Println(n)
 	return nil
 }
