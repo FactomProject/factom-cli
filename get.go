@@ -22,6 +22,8 @@ func get(args []string) error {
 	}
 
 	switch args[0] {
+	case "dblock":
+		return getDBlock(args)
 	case "dblocks":
 		return getDBlocks(args)
 	case "eblock":
@@ -35,6 +37,24 @@ func get(args []string) error {
 	}
 
 	panic("something went really wrong with get!")
+}
+
+func getDBlock(args []string) error {
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) < 1 {
+		return man("getDBlock")
+	}
+
+	hash := args[0]
+	dblock, err := factom.GetDBlock(hash)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(dblock)
+	return nil
 }
 
 func getDBlocks(args []string) error {
