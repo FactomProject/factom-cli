@@ -22,6 +22,7 @@ const usage = `factom-cli [options] [subcommand]
 	fatoidtx [dest] [amt]	"create and submit a factoid transaction"
 
 	get
+		dbinfo "hash"		"get dbinfo by hash"
 		dblock "hash"		"get dblock by hash"
 		dblocks #from #to	"get dblocks by range"
 		eblock "merkelroot"	"get eblock by merkel root"
@@ -46,6 +47,7 @@ func man(s string) error {
 		"buy":        "factom-cli buy amt",
 		"factoidtx":  "factom-cli factoidtx addr amt",
 		"get":        "factom-cli get height|dblocks|eblocks|entry",
+		"getDBInfo":  "factom-cli get dbinfo [hash]",
 		"getDBlock":  "factom-cli get dblock [hash]",
 		"getDBlocks": "factom-cli get dblocks #from #to",
 		"getEBlock":  "factom-cli get eblock [merkelroot]",
