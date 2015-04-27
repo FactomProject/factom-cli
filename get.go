@@ -38,7 +38,7 @@ func get(args []string) error {
 		return man("get")
 	}
 
-	panic("something went really wrong with get!")
+	panic("Something went really wrong with get!")
 }
 
 func getDBInfo(args []string) error {
@@ -144,7 +144,7 @@ func getHeight() error {
 	if err != nil {
 		return err
 	}
-
 	fmt.Println(n)
+
 	return nil
 }

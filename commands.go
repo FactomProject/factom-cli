@@ -8,10 +8,6 @@ import (
 	"fmt"
 )
 
-//func bintx(args []string) error {
-//	return fmt.Errorf("bintx called")
-//}
-
 func mkchain(args []string) error {
 	return fmt.Errorf("mkchain called")
 }
