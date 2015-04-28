@@ -30,7 +30,7 @@ func eckey(args []string) error {
 	case "pub":
 		return printPubKey()
 	default:
-		return nil
+		return man("eckey")
 	}
 	
 	panic("Something went really wrong with eckey!")
