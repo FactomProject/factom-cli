@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	ed "github.com/agl/ed25519"
@@ -26,6 +27,8 @@ func eckey(args []string) error {
 	switch args[0] {
 	case "new":
 		return newECKey()
+	case "pub":
+		return printPubKey()
 	default:
 		return nil
 	}
@@ -39,11 +42,42 @@ func newECKey() error {
 		return err
 	}
 
+	// private key is [32]byte private section + [32]byte public key
 	_, priv, err := ed.GenerateKey(rand)
 	if err != nil {
 		return err
 	}
-	fmt.Println(hex.EncodeToString(priv[:]))
+	fmt.Print(hex.EncodeToString(priv[:]))
 
 	return nil
+}
+
+func printPubKey() error {
+	pub, err := pubKey()
+	if err != nil {
+		return err
+	}
+	fmt.Println(hex.EncodeToString(pub[:]))
+
+	return nil
+}
+
+func pubKey() (*[32]byte, error) {
+	pub := new([32]byte)
+	
+	in, err := os.Open(wallet)
+	if err != nil {
+		return nil, err
+	}
+	p, err := ioutil.ReadAll(in)
+	if err != nil {
+		return nil, err
+	}
+	key, err := hex.DecodeString(string(p))
+	if err != nil {
+		return nil, err
+	}
+	copy(pub[:], key[32:64])
+	
+	return pub, nil
 }

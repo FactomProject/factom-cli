@@ -57,6 +57,11 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
+	case "eckey":
+		err := eckey(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	case "factoidtx":
 		err := factoidtx(args)
 		if err != nil {
