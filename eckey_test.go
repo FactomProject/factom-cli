@@ -2,34 +2,26 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 )
 
 func TestNewECKey(t *testing.T) {
+	fmt.Printf("TestNewECKey\n---\n")
 	wallet = os.Getenv("HOME") + "/.factom/ecwallet"
 
 	err := newECKey()
 	if err != nil {
 		t.Fatal(err)
 	}
-	
-	wfile, err := os.Open(wallet)
-	if err != nil {
-		t.Fatal(err)
-	}
-	p, err := ioutil.ReadAll(wfile)
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(string(p))
+	fmt.Println()
 }
 
 func TestPubKey(t *testing.T) {
+	fmt.Printf("TestPubKey\n---\n")
 	wallet = os.Getenv("HOME") + "/.factom/ecwallet"
 	
-	err := pubKey()
+	err := printPubKey()
 	if err != nil {
 		t.Error(err)
 	}

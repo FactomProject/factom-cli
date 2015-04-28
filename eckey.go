@@ -53,7 +53,7 @@ func newECKey() error {
 }
 
 func printPubKey() error {
-	pub, err := pubKey()
+	pub, err := ecPubKey()
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,27 @@ func printPubKey() error {
 	return nil
 }
 
-func pubKey() (*[32]byte, error) {
+func ecPrivKey() (*[64]byte, error) {
+	priv := new([64]byte)
+	
+	in, err := os.Open(wallet)
+	if err != nil {
+		return nil, err
+	}
+	p, err := ioutil.ReadAll(in)
+	if err != nil {
+		return nil, err
+	}
+	key, err := hex.DecodeString(string(p))
+	if err != nil {
+		return nil, err
+	}
+	copy(priv[:], key)
+	
+	return priv, nil
+}
+
+func ecPubKey() (*[32]byte, error) {
 	pub := new([32]byte)
 	
 	in, err := os.Open(wallet)
