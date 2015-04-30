@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	ed "github.com/agl/ed25519"
+	"github.com/FactomProject/factom"
 )
 
 var (
@@ -37,18 +37,8 @@ func eckey(args []string) error {
 }
 
 func newECKey() error {
-	rand, err := os.Open("/dev/random")
-	if err != nil {
-		return err
-	}
-
-	// private key is [32]byte private section + [32]byte public key
-	_, priv, err := ed.GenerateKey(rand)
-	if err != nil {
-		return err
-	}
-	fmt.Print(hex.EncodeToString(priv[:]))
-
+	key := factom.NewECKey()
+	fmt.Printf("%x", *key)
 	return nil
 }
 
