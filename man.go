@@ -22,7 +22,7 @@ const usage = `factom-cli [options] [subcommand]
 		new                 "generate a new eckey"
 		pub                 "print the pubkey from the wallet"
 		
-	fatoidtx [dest] [amt]   "create and submit a factoid transaction"
+	factoidtx [dest] [amt]   "create and submit a factoid transaction"
 
 	get
 		dbinfo "hash"       "get dbinfo by hash"
@@ -41,7 +41,7 @@ const usage = `factom-cli [options] [subcommand]
 	put                     "read data from stdin and write to factom"
 		-e [externalid]     "specify an exteral id for the factom entry. -e"
                             "can be used multiple times"
-		-c [chainid]        "spesify the chain that the entry belongs to"
+		-c [chainid]        "specify the chain that the entry belongs to"
 `
 
 // man returns an usage error string for the specified sub command.
