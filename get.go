@@ -23,7 +23,7 @@ func get(args []string) error {
 
 	switch args[0] {
 	case "dbinfo":
-		return getDBInfo(args)
+		return getDirBlockInfo(args)
 	case "dblock":
 		return getDBlock(args)
 	case "dblocks":
@@ -41,16 +41,16 @@ func get(args []string) error {
 	panic("Something went really wrong with get!")
 }
 
-func getDBInfo(args []string) error {
+func getDirBlockInfo(args []string) error {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("getDBInfo")
+		return man("getDirBlockInfo")
 	}
 
 	hash := args[0]
-	info, err := factom.GetDBInfo(hash)
+	info, err := factom.GetDirBlockInfo(hash)
 	if err != nil {
 		return err
 	}

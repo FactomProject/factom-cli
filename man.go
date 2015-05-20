@@ -52,7 +52,7 @@ func man(s string) error {
 		"buy":        "factom-cli buy amt",
 		"factoidtx":  "factom-cli factoidtx addr amt",
 		"get":        "factom-cli get height|dblocks|eblocks|entry",
-		"getDBInfo":  "factom-cli get dbinfo [hash]",
+		"getDirBlockInfo":  "factom-cli get dbinfo [hash]",
 		"getDBlock":  "factom-cli get dblock [hash]",
 		"getDBlocks": "factom-cli get dblocks #from #to",
 		"getEBlock":  "factom-cli get eblock [merkelroot]",
