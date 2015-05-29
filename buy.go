@@ -4,41 +4,41 @@
 
 package main
 
-import (
-	"encoding/hex"
-	"flag"
-	"os"
-	"strconv"
-	
-	"github.com/FactomProject/factom"
-)
-
-func buy(args []string) error {
-	os.Args = args
-	flag.Parse()
-	args = flag.Args()
-	if len(args) < 1 {
-		return man("buy")
-	}
-	
-	amt, err := strconv.Atoi(args[0])
-	if err != nil {
-		return err
-	}
-	
-	pub, err := ecPubKey()
-	if err != nil {
-		return err
-	}
-	
-	err = factom.BuyTestCredits(hex.EncodeToString(pub[:]), amt)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
+//import (
+//	"encoding/hex"
+//	"flag"
+//	"os"
+//	"strconv"
+//	
+//	"github.com/FactomProject/factom"
+//)
+//
+//func buy(args []string) error {
+//	os.Args = args
+//	flag.Parse()
+//	args = flag.Args()
+//	if len(args) < 1 {
+//		return man("buy")
+//	}
+//	
+//	amt, err := strconv.Atoi(args[0])
+//	if err != nil {
+//		return err
+//	}
+//	
+//	pub, err := ecPubKey()
+//	if err != nil {
+//		return err
+//	}
+//	
+//	err = factom.BuyTestCredits(hex.EncodeToString(pub[:]), amt)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
+//
 //func buy(args []string) error {
 //	var (
 //		amt  string

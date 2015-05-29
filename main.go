@@ -52,11 +52,6 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-	case "buy":
-		err := buy(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
 	case "eckey":
 		err := eckey(args)
 		if err != nil {
