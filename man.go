@@ -22,17 +22,16 @@ const usage = `factom-cli [options] [subcommand]
 		new                 "generate a new eckey"
 		pub                 "print the pubkey from the wallet"
 		
-	factoidtx [dest] [amt]   "create and submit a factoid transaction"
+	factoidtx [dest] [amt]  "create and submit a factoid transaction"
 
 	get
-		dbinfo "hash"       "get dbinfo by hash"
-		dblock "hash"       "get dblock by hash"
-		dblocks #from #to   "get dblocks by range"
-		eblock "merkelroot" "get eblock by merkel root"
+		head				"get current dbhead"
+		dblock "keymr"      "get dblock by merkel root"
+		chain "chainid"     "get ebhead by chainid"
+		eblock "keymr"      "get eblock by merkel root"
 		entry "hash"        "get entry by hash"
-		height              "get current height of dblock chain"
 		
-	help [command]          "print help message for the sub-command"
+	help [command]          "print help message for a sub-command"
 
 	mkchain [opt] [name]    "create a new factom chain with 'name'. read"
                             "the data for the first entry from stdin"
@@ -47,21 +46,20 @@ const usage = `factom-cli [options] [subcommand]
 // man returns an usage error string for the specified sub command.
 func man(s string) error {
 	m := map[string]string{
-		"balance":    "factom-cli balance ec|factoid [wallet]",
-		"buy":        "factom-cli buy #amt",
-		"factoidtx":  "factom-cli factoidtx addr amt",
-		"get":        "factom-cli get height|dblocks|eblocks|entry",
-		"getDirBlockInfo":  "factom-cli get dbinfo [hash]",
-		"getDBlock":  "factom-cli get dblock [hash]",
-		"getDBlocks": "factom-cli get dblocks #from #to",
-		"getEBlock":  "factom-cli get eblock [merkelroot]",
-		"getEntry":   "factom-cli get entry [entryhash]",
-		"getHeight":  "factom-cli get height",
-		"help":       "factom-cli help [subcommand]",
-		"mkchain":    "factom-cli mkchain [-e extid ...] name",
-		"eckey":      "factom-cli eckey new|pub",
-		"put":        "factom-cli put [-e extid ...] <stdin>",
-		"default":    usage,
+		"balance":   "factom-cli balance ec|factoid [wallet]",
+		"buy":       "factom-cli buy #amt",
+		"factoidtx": "factom-cli factoidtx addr amt",
+		"get":       "factom-cli get head|dblock|chain|eblock|entry",
+		"getHead":   "factom-cli get dblocks #from #to",
+		"getDBlock": "factom-cli get dblock [keymr]",
+		"getChain":  "factom-cli get chain [chainid]",
+		"getEBlock": "factom-cli get eblock [keymr]",
+		"getEntry":  "factom-cli get entry [entryhash]",
+		"help":      "factom-cli help [subcommand]",
+		"mkchain":   "factom-cli mkchain [-e extid ...] name",
+		"eckey":     "factom-cli eckey new|pub",
+		"put":       "factom-cli put [-e extid ...] <stdin>",
+		"default":   usage,
 	}
 
 	if m[s] != "" {

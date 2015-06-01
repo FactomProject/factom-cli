@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strconv"
 	
 	"github.com/FactomProject/factom"
 )
@@ -22,21 +21,30 @@ func get(args []string) error {
 	}
 
 	switch args[0] {
+	case "head":
+		return getHead()
 	case "dblock":
 		return getDBlock(args)
-	case "dblocks":
-		return getDBlocks(args)
+	case "chain":
+		return getChain(args)
 	case "eblock":
 		return getEBlock(args)
 	case "entry":
 		return getEntry(args)
-	case "height":
-		return getHeight()
 	default:
 		return man("get")
 	}
 
 	panic("Something went really wrong with get!")
+}
+
+func getHead() error {
+	head, err := factom.GetDBlockHead()
+	if err != nil {
+		return err
+	}
+	fmt.Println(head)
+	return nil
 }
 
 func getDBlock(args []string) error {
@@ -47,8 +55,8 @@ func getDBlock(args []string) error {
 		return man("getDBlock")
 	}
 
-	hash := args[0]
-	dblock, err := factom.GetDBlock(hash)
+	keymr := args[0]
+	dblock, err := factom.GetDBlock(keymr)
 	if err != nil {
 		return err
 	}
@@ -57,29 +65,21 @@ func getDBlock(args []string) error {
 	return nil
 }
 
-func getDBlocks(args []string) error {
+func getChain(args []string) error {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
-	if len(args) < 2 {
-		return man("getDBlocks")
+	if len(args) < 1 {
+		return man("getChain")
 	}
-
-	from, err := strconv.Atoi(args[0])
-	if err != nil {
-		return err
-	}
-	to, err := strconv.Atoi(args[1])
+	
+	chainid := args[0]
+	chain, err := factom.GetChainHead(chainid)
 	if err != nil {
 		return err
 	}
 	
-	blocks, err := factom.GetDBlocks(from, to)
-	if err != nil {
-		return err
-	}
-	
-	fmt.Println(blocks)
+	fmt.Println(chain)
 	return nil
 }
 
@@ -88,11 +88,11 @@ func getEBlock(args []string) error {
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("getEBlocks")
+		return man("getEBlock")
 	}
 
-	mr := args[0]
-	eblock, err := factom.GetEBlock(mr)
+	keymr := args[0]
+	eblock, err := factom.GetEBlock(keymr)
 	if err != nil {
 		return err
 	}
@@ -116,15 +116,5 @@ func getEntry(args []string) error {
 	}
 	
 	fmt.Println(entry)
-	return nil
-}
-
-func getHeight() error {
-	n, err := factom.GetBlockHeight()
-	if err != nil {
-		return err
-	}
-	fmt.Println(n)
-
 	return nil
 }
