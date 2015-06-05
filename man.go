@@ -12,6 +12,8 @@ const usage = `factom-cli [options] [subcommand]
 	-s [server]             "address for the api server"
 	-w [wallet]             "wallet file"
 	
+	testcredit [key]        "add 100 test credits to the key. use the wallet"
+	                        "file if no key is specified"
 	balance
 		ec                  "entry credit balance of eckey"
 		factoid             "factoid balance of factoid"
@@ -46,6 +48,7 @@ const usage = `factom-cli [options] [subcommand]
 // man returns an usage error string for the specified sub command.
 func man(s string) error {
 	m := map[string]string{
+		"testcredit": "factom-cli testcredit [key]",
 		"balance":   "factom-cli balance ec|factoid [wallet]",
 		"buy":       "factom-cli buy #amt",
 		"factoidtx": "factom-cli factoidtx addr amt",

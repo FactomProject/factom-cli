@@ -42,6 +42,12 @@ func main() {
 	}
 
 	switch args[0] {
+	//TODO remove testcredit before production
+	case "testcredit":
+		err := testcredit(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 	case "bintx":
 		err := bintx(args)
 		if err != nil {
