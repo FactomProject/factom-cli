@@ -5,63 +5,53 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/hex"
+	"flag"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
+	"os"
+
+	"github.com/FactomProject/factom"
 )
 
 // balance prints the current balance of the specified wallet
 func balance(args []string) error {
-	api := "http://" + server + "/v1/creditbalance"
-	key := wallet
-
-	if len(args) == 1 {
-		args = append(args, "ec")
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) < 1 {
+		return man("balance")
 	}
-	args = args[1:]
-
+	
 	switch args[0] {
 	case "ec":
-		return ecBalance(key, api)
-	case "factoid":
-		return factoidBalance(key, api)
+		return ecbalance(args)
 	default:
 		return man("balance")
 	}
-	panic("something went wrong with balance")
+
+	panic("Something went really wrong with balance!")
 }
 
-func ecBalance(pubkey, server string) error {
-	type balance struct {
-		Publickey string
-		Credits   float64
-	}
-
-	data := url.Values{
-		"pubkey": {pubkey},
-	}
-
-	resp, err := http.PostForm(server, data)
-	if err != nil {
+func ecbalance(args []string) error {
+	var eckey string
+	if p, err := ecPubKey(); err != nil {
 		return err
+	} else {
+		eckey = hex.EncodeToString(p[:])
 	}
-	defer resp.Body.Close()
-	dec := json.NewDecoder(resp.Body)
-	for {
-		var b *balance
-		if err := dec.Decode(&b); err == io.EOF {
-			break
-		} else if err != nil {
-			return err
-		}
-		fmt.Println("EC Balance:", b.Credits)
+	
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) > 0 {
+		eckey = args[0]
 	}
-
-	return nil
-}
-
-func factoidBalance(pubkey, server string) error {
-	return fmt.Errorf("Factoid Balance: not implimented")
+	
+	if b, err := factom.ECBalance(eckey); err != nil {
+		return err
+	} else {
+		fmt.Println(b)
+	}
+	
+	return nil	
 }
