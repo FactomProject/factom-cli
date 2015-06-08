@@ -24,8 +24,6 @@ const usage = `factom-cli [options] [subcommand]
 		new                 "generate a new eckey"
 		pub                 "print the pubkey from the wallet"
 		
-	factoidtx [dest] [amt]  "create and submit a factoid transaction"
-
 	get
 		head				"get current dbhead"
 		dblock "keymr"      "get dblock by merkel root"
@@ -35,7 +33,7 @@ const usage = `factom-cli [options] [subcommand]
 		
 	help [command]          "print help message for a sub-command"
 
-	mkchain [opt] [name]    "create a new factom chain with 'name'. read"
+	mkchain [opt]           "create a new factom chain with 'name'. read"
                             "the data for the first entry from stdin"
 		-e externalid       "externalid for the first entry
 
@@ -49,20 +47,19 @@ const usage = `factom-cli [options] [subcommand]
 func man(s string) error {
 	m := map[string]string{
 		"testcredit": "factom-cli testcredit [key]",
-		"balance":   "factom-cli balance ec|factoid [wallet]",
-		"buy":       "factom-cli buy #amt",
-		"factoidtx": "factom-cli factoidtx addr amt",
-		"get":       "factom-cli get head|dblock|chain|eblock|entry",
-		"getHead":   "factom-cli get dblocks #from #to",
-		"getDBlock": "factom-cli get dblock [keymr]",
-		"getChain":  "factom-cli get chain [chainid]",
-		"getEBlock": "factom-cli get eblock [keymr]",
-		"getEntry":  "factom-cli get entry [entryhash]",
-		"help":      "factom-cli help [subcommand]",
-		"mkchain":   "factom-cli mkchain [-e extid ...] name",
-		"eckey":     "factom-cli eckey new|pub",
-		"put":       "factom-cli put [-e extid ...] <stdin>",
-		"default":   usage,
+		"balance":    "factom-cli balance ec|factoid [wallet]",
+		"buy":        "factom-cli buy #amt",
+		"get":        "factom-cli get head|dblock|chain|eblock|entry",
+		"getHead":    "factom-cli get head",
+		"getDBlock":  "factom-cli get dblock [keymr]",
+		"getChain":   "factom-cli get chain [chainid]",
+		"getEBlock":  "factom-cli get eblock [keymr]",
+		"getEntry":   "factom-cli get entry [hash]",
+		"help":       "factom-cli help [subcommand]",
+		"mkchain":    "factom-cli mkchain [-e extid ...] <stdin>",
+		"eckey":      "factom-cli eckey new|pub",
+		"put":        "factom-cli put [-e extid ...] <stdin>",
+		"default":    usage,
 	}
 
 	if m[s] != "" {

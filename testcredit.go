@@ -20,7 +20,7 @@ func testcredit(args []string) error {
 	} else {
 		key = hex.EncodeToString(p[:])
 	}
-	if args != nil {
+	if len(args) > 0 {
 		key = args[0]
 	}
 	

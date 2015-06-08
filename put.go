@@ -6,13 +6,13 @@ package main
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/url"
 	"os"
+	"time"
+
+	"github.com/FactomProject/factom"
 )
 
 type extids []string
@@ -26,15 +26,8 @@ func (e *extids) Set(s string) error {
 	return nil
 }
 
+// put commits then reveals an entry to factomd
 func put(args []string) error {
-	type jsonentry struct {
-		ChainID string
-		ExtIDs  []string
-		Data    string
-	}
-	
-	api := "http://" + server + "/v1/submitentry"
-
 	os.Args = args
 	var (
 		cid  = flag.String("c", "", "hex encoded chainid for the entry")
@@ -42,9 +35,11 @@ func put(args []string) error {
 	)
 	flag.Var(&eids, "e", "external id for the entry")
 	flag.Parse()
-
-	e := new(jsonentry)
+	args = flag.Args()
 	
+	e := new(factom.Entry)
+	
+	// use the default chainid and extids from the config file
 	econf := ReadConfig().Entry
 	if econf.Chainid != "" {
 		e.ChainID = econf.Chainid
@@ -60,28 +55,25 @@ func put(args []string) error {
 		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
 	}
 
-	p, err := ioutil.ReadAll(os.Stdin)
-	if err != nil {
+	// Entry.Content is read from stdin
+	if p, err := ioutil.ReadAll(os.Stdin); err != nil {
 		return err
-	}
-	if size := len(p); size > 10240 {
+	} else if size := len(p); size > 10240 {
 		return fmt.Errorf("Entry of %d bytes is too large", size)
+	} else {
+		e.Content = hex.EncodeToString(p)
 	}
-	e.Data = hex.EncodeToString(p)
-
-	b, err := json.Marshal(e)
+	
+	priv, err := ecPrivKey()
 	if err != nil {
 		return err
 	}
-
-	data := url.Values{
-		"datatype": {"entry"},
-		"format":   {"json"},
-		"entry":    {string(b)},
+	
+	if err := factom.CommitEntry(e, priv); err != nil {
+		return err
 	}
-
-	_, err = http.PostForm(api, data)
-	if err != nil {
+	time.Sleep(10 * time.Second)
+	if err := factom.RevealEntry(e); err != nil {
 		return err
 	}
 
