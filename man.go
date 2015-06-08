@@ -33,8 +33,8 @@ const usage = `factom-cli [options] [subcommand]
 		
 	help [command]          "print help message for a sub-command"
 
-	mkchain [opt]           "create a new factom chain with 'name'. read"
-                            "the data for the first entry from stdin"
+	mkchain                 "create a new factom chain. read the data for the"
+	                        "first entry from stdin"
 		-e externalid       "externalid for the first entry
 
 	put                     "read data from stdin and write to factom"
