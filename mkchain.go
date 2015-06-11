@@ -53,6 +53,8 @@ func mkchain(args []string) error {
 	if err := factom.RevealChain(c); err != nil {
 		return err
 	}
+	
+	fmt.Println("New Chain:", c.ChainID)
 
 	return nil
 }
