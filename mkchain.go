@@ -15,22 +15,9 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-type extids []string
-
-func (e *extids) String() string {
-	return fmt.Sprint(*e)
-}
-
-func (e *extids) Set(s string) error {
-	*e = append(*e, s)
-	return nil
-}
-
-// put commits then reveals an entry to factomd
-func put(args []string) error {
+func mkchain(args []string) error {
 	os.Args = args
 	var (
-		cid  = flag.String("c", "", "hex encoded chainid for the entry")
 		eids extids
 	)
 	flag.Var(&eids, "e", "external id for the entry")
@@ -38,18 +25,6 @@ func put(args []string) error {
 	args = flag.Args()
 	
 	e := factom.NewEntry()
-	
-	// use the default chainid and extids from the config file
-	econf := ReadConfig().Entry
-	if econf.Chainid != "" {
-		e.ChainID = econf.Chainid
-	}
-	if *cid != "" {
-		e.ChainID = *cid
-	}
-	if econf.Extid != "" {
-		e.ExtIDs = append(e.ExtIDs, econf.Extid)
-	}
 	
 	for _, v := range eids {
 		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
@@ -68,12 +43,14 @@ func put(args []string) error {
 	if err != nil {
 		return err
 	}
+
+	c := factom.NewChain(e)
 	
-	if err := factom.CommitEntry(e, priv); err != nil {
+	if err := factom.CommitChain(c, priv); err != nil {
 		return err
 	}
 	time.Sleep(10 * time.Second)
-	if err := factom.RevealEntry(e); err != nil {
+	if err := factom.RevealChain(c); err != nil {
 		return err
 	}
 

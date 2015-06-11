@@ -23,7 +23,7 @@ type CliConf struct {
 const defaultConf = `
 [main]
 Server	= localhost:8088
-Wallet	= ""
+Wallet	= "$HOME/.factom/ecwallet"
 [entry]
 Chainid	= ""
 Extid	= ""
