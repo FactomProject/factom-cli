@@ -83,6 +83,11 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
+    case "newfactoidaddress":
+        err := generateAddress(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
 	case "put":
 		err := put(args)
 		if err != nil {
