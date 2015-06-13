@@ -5,29 +5,27 @@
 package main
 
 import (
-    "flag"
-    "fmt"
-    "os"
-    "github.com/FactomProject/factom"
+	"flag"
+	"fmt"
+	"github.com/FactomProject/factom"
+	"os"
 )
 
 // Generates a new Address
 func generateAddress(args []string) error {
-    
-    os.Args = args
-    flag.Parse()
-    args = flag.Args()
-    if len(args) < 1 {
-        return man("generatefactoidaddress")
-    }
-    
-    Addr,err := factom.GenerateFactoidAddress(args[0])
-    if err != nil {
-        fmt.Println(err)
-    }else{
-        fmt.Println(args[0]," = ",Addr)
-    }
-    
-    return nil
-    
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) < 1 {
+		return man("generatefactoidaddress")
+	}
+
+	Addr, err := factom.GenerateFactoidAddress(args[0])
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(args[0], " = ", Addr)
+	}
+
+	return nil
 }

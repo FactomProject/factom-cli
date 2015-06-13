@@ -48,11 +48,6 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-	case "bintx":
-		err := bintx(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
 	case "balance":
 		err := balance(args)
 		if err != nil {
