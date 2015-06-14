@@ -43,7 +43,7 @@ func getHead() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(head)
+	fmt.Println(head.KeyMR)
 	return nil
 }
 
