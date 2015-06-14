@@ -83,17 +83,54 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-    case "newfactoidaddress":
-        err := generateAddress(args)
+    case "put":
+        err := put(args)
         if err != nil {
             fmt.Fprintln(os.Stderr, err)
         }
-	case "put":
-		err := put(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	default:
+        
+    case "genfactoidaddr":
+        err := genfactoidaddress(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "newtransaction":
+        err := fctnewtrans(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        } 
+    case "addinput":
+        err := fctaddinput(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "addoutput":
+        err := fctaddoutput(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "addecoutput":
+        err := fctaddecoutput(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "sign":
+        err := fctsign(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "submit":
+        err := fctsubmit(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "getfee":
+        err := fctgetfee(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    default:
+        fmt.Println("Command not found")
 		man("default")
 	}
 }
