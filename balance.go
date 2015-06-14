@@ -74,9 +74,6 @@ func fctbalance(args []string) error {
     }else{
         fmt.Println("Missing Address")
     } 
-    if len(fctAdr) != 64 {
-        fmt.Println("Invalid Address")
-    }
     
     if b, err := factom.FctBalance(fctAdr); err != nil {
         return err
