@@ -20,29 +20,49 @@ import (
 var _ = hex.EncodeToString
 var serverFct = "localhost:8089"
 
-func sendCmd(cmd string, cmderror string) error {
-    
-    resp, err := http.Get(cmd)
-    if err != nil {
-        return err
-    }
-    
-    body, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        return err
-    }
-    resp.Body.Close()
-    
-    type x struct { Success bool }
-    b := new(x)
-    if err := json.Unmarshal(body, b); err != nil || !b.Success {
-        fmt.Println(cmderror)
-        return fmt.Errorf("Command Failed: ",string(body))
-    }
-    
-    return nil
+func getCmd(cmd string, cmderror string) error {
+	resp, err := http.Get(cmd)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+
+	type x struct{ Success bool }
+	b := new(x)
+	if err := json.Unmarshal(body, b); err != nil || !b.Success {
+		fmt.Println(cmderror)
+		return fmt.Errorf("Command Failed: ", string(body))
+	}
+
+	return nil
 }
 
+func postCmd(cmd string, cmderror string) error {
+	resp, err := http.PostForm(cmd, nil)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+
+	type x struct{ Success bool }
+	b := new(x)
+	if err := json.Unmarshal(body, b); err != nil || !b.Success {
+		fmt.Println(cmderror)
+		return fmt.Errorf("Command Failed: ", string(body))
+	}
+
+	return nil
+}
 
 // Generates a new Address
 func genfactoidaddress(args []string) error {
@@ -75,7 +95,7 @@ func fctnewtrans(args []string) error {
     } 
     
     str := fmt.Sprintf("http://%s/v1/factoid-new-transaction/%s", serverFct, args[0])
-    err := sendCmd(str,"Duplicate or bad key")
+    err := postCmd(str, "Duplicate or bad key")
     
     return err
     
@@ -95,7 +115,7 @@ func fctaddinput(args []string) error {
     
     str := fmt.Sprintf("http://%s/v1/factoid-add-input/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],args[2])
-    err := sendCmd(str,"Failed to add input")
+    err := postCmd(str,"Failed to add input")
     
     return err
 }
@@ -112,7 +132,7 @@ func fctaddoutput(args []string) error {
     
     str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],args[2])
-    err := sendCmd(str,"Failed to add output")
+    err := postCmd(str,"Failed to add output")
     
     return err
 }
@@ -129,7 +149,7 @@ func fctaddecoutput(args []string) error {
     
     str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],args[2])
-    err := sendCmd(str,"Failed to add Entry Credit output")
+    err := postCmd(str,"Failed to add Entry Credit output")
     
     return err
 }
@@ -174,7 +194,7 @@ func fctsign(args []string) error {
     } 
     
     str := fmt.Sprintf("http://%s/v1/factoid-sign-transaction/%s", serverFct, args[0])
-    err := sendCmd(str,"Cannot sign transaction.  Check balances, inputs, transaction fees")
+    err := postCmd(str,"Cannot sign transaction.  Check balances, inputs, transaction fees")
     
     return err
 }
