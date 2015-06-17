@@ -15,7 +15,6 @@ import (
 
 // balance prints the current balance of the specified wallet
 func balance(args []string) error {
-    
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
@@ -25,10 +24,8 @@ func balance(args []string) error {
 	switch args[0] {
 	case "ec":
 		return ecbalance(args)
-    case "factoid":
-        fallthrough
-    case "fct":
-        return fctbalance(args)
+	case "fct":
+		return fctbalance(args)
 	default:
 		return man("balance")
 	}
@@ -61,26 +58,25 @@ func ecbalance(args []string) error {
 }
 
 func fctbalance(args []string) error {
-    type balance struct {
-        Balance int64
-    }
-    
-    var fctAdr string
-    os.Args = args
-    flag.Parse()
-    args = flag.Args()
-    if len(args) > 0 {
-       fctAdr = args[0]
-    }else{
-        fmt.Println("Missing Address")
-    } 
-    
-    if b, err := factom.FctBalance(fctAdr); err != nil {
-        return err
-    } else {
-        fmt.Println("Balance of ",fctAdr," = ", b.Balance)
-    }
-    
-    return nil
-    
+	type balance struct {
+		Balance int64
+	}
+
+	var fctAdr string
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) > 0 {
+		fctAdr = args[0]
+	} else {
+		fmt.Println("Missing Address")
+	}
+
+	if b, err := factom.FctBalance(fctAdr); err != nil {
+		return err
+	} else {
+		fmt.Println("Balance of ", fctAdr, " = ", b.Balance)
+	}
+
+	return nil
 }

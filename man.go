@@ -41,7 +41,7 @@ const usage = `factom-cli [options] [subcommand]
 
     balance
         ec                  "entry credit balance of eckey"
-        factoid             "factoid balance of factoid"
+        fct                 "factoid balance of factoid"
         
     genfactoidaddr name     "generate a new address, and give it a name"
     
@@ -68,7 +68,7 @@ const usage = `factom-cli [options] [subcommand]
 func man(s string) error {
     m := map[string]string{
         "testcredit":     "factom-cli testcredit [key]",
-        "balance":        "factom-cli balance ec|factoid [wallet]",
+        "balance":        "factom-cli balance ec|fct [key]",
         "buy":            "factom-cli buy #amt",
         "get":            "factom-cli get head|dblock|chain|eblock|entry",
         "getHead":        "factom-cli get head",
