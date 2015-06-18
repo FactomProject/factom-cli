@@ -45,7 +45,7 @@ const usage = `factom-cli [options] [subcommand]
                             "a name"
     balance
         ec key|address      "entry credit balance of eckey"
-        factoid key|address "factoid balance of factoid"
+        fct key|address     "factoid balance of factoid"
             
     newtransaction key      "create a new transaction.  The key is used to"
                             "add inputs, outputs, and ecoutputs (to buy   "
@@ -75,7 +75,7 @@ const usage = `factom-cli [options] [subcommand]
 func man(s string) error {
     m := map[string]string{
         "testcredit":     "factom-cli testcredit [key]",
-        "balance":        "factom-cli balance ec|factoid [wallet]",
+        "balance":        "factom-cli balance ec|fct [key]",
         "buy":            "factom-cli buy #amt",
         "get":            "factom-cli get head|dblock|chain|eblock|entry",
         "getHead":        "factom-cli get head",
