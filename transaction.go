@@ -26,7 +26,8 @@ func getCmd(cmd string, cmderror string) error {
 		return err
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body) 
+	
 	if err != nil {
 		return err
 	}

@@ -39,12 +39,14 @@ const usage = `factom-cli [options] [subcommand]
                             "can be used multiple times"
         -c [chainid]        "specify the chain that the entry belongs to"
 
-    balance
-        ec                  "entry credit balance of eckey"
-        factoid             "factoid balance of factoid"
-        
     genfactoidaddr name     "generate a new address, and give it a name"
-    
+        
+    genentrycreditaddr name "generate an Entry Credit address, and give it"
+                            "a name"
+    balance
+        ec key|address      "entry credit balance of eckey"
+        factoid key|address "factoid balance of factoid"
+            
     newtransaction key      "create a new transaction.  The key is used to"
                             "add inputs, outputs, and ecoutputs (to buy   "
                             "entry credits).  Once the transaction is built,"
@@ -62,6 +64,11 @@ const usage = `factom-cli [options] [subcommand]
                             "a transaction"
         key name amount     "Use the name supplied to genfactoidaddr"
         key address amount  "Use an address"
+    
+    sign key                "Sign the transaction specified by the key"
+    
+    submit key              "Submit the transaction specified by the key"
+                            "to Factom"
 `
 
 // man returns an usage error string for the specified sub command.
