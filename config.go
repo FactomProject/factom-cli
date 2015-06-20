@@ -32,8 +32,7 @@ Extid	= ""
 func ReadConfig() *CliConf {
 	cfg := new(CliConf)
 	filename := os.Getenv("HOME")+"/.factom/factom-cli.conf"
-	err := gcfg.ReadFileInto(cfg, filename)
-	if err != nil {
+	if err := gcfg.ReadFileInto(cfg, filename); err != nil {
 		gcfg.ReadStringInto(cfg, defaultConf)
 	}
 	return cfg
