@@ -58,11 +58,6 @@ func main() {
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-	case "factoidtx":
-		err := factoidtx(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
 	case "get":
 		err := get(args)
 		if err != nil {
@@ -84,8 +79,13 @@ func main() {
             fmt.Fprintln(os.Stderr, err)
         }
         
-    case "genfactoidaddr":
-        err := genfactoidaddress(args)
+    case "generateaddress":
+        err := generateaddress(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "getaddresses":
+        err := getaddresses(args)
         if err != nil {
             fmt.Fprintln(os.Stderr, err)
         }

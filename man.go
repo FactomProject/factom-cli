@@ -11,16 +11,7 @@ import (
 const usage = `factom-cli [options] [subcommand]
     -s [server]             "address for the api server"
     -w [wallet]             "wallet file"
-    
-    testcredit [key]        "add 100 test credits to the key. use the wallet"
-                            "file if no key is specified"
-
-    buy #amt                "buy amt entry credits for the pubkey in the wallet"
-
-    eckey
-        new                 "generate a new eckey"
-        pub                 "print the pubkey from the wallet"
-        
+    -v                      "Verbose.  Prints progress and feedback"        
     get
         head                "get current dbhead"
         dblock "keymr"      "get dblock by merkel root"
@@ -30,22 +21,29 @@ const usage = `factom-cli [options] [subcommand]
         
     help [command]          "print help message for a sub-command"
 
-    mkchain                 "create a new factom chain. read the data for the"
-                            "first entry from stdin"
+    mkchain ecaddress       "create a new factom chain. read the data for the"
+                            "first entry from stdin.  Use the entry credits"
+                            "from the specified entry credit address"
         -e externalid       "externalid for the first entry
 
-    put                     "read data from stdin and write to factom"
+    put ecaddress           "read data from stdin and write to factom. Use"
+                            "the entry credits from the specified entry credit"
+                            "address"
         -e [externalid]     "specify an exteral id for the factom entry. -e"
                             "can be used multiple times"
         -c [chainid]        "specify the chain that the entry belongs to"
-
-    genfactoidaddr name     "generate a new address, and give it a name"
         
-    genentrycreditaddr name "generate an Entry Credit address, and give it"
-                            "a name"
-    balance
-        ec key|address      "entry credit balance of eckey"
-        fct key|address     "factoid balance of factoid"
+    generateaddress
+        ec name             "generate an Entry Credit address, tied to the name"
+        fct name            "generate a Factoid address, tied to the name"
+                            "Names must be unique, or you will get a"
+                            "Duplicate Name or Invalid Name error."
+                            "Names are limited to 32 characters"
+   
+    balance key|address     "If this is an ec balance, returns number of 
+                            "entry credits"
+                            "If this is a Factoid balance, returns the 
+                            "factoids at that address"
             
     newtransaction key      "create a new transaction.  The key is used to"
                             "add inputs, outputs, and ecoutputs (to buy   "

@@ -33,13 +33,16 @@ func getCmd(cmd string, cmderror string) error {
 	}
 	resp.Body.Close()
 
-	type x struct{ Success bool }
+	type x struct{ 
+        Body string
+        Success bool 
+    }
 	b := new(x)
 	if err := json.Unmarshal(body, b); err != nil || !b.Success {
 		fmt.Println(cmderror)
 		return fmt.Errorf("Command Failed: ", string(body))
 	}
-
+    fmt.Println(b.Body)
 	return nil
 }
 
@@ -66,23 +69,47 @@ func postCmd(cmd string, cmderror string) error {
 }
 
 // Generates a new Address
-func genfactoidaddress(args []string) error {
+func generateaddress(args []string) (err error) {
     
     os.Args = args
     flag.Parse()
     args = flag.Args()
-    if len(args) < 1 {
+    if len(args) < 2 {
         return man("generatefactoidaddress")
     }
     
-    Addr,err := factom.GenerateFactoidAddress(args[0])
-    if err != nil {
-        fmt.Println(err)
-    }else{
-        fmt.Println(args[0]," = ",Addr)
+    var Addr string
+    switch args[0]{
+        case "ec": 
+            Addr,err = factom.GenerateEntryCreditAddress(args[1])
+        case "fct":
+            Addr,err = factom.GenerateFactoidAddress(args[1])
+        default:
+            panic("Expected ec|fct name")
     }
     
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(args[0]," = ",Addr)
+
     return nil
+    
+}
+
+func getaddresses(args []string) (err error){
+    os.Args = args
+    flag.Parse()
+    args = flag.Args()
+    if len(args) > 0 {
+        return man("getaddresses")
+    }
+    
+    str := fmt.Sprintf("http://%s/v1/factoid-get-addresses/", serverFct)
+    err  = getCmd(str,"Error printing addresses")
+    
+    return err
+    
     
 }
 
