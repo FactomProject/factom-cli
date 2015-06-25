@@ -42,19 +42,9 @@ func main() {
 	}
 
 	switch args[0] {
-	//TODO remove testcredit before production
-	case "testcredit":
-		err := testcredit(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
+	
 	case "balance":
 		err := balance(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	case "eckey":
-		err := eckey(args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}

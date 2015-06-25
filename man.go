@@ -8,10 +8,14 @@ import (
     "fmt"
 )
 
-const usage = `factom-cli [options] [subcommand]
-    -s [server]             Address for the api server
-    -w [wallet]             Wallet file
-    -v                      Verbose.  Prints progress and feedback        
+const usage = `
+factom-cli [options] [subcommand]
+
+        -c [ChainID]        hex encoded chainid for the entry
+        -e [extid]          external id for the entry. -e may be used multiple times
+        -h                  display help message
+        -s                  path to the factomclient. default: localhost:8083    
+        
     get
         head                Get current dbhead
         dblock keymr        Get dblock by merkel root
@@ -62,6 +66,9 @@ const usage = `factom-cli [options] [subcommand]
                             a transaction
         key name amount     Use the name supplied to genfactoidaddr
         key address amount  Use an address
+        
+    getfee key              Get the current fee required for this 
+                            transaction
     
     sign key                Sign the transaction specified by the key
     
@@ -97,7 +104,6 @@ func man(s string) error {
         "addecoutput":    "factom-cli addecoutput key name|address amount",
         "validate":       "factom-cli validate key",
         "submit":         "factom-cli submit key",
-        "eckey":          "factom-cli eckey new|pub",
         "put":            "factom-cli put [-e extid ...] <stdin>",
         "default":        usage,
     }

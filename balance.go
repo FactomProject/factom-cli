@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
@@ -21,61 +20,36 @@ func balance(args []string) error {
 	if len(args) < 1 {
 		return man("balance")
 	}
+	
 	switch args[0] {
 	case "ec":
-		return ecbalance(args)
+		return ecbalance(args[1])
 	case "fct":
-		return fctbalance(args)
+		return fctbalance(args[1])
 	default:
 		return man("balance")
 	}
 
-	panic("Something went really wrong with balance!")
 }
 
-func ecbalance(args []string) error {
-	var eckey string
-	if p, err := ecPubKey(); err != nil {
+func ecbalance(addr string) error {
+
+    if b, err := factom.ECBalance(addr); err != nil {
 		return err
 	} else {
-		eckey = hex.EncodeToString(p[:])
-	}
-	
-	os.Args = args
-	flag.Parse()
-	args = flag.Args()
-	if len(args) > 0 {
-		eckey = args[0]
-	}
-	
-	if b, err := factom.ECBalance(eckey); err != nil {
-		return err
-	} else {
-		fmt.Println(b)
-	}
+        fmt.Println("Balance of ", addr, " = ", b)
+    }
 	
 	return nil	
 }
 
-func fctbalance(args []string) error {
-	type balance struct {
-		Balance int64
-	}
+func fctbalance(addr string) error {
 
-	var fctAdr string
-	os.Args = args
-	flag.Parse()
-	args = flag.Args()
-	if len(args) > 0 {
-		fctAdr = args[0]
-	} else {
-		fmt.Println("Missing Address")
-	}
 
-	if b, err := factom.FctBalance(fctAdr); err != nil {
+	if b, err := factom.FctBalance(addr); err != nil {
 		return err
 	} else {
-		fmt.Println("Balance of ", fctAdr, " = ", b.Balance)
+		fmt.Println("Balance of ", addr, " = ", b)
 	}
 
 	return nil

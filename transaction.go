@@ -91,7 +91,7 @@ func generateaddress(args []string) (err error) {
     }
     
     if err != nil {
-        panic(err)
+        return err
     }
     fmt.Println(args[0]," = ",Addr)
 
