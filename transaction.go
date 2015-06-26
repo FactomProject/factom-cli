@@ -131,43 +131,6 @@ func fctnewtrans(args []string) error {
     
 }
 
-func convertFixedPoint(amt string) (string, error) {
-    var v int64
-    var err error
-    index := strings.Index(amt,".");
-    if  index < 0 {
-        v, err =strconv.ParseInt(amt,10,64)
-        if err != nil {
-            fmt.Println("1:",err)
-            return "", err
-        }
-        v *= 100000000      // Convert to Factoshis
-    }else{
-        tp := amt[:index]
-        v, err =strconv.ParseInt(tp,10,64)
-        if err != nil {
-            fmt.Println("2:",err)
-            return "", err
-        }
-        v = v*100000000      // Convert to Factoshis
-        
-        bp := amt[index+1:]
-        if len(bp)>8 {
-            fmt.Println("3: Bad length")
-            return "", fmt.Errorf("Format Error in amount")
-        }
-        bpv, err :=strconv.ParseInt(bp,10,64)
-        if err != nil {
-            fmt.Println("4:",err)
-            return "", err
-        }
-        for i:=0; i<8-len(bp); i++ {
-            bpv *= 10
-        }
-        v += bpv
-    }
-    return strconv.FormatInt(v,10),nil
-}
 
 func fctaddinput(args []string) error {
     os.Args = args
@@ -180,7 +143,7 @@ func fctaddinput(args []string) error {
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
     
-    amt,err := convertFixedPoint(args[2])
+    amt,err := fct.convertFixedPoint(args[2])
     if err != nil { return err }
     str := fmt.Sprintf("http://%s/v1/factoid-add-input/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
@@ -199,7 +162,7 @@ func fctaddoutput(args []string) error {
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
-    amt,err := convertFixedPoint(args[2])
+    amt,err := fct.convertFixedPoint(args[2])
     if err != nil { return err }
     str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
@@ -218,7 +181,7 @@ func fctaddecoutput(args []string) error {
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
-    amt,err := convertFixedPoint(args[2])
+    amt,err := fct.convertFixedPoint(args[2])
     if err != nil { return err }
     str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
