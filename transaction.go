@@ -5,8 +5,6 @@
 package main
 
 import (
-    "strings"
-    "strconv"
     "bytes"
     "net/http"
     "encoding/hex"
@@ -15,7 +13,7 @@ import (
     "flag"
     "fmt"
     "os"
-    
+    fct "github.com/FactomProject/factoid"
     "github.com/FactomProject/factom"
 )
 
@@ -143,7 +141,7 @@ func fctaddinput(args []string) error {
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
     
-    amt,err := fct.convertFixedPoint(args[2])
+    amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { return err }
     str := fmt.Sprintf("http://%s/v1/factoid-add-input/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
@@ -162,7 +160,7 @@ func fctaddoutput(args []string) error {
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
-    amt,err := fct.convertFixedPoint(args[2])
+    amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { return err }
     str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
@@ -181,7 +179,7 @@ func fctaddecoutput(args []string) error {
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
-    amt,err := fct.convertFixedPoint(args[2])
+    amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { return err }
     str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
