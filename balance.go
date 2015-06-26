@@ -9,7 +9,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/FactomProject/factom"
+    fct "github.com/FactomProject/factoid"
+    "github.com/FactomProject/factom"
 )
 
 // balance prints the current balance of the specified wallet
@@ -49,7 +50,7 @@ func fctbalance(addr string) error {
 	if b, err := factom.FctBalance(addr); err != nil {
 		return err
 	} else {
-		fmt.Println("Balance of ", addr, " = ", b)
+        fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
 	}
 
 	return nil
