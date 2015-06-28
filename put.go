@@ -37,6 +37,11 @@ func put(args []string) error {
 	flag.Parse()
 	args = flag.Args()
 	
+	if len(args) < 1 {
+		return man("put")
+	}
+	name := args[0]
+	
 	e := factom.NewEntry()
 	
 	// use the default chainid and extids from the config file
@@ -64,12 +69,7 @@ func put(args []string) error {
 		e.Content = hex.EncodeToString(p)
 	}
 	
-	priv, err := ecPrivKey()
-	if err != nil {
-		return err
-	}
-	
-	if err := factom.CommitEntry(e, priv); err != nil {
+	if err := factom.CommitEntry(e, name); err != nil {
 		return err
 	}
 	time.Sleep(10 * time.Second)

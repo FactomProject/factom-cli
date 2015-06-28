@@ -24,6 +24,11 @@ func mkchain(args []string) error {
 	flag.Parse()
 	args = flag.Args()
 	
+	if len(args) < 1 {
+		return man("mkchain")
+	}
+	name := args[0]
+	
 	e := factom.NewEntry()
 	
 	for _, v := range eids {
@@ -39,14 +44,9 @@ func mkchain(args []string) error {
 		e.Content = hex.EncodeToString(p)
 	}
 	
-	priv, err := ecPrivKey()
-	if err != nil {
-		return err
-	}
-
 	c := factom.NewChain(e)
 	
-	if err := factom.CommitChain(c, priv); err != nil {
+	if err := factom.CommitChain(c, name); err != nil {
 		return err
 	}
 	time.Sleep(10 * time.Second)

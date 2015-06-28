@@ -25,12 +25,12 @@ factom-cli [options] [subcommand]
         
     help [command]          Print help message for a sub-command
 
-    mkchain ecaddress       Create a new factom chain. read the data for the
+    mkchain name            Create a new factom chain. read the data for the
                             first entry from stdin.  Use the entry credits
-                            from the specified entry credit address.
+                            from the specified name.
         -e externalid       Externalid for the first entry
 
-    put ecaddress           Read data from stdin and write to factom. Use
+    put name                Read data from stdin and write to factom. Use
                             the entry credits from the specified entry credit
                             address
         -e [externalid]     Specify an exteral id for the factom entry. -e
@@ -96,7 +96,7 @@ func man(s string) error {
         "getEBlock":      "factom-cli get eblock [keymr]",
         "getEntry":       "factom-cli get entry [hash]",
         "help":           "factom-cli help [subcommand]",
-        "mkchain":        "factom-cli mkchain [-e extid ...] <stdin>",
+        "mkchain":        "factom-cli mkchain [-e extid ...] name <stdin>",
         "genfactoidaddr": "factom-cli genfactoidaddr name",
         "newtransaction": "factom-cli newtransaction key",
         "addinput":       "factom-cli addinput key name|address amount",
@@ -104,7 +104,7 @@ func man(s string) error {
         "addecoutput":    "factom-cli addecoutput key name|address amount",
         "validate":       "factom-cli validate key",
         "submit":         "factom-cli submit key",
-        "put":            "factom-cli put [-e extid ...] <stdin>",
+        "put":            "factom-cli put [-e extid ...] name <stdin>",
         "default":        usage,
     }
 
