@@ -3,19 +3,56 @@ Factom Command Line Interface
 
 Synopsis
 ---
-	factom
-		-c [ChainID]	"hex encoded chainid for the entry"
-		-e [extid]		"external id for the entry"			# -e may be used multiple times
-		-h				"display help message"
-		-s				"path to the factomclient"			# default: localhost:8083
+	factom-cli [options] [subcommand]
+		-h						"print usage information"
+		-s [server]				"address for the api server"
+		-w [wallet]				"address for the wallet"
+		
+		balance
+			ec					"entry credit balance of 'wallet'"
+			factoid				"factoid balance of 'wallet'"
 
+		buy
+			amt #n				"buy n entry credits for 'wallet'"
+
+		fatoidtx [addr] [amt]	"create and submit a factoid transaction"
+
+		get
+			height				"get current height of dblock chain"
+			dblocks #from #to	"get dblocks by range"
+			eblock "merkelroot"	"get eblock by merkel root"
+			entry "hash"		"get entry by hash"
+			
+
+		help [command]			"print help message for the sub-command"
+
+		mkchain [opt] [name]	"create a new factom chain with 'name'. read"
+								"the data for the first entry from stdin"
+			-e externalid		"externalid for the first entry
+
+		put						"read data from stdin and write to factom"
+			-e [externalid]		"specify an exteral id for the factom entry."
+								"-e can be used multiple times"
+			-c [chainid]		"spesify the chain that the entry belongs to"
+			
 Description
 ---
-factom-cli takes data from the command arguments and stdin and constructs a json entry for the factomclient to decode and submit to factom.
+factom-cli is the command line interface to the factom api
 
 Examples
 ---
-Submiting arbitrary data to factom:
-	$ echo "Some data to save in factom" | factom-cli -c <my chainid> -e mydata -e somekey
-Submitting a file:
-	$ factom-cli -s "facom.org/demo" -c <my chainid> -e filename <file
+	# Submit arbitrary data to factom
+	echo "Some data to save in factom" | factom-cli put -c [chainid] -e mydata -e somekey
+	
+	# Submit a file
+	factom-cli -s "facom.org/demo" put -c [chainid] -e filename <file
+	
+	factom-cli balance ec
+	factom-cli factoidtx [address] 100
+
+Files
+---
+	factom-cli.conf	"factom-cli will try and read the conf file from
+					$HOME/.factom/ If the conf file does not exist it will use
+					the default configuration. Command line flags will
+					overwrite the configurations."

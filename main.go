@@ -1,78 +1,121 @@
+// Copyright 2015 Factom Foundation
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
-	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"net/http"
-	"net/url"
 	"os"
 )
 
-const usage = "factom -s [server] -c [chainid] -e [extid] -e [extid2] <data"
-
-type entry struct {
-	ChainID string
-	ExtIDs  []string
-	Data    string
-}
-
-type extids []string
-
-func (e *extids) String() string {
-	return fmt.Sprint(*e)
-}
-
-func (e *extids) Set(s string) error {
-	*e = append(*e, s)
-	return nil
-}
+var (
+	server string
+	wallet string
+)
 
 func main() {
+	cfg := ReadConfig().Main
+	server = cfg.Server
+	wallet = cfg.Wallet
+	
+	// command line flags overwirte conf file
 	var (
-		help = flag.Bool("h", false, usage)
-		cid  = flag.String("c", "", "hex encoded chainid for the entry")
-		serv = flag.String("s", "localhost:8088", "path to the factomclient")
-		eids extids
+		hflag = flag.Bool("h", false, "help")
+		sflag = flag.String("s", "", "address of api server")
+		wflag = flag.String("w", "", "wallet address")
 	)
-
-	flag.Var(&eids, "e", "external id for the entry")
 	flag.Parse()
-
-	if *help {
-		fmt.Println(usage)
-		return
+	args := flag.Args()
+	if *sflag != "" {
+		server = *sflag
+	}
+	if *wflag != "" {
+		wallet = *wflag
+	}
+	if *hflag {
+		args = []string{"help"}
+	}
+	if len(args) == 0 {
+		args = append(args, "help")
 	}
 
-	server := "http://" + *serv + "/v1/addentry"
-
-	d := make([]byte, 1024)
-	n, _ := os.Stdin.Read(d)
-	d = d[:n]
-
-	e := new(entry)
-	e.ChainID = *cid
-	for _, v := range eids {
-		e.ExtIDs = append(e.ExtIDs, string(v))
-	}
-	e.Data = hex.EncodeToString(d)
-
-	b, err := json.Marshal(e)
-	if err != nil {
-		return
-	}
+	switch args[0] {
 	
-	data := url.Values{
-		"datatype": {"entry"},
-		"format":   {"json"},
-		"entry":    {string(b)},
+	case "balance":
+		err := balance(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	case "get":
+		err := get(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	case "help":
+		err := help(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	case "mkchain":
+		err := mkchain(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+    case "put":
+        err := put(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+        
+    case "generateaddress":
+        err := generateaddress(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "getaddresses":
+        err := getaddresses(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "newtransaction":
+        err := fctnewtrans(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        } 
+    case "addinput":
+        err := fctaddinput(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "addoutput":
+        err := fctaddoutput(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "addecoutput":
+        err := fctaddecoutput(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "sign":
+        err := fctsign(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "submit":
+        err := fctsubmit(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    case "getfee":
+        err := fctgetfee(args)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err)
+        }
+    default:
+        fmt.Println("Command not found")
+		man("default")
 	}
-	
-	_, err = http.PostForm(server, data)
-	if err != nil {
-		fmt.Println("Error: ", err)
-	}
-
-	return
 }
