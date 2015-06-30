@@ -1,52 +1,76 @@
-echo "#   If the addresses bill, bob, and jane are already created, this" 
-echo "#   script will give a Duplicate or Invalid address error."
-echo "#   This error does not prevent the construction and submission"
-echo "#   of the transaction"
-
-echo "#   Building Addresses for bill and bob, and entry credit address for jane"
-echo "#      bill"
+echo "
+#=====================================================================#
+#   If the addresses bill, bob, dan, sally and jane are already       #
+#   created, this script will give 'Generation Failed' errors.        #
+#                                                                     #
+#   These error(s) do not prevent the construction and submission     # 
+#   of the transaction                                                #
+#=====================================================================#
 factom-cli generateaddress fct bill
-echo "#      bob"
 factom-cli generateaddress fct bob
-echo "#      jane"
+factom-cli generateaddress fct sally
+factom-cli generateaddress fct george
+factom-cli generateaddress ec  dan
 factom-cli generateaddress ec  jane
+factom-cli getaddresses"
+factom-cli generateaddress fct bill
+factom-cli generateaddress fct bob
+factom-cli generateaddress fct sally
+factom-cli generateaddress fct george
+factom-cli generateaddress ec  dan
+factom-cli generateaddress ec  jane
+factom-cli getaddresses
 
-echo "#   Looking at the balance for bill's address" 
-factom-cli balance fct bill
 
-echo "#   Looking at the balance for bob's address"
-factom-cli balance fct bob
-
-echo "#   Get the balance for jane"
-factom-cli balance ec jane
-
-echo "#   Creating a new Transaction"
+echo "
+#=====================================================================#
+#   bill sends some money to bob, and also buys some Entry Credits    #
+#   for jane and dan                                                  #
+#                                                                     #
+#   A transaction under construction has a key.  In this              #
+#   case, the key is 'newtrans'.  Multiple transactions               #
+#   can be under construction at the same time, so you have           #
+#   to use the key when you add inputs and outputs.                   #
+#   You can add multiple inputs and outputs to the same transaction.  #
+#=====================================================================#
 factom-cli newtransaction newtrans
-
-echo "#   Add an input to the PayToBob transaction from bill"
-factom-cli addinput newtrans bill 20
-
-echo "#   Add an output to the PayToBob transaction to bob"
-factom-cli addoutput newtrans bob 9
-
-echo "#   By some Entry Credits for jane"
-factom-cli addecoutput newtrans jane 9
-
-echo "#   Sign newtrans"
+factom-cli addinput newtrans bill 21.54321
+factom-cli addoutput newtrans bob 1.5
+factom-cli addecoutput newtrans jane 9.321
+factom-cli addecoutput newtrans dan 9.321
 factom-cli sign newtrans
-
-echo "#   Submit newtrans"
 factom-cli submit newtrans
+factom-cli getaddresses"
+factom-cli newtransaction newtrans
+factom-cli addinput newtrans bill 21.54321
+factom-cli addoutput newtrans bob 1.5
+factom-cli addecoutput newtrans jane 9.321
+factom-cli addecoutput newtrans dan 9.321
+factom-cli sign newtrans
+factom-cli submit newtrans
+factom-cli getaddresses
 
-echo "#   Get the balance for bill"
-factom-cli balance fct bill
-
-echo "#   Get the balance for bob"
-factom-cli balance fct bob
-
-echo "#   Get the balance for jane"
-factom-cli balance ec jane
-
-echo "#   Get all balances for addresses in this wallet"
+echo "
+#=====================================================================#
+#  george wants to spread the wealth.  A pure Factoid transaction,    #
+#  he sends bill, bob, and sally some factoids.                       #
+#                                                                     #
+#  This transaction is named '2ndTrans'                               #
+#=====================================================================#
+factom-cli newtransaction 2ndTrans
+factom-cli addinput 2ndTrans george 5
+factom-cli addoutput 2ndTrans bill 2
+factom-cli addoutput 2ndTrans bob 0.00005
+factom-cli addoutput 2ndTrans sally 2
+factom-cli sign 2ndTrans
+factom-cli submit 2ndTrans
+factom-cli getaddresses"
+factom-cli newtransaction 2ndTrans
+factom-cli addinput 2ndTrans george 5
+factom-cli addoutput 2ndTrans bill 2
+factom-cli addoutput 2ndTrans bob 0.00005
+factom-cli addoutput 2ndTrans sally 2
+factom-cli sign 2ndTrans
+factom-cli submit 2ndTrans
 factom-cli getaddresses
 
