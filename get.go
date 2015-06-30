@@ -79,7 +79,7 @@ func getChain(args []string) error {
 		return err
 	}
 	
-	fmt.Println(chain)
+	fmt.Println(chain.EntryBlockKeyMR)
 	return nil
 }
 
