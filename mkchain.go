@@ -54,7 +54,7 @@ func mkchain(args []string) error {
 		return err
 	}
 	
-	fmt.Println("New Chain:", c.ChainID)
+	fmt.Println("Chain:", c.ChainID)
 
 	return nil
 }
