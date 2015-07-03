@@ -61,7 +61,16 @@ func getDBlock(args []string) error {
 		return err
 	}
 
-	fmt.Println(dblock)
+	fmt.Println("PrevBlockKeyMR:", dblock.Header.PrevBlockKeyMR)
+	fmt.Println("TimeStamp:", dblock.Header.TimeStamp)
+	fmt.Println("SequenceNumber:", dblock.Header.SequenceNumber)
+	
+	for _, v := range dblock.EntryBlockList {
+		fmt.Println("EntryBlock {")
+		fmt.Println("	ChainID", v.ChainID)
+		fmt.Println("	KeyMR", v.KeyMR)
+		fmt.Println("}")
+	}
 	return nil
 }
 
@@ -97,7 +106,17 @@ func getEBlock(args []string) error {
 		return err
 	}
 
-	fmt.Println(eblock)
+	fmt.Println("BlockSequenceNumber:", eblock.Header.BlockSequenceNumber)
+	fmt.Println("ChainID:", eblock.Header.ChainID)
+	fmt.Println("PrevKeyMR:", eblock.Header.PrevKeyMR)
+	fmt.Println("TimeStamp:", eblock.Header.TimeStamp)
+	
+	for _, v := range eblock.EntryList {
+		fmt.Println("EBEntry {")
+		fmt.Println("	TimeStamp", v.TimeStamp)
+		fmt.Println("	EntryHash", v.EntryHash)
+		fmt.Println("}")
+	}
 	return nil
 }
 
@@ -115,6 +134,10 @@ func getEntry(args []string) error {
 		return err
 	}
 	
-	fmt.Println(entry)
+	fmt.Println("ChainID:", entry.ChainID)
+	for _, v := range entry.ExtIDs {
+		fmt.Println("ExtID:", v)
+	}
+	fmt.Println("Content:", entry.Content)
 	return nil
 }
