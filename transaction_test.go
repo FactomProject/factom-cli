@@ -6,19 +6,20 @@ package main
 
 import(
     "testing"
+    fct "github.com/FactomProject/factoid"
 )
     
 func Test_Input_Amounts(test *testing.T) {
     
-    str,err := convertFixedPoint("10") 
+    str,err := fct.ConvertFixedPoint("10") 
     if err != nil { test.Fail() }
     if str != "1000000000" { test.Fail() }
     
-    str,err = convertFixedPoint("10.08") 
+    str,err = fct.ConvertFixedPoint("10.08") 
     if err != nil { test.Fail() }
     if str != "1008000000" { test.Fail() }
     
-    str,err = convertFixedPoint("10.08000001") 
+    str,err = fct.ConvertFixedPoint("10.08000001") 
     if err != nil { test.Fail() }
     if str != "1008000001" {  test.Fail() }
     

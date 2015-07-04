@@ -33,6 +33,7 @@ echo "
 #   to use the key when you add inputs and outputs.                   #
 #   You can add multiple inputs and outputs to the same transaction.  #
 #=====================================================================#
+factom-cli deletetransaction newtrans
 factom-cli newtransaction newtrans
 factom-cli addinput newtrans bill 21.54321
 factom-cli addoutput newtrans bob 1.5
@@ -41,6 +42,7 @@ factom-cli addecoutput newtrans dan 9.321
 factom-cli sign newtrans
 factom-cli submit newtrans
 factom-cli getaddresses"
+factom-cli deletetransaction newtrans
 factom-cli newtransaction newtrans
 factom-cli addinput newtrans bill 21.54321
 factom-cli addoutput newtrans bob 1.5
@@ -57,6 +59,7 @@ echo "
 #                                                                     #
 #  This transaction is named '2ndTrans'                               #
 #=====================================================================#
+factom-cli deletetransaction 2ndTrans
 factom-cli newtransaction 2ndTrans
 factom-cli addinput 2ndTrans george 5
 factom-cli addoutput 2ndTrans bill 2
@@ -65,6 +68,7 @@ factom-cli addoutput 2ndTrans sally 2
 factom-cli sign 2ndTrans
 factom-cli submit 2ndTrans
 factom-cli getaddresses"
+factom-cli deletetransaction 2ndTrans
 factom-cli newtransaction 2ndTrans
 factom-cli addinput 2ndTrans george 5
 factom-cli addoutput 2ndTrans bill 2

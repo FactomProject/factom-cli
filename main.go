@@ -7,7 +7,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 )
 
 var (
@@ -43,77 +42,25 @@ func main() {
 
 	switch args[0] {
 	
-	case "balance":
-		err := balance(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	case "get":
-		err := get(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	case "help":
-		err := help(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-	case "mkchain":
-		err := mkchain(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-		}
-    case "put":
-        err := put(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-        
-    case "generateaddress":
-        err := generateaddress(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "getaddresses":
-        err := getaddresses(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "newtransaction":
-        err := fctnewtrans(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        } 
-    case "addinput":
-        err := fctaddinput(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "addoutput":
-        err := fctaddoutput(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "addecoutput":
-        err := fctaddecoutput(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "sign":
-        err := fctsign(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "submit":
-        err := fctsubmit(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
-    case "getfee":
-        err := fctgetfee(args)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err)
-        }
+	case "balance":	            balance(args)		
+	case "get":		            get(args)
+	case "help":	            help(args)
+	case "mkchain":	            mkchain(args)
+    case "put":                 put(args)
+    // two commands for the same thing    
+    case "newaddress":          generateaddress(args)
+    case "generateaddress":     generateaddress(args)
+    // two commands for the same thing    
+    case "balances":            getaddresses(args)
+    case "getaddresses":        getaddresses(args)
+    case "newtransaction":      fctnewtrans(args)
+    case "deletetransaction":   fctdeletetrans(args)
+    case "addinput":            fctaddinput(args)
+    case "addoutput":           fctaddoutput(args)
+    case "addecoutput":         fctaddecoutput(args)
+    case "sign":                fctsign(args)
+    case "submit":              fctsubmit(args)
+    case "getfee":              fctgetfee(args)
     default:
         fmt.Println("Command not found")
 		man("default")
