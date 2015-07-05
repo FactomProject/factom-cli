@@ -67,7 +67,7 @@ func postCmd(cmd string) {
 	type x struct{ Response string; Success bool }
 	b := new(x)
 	if err := json.Unmarshal(body, b); err != nil {
-        fmt.Printf("Failed to parse the response from factomd: %s",body)
+        fmt.Printf("Failed to parse the response from factomd: %s\n",body)
         os.Exit(1)
 	}
 	
@@ -297,7 +297,7 @@ func fctgetfee(args []string) {
     var i int; for i=len(r)-1; r[i]=='0'; i-- {}
     if string(r[i])=="." { i +=1 }
     fmt.Println(r[:i+1])
-    return 
+     
 }
     
 func fctsign(args []string) {
@@ -312,7 +312,6 @@ func fctsign(args []string) {
     str := fmt.Sprintf("http://%s/v1/factoid-sign-transaction/%s", serverFct, args[0])
     postCmd(str)
     
-    return
 }
 
 func fctsubmit(args []string) {
@@ -332,13 +331,6 @@ func fctsubmit(args []string) {
         os.Exit(1) 
     }
     
-    resp, err := http.Post(fmt.Sprintf("http://%s/v1/factoid-submit/", serverFct),
-                           "application/json",
-                           bytes.NewBuffer(jdata))
-    if err != nil {
-        fmt.Println("Submitt failed")
-        os.Exit(1) 
-    }
-    resp.Body.Close()
-    return 
+    str:=fmt.Sprintf("http://%s/v1/factoid-submit/%s", serverFct,bytes.NewBuffer(jdata))
+    postCmd(str)
 }
