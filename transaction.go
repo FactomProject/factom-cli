@@ -179,7 +179,7 @@ func fctaddinput(args []string) {
         os.Exit(1) 
     }
     
-    ramt,err := strconv.ParseInt(amt,0,64)
+    ramt,err := strconv.ParseInt(amt,10,64)
     if err != nil { 
         fmt.Println(err)
         os.Exit(1) 
@@ -215,7 +215,7 @@ func fctaddoutput(args []string) {
         os.Exit(1) 
     }
     
-    ramt,err := strconv.ParseInt(amt,0,64)
+    ramt,err := strconv.ParseInt(amt,10,64)
     if err != nil { 
         fmt.Println(err)
         os.Exit(1) 
@@ -251,7 +251,7 @@ func fctaddecoutput(args []string) {
         os.Exit(1)  
     }
     
-    ramt,err := strconv.ParseInt(amt,0,64)
+    ramt,err := strconv.ParseInt(amt,10,64)
     if err != nil { 
         fmt.Println(err)
         os.Exit(1) 
