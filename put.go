@@ -27,7 +27,7 @@ func (e *extids) Set(s string) error {
 }
 
 // put commits then reveals an entry to factomd
-func put(args []string) error {
+func put(args []string) {
 	os.Args = args
 	var (
 		cid  = flag.String("c", "", "hex encoded chainid for the entry")
@@ -38,7 +38,8 @@ func put(args []string) error {
 	args = flag.Args()
 	
 	if len(args) < 1 {
-		return man("put")
+		man("put")
+		return
 	}
 	name := args[0]
 	
@@ -62,20 +63,22 @@ func put(args []string) error {
 
 	// Entry.Content is read from stdin
 	if p, err := ioutil.ReadAll(os.Stdin); err != nil {
-		return err
+		errorln(err)
+		return
 	} else if size := len(p); size > 10240 {
-		return fmt.Errorf("Entry of %d bytes is too large", size)
+		errorln(fmt.Errorf("Entry of %d bytes is too large", size))
+		return
 	} else {
 		e.Content = hex.EncodeToString(p)
 	}
 	
 	if err := factom.CommitEntry(e, name); err != nil {
-		return err
+		errorln(err)
+		return
 	}
 	time.Sleep(10 * time.Second)
 	if err := factom.RevealEntry(e); err != nil {
-		return err
+		errorln(err)
+		return
 	}
-
-	return nil
 }

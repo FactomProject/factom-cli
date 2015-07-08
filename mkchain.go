@@ -15,7 +15,7 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-func mkchain(args []string) error {
+func mkchain(args []string) {
 	os.Args = args
 	var (
 		eids extids
@@ -25,7 +25,8 @@ func mkchain(args []string) error {
 	args = flag.Args()
 	
 	if len(args) < 1 {
-		return man("mkchain")
+		man("mkchain")
+		return
 	}
 	name := args[0]
 	
@@ -37,9 +38,11 @@ func mkchain(args []string) error {
 
 	// Entry.Content is read from stdin
 	if p, err := ioutil.ReadAll(os.Stdin); err != nil {
-		return err
+		errorln(err)
+		return
 	} else if size := len(p); size > 10240 {
-		return fmt.Errorf("Entry of %d bytes is too large", size)
+		errorln(fmt.Errorf("Entry of %d bytes is too large", size))
+		return
 	} else {
 		e.Content = hex.EncodeToString(p)
 	}
@@ -47,14 +50,14 @@ func mkchain(args []string) error {
 	c := factom.NewChain(e)
 	
 	if err := factom.CommitChain(c, name); err != nil {
-		return err
+		errorln(err)
+		return
 	}
 	time.Sleep(10 * time.Second)
 	if err := factom.RevealChain(c); err != nil {
-		return err
+		errorln(err)
+		return
 	}
 	
 	fmt.Println("Chain:", c.ChainID)
-
-	return nil
 }
