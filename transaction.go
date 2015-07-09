@@ -87,7 +87,7 @@ func generateaddress(args []string) {
     flag.Parse()
     args = flag.Args()
     if len(args) < 2 {
-        fmt.Println(man("generatefactoidaddress"))
+        man("generatefactoidaddress")
         os.Exit(1)
     }
     
@@ -117,7 +117,7 @@ func getaddresses(args []string) {
     flag.Parse()
     args = flag.Args()
     if len(args) > 0 {
-        fmt.Println(man("getaddresses"))
+        man("getaddresses")
         os.Exit(1)
     }
     
@@ -135,7 +135,7 @@ func fctnewtrans(args []string) {
     args = flag.Args()
     if len(args) < 1 {
         fmt.Println("Missing Key")
-        fmt.Println(man("newtransaction"))
+        man("newtransaction")
         os.Exit(1)
     } 
     
@@ -152,7 +152,7 @@ func fctdeletetrans(args []string) {
     args = flag.Args()
     if len(args) < 1 {
         fmt.Println("Missing Key")
-        fmt.Println(man("deletetransaction"))
+        man("deletetransaction")
         os.Exit(1)
     } 
     
@@ -211,7 +211,7 @@ func fctaddoutput(args []string) {
     amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { 
         fmt.Println("Invalid format for a number: ",args[2])
-        fmt.Println(man("addoutput"))
+        man("addoutput")
         os.Exit(1) 
     }
     

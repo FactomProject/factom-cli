@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 )
 
 var (
@@ -42,7 +43,6 @@ func main() {
 
 	switch args[0] {
 	
-	case "balance":	            balance(args)		
 	case "get":		            get(args)
 	case "help":	            help(args)
 	case "mkchain":	            mkchain(args)
@@ -65,4 +65,8 @@ func main() {
         fmt.Println("Command not found")
 		man("default")
 	}
+}
+
+func errorln(a ...interface{}) (n int, err error) {
+	return fmt.Fprintln(os.Stderr, a...)
 }

@@ -12,53 +12,54 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-func get(args []string) error {
+func get(args []string) {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("get")
+		man("get")
+		return
 	}
 
 	switch args[0] {
 	case "head":
-		return getHead()
+		getHead()
 	case "dblock":
-		return getDBlock(args)
+		getDBlock(args)
 	case "chain":
-		return getChain(args)
+		getChain(args)
 	case "eblock":
-		return getEBlock(args)
+		getEBlock(args)
 	case "entry":
-		return getEntry(args)
+		getEntry(args)
 	default:
-		return man("get")
+		man("get")
 	}
-
-	panic("Something went really wrong with get!")
 }
 
-func getHead() error {
+func getHead() {
 	head, err := factom.GetDBlockHead()
 	if err != nil {
-		return err
+		errorln(err)
+		return
 	}
 	fmt.Println(head.KeyMR)
-	return nil
 }
 
-func getDBlock(args []string) error {
+func getDBlock(args []string) {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("getDBlock")
+		man("getDBlock")
+		return
 	}
 
 	keymr := args[0]
 	dblock, err := factom.GetDBlock(keymr)
 	if err != nil {
-		return err
+		errorln(err)
+		return
 	}
 
 	fmt.Println("PrevBlockKeyMR:", dblock.Header.PrevBlockKeyMR)
@@ -71,39 +72,41 @@ func getDBlock(args []string) error {
 		fmt.Println("	KeyMR", v.KeyMR)
 		fmt.Println("}")
 	}
-	return nil
 }
 
-func getChain(args []string) error {
+func getChain(args []string) {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("getChain")
+		man("getChain")
+		return
 	}
 	
 	chainid := args[0]
 	chain, err := factom.GetChainHead(chainid)
 	if err != nil {
-		return err
+		errorln(err)
+		return
 	}
 	
 	fmt.Println(chain.EntryBlockKeyMR)
-	return nil
 }
 
-func getEBlock(args []string) error {
+func getEBlock(args []string) {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("getEBlock")
+		man("getEBlock")
+		return
 	}
 
 	keymr := args[0]
 	eblock, err := factom.GetEBlock(keymr)
 	if err != nil {
-		return err
+		errorln(err)
+		return
 	}
 
 	fmt.Println("BlockSequenceNumber:", eblock.Header.BlockSequenceNumber)
@@ -117,21 +120,22 @@ func getEBlock(args []string) error {
 		fmt.Println("	EntryHash", v.EntryHash)
 		fmt.Println("}")
 	}
-	return nil
 }
 
-func getEntry(args []string) error {
+func getEntry(args []string) {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("getEntry")
+		man("getEntry")
+		return
 	}
 
 	hash := args[0]
 	entry, err := factom.GetEntry(hash)
 	if err != nil {
-		return err
+		errorln(err)
+		return
 	}
 	
 	fmt.Println("ChainID:", entry.ChainID)
@@ -139,5 +143,4 @@ func getEntry(args []string) error {
 		fmt.Println("ExtID:", v)
 	}
 	fmt.Println("Content:", entry.Content)
-	return nil
 }
