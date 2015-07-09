@@ -8,18 +8,20 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
-    fct "github.com/FactomProject/factoid"
-    "github.com/FactomProject/factom"
+	fct "github.com/FactomProject/factoid"
+	"github.com/FactomProject/factom"
 )
 
-// balance prints the current balance of the specified wallet
+// balance prints the current balance of the specified address
 func balance(args []string) error {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		return man("balance")
+		man("balance")
+        return fmt.Errorf("Too Few Arguments")
 	}
 	
 	switch args[0] {
@@ -28,7 +30,9 @@ func balance(args []string) error {
 	case "fct":
 		return fctbalance(args[1])
 	default:
-		return man("balance")
+        fmt.Println("Must specify an address type, either 'ec' or 'fct'")
+		man("balance")
+        return fmt.Errorf("")
 	}
 
 }
@@ -36,7 +40,8 @@ func balance(args []string) error {
 func ecbalance(addr string) error {
 
     if b, err := factom.ECBalance(addr); err != nil {
-		return err
+        fmt.Println(err)
+        return err
 	} else {
         fmt.Println("Balance of ", addr, " = ", b)
     }
@@ -48,9 +53,10 @@ func fctbalance(addr string) error {
 
 
 	if b, err := factom.FctBalance(addr); err != nil {
-		return err
+		fmt.Println(err)
+        return err
 	} else {
-        fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
+        fmt.Println("Balance of ", addr, " = ", strings.TrimSpace(fct.ConvertDecimal(uint64(b))))
 	}
 
 	return nil

@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func help(args []string) error {
+func help(args []string) {
 	os.Args = args
 
 	flag.Parse()
@@ -19,5 +19,5 @@ func help(args []string) error {
 		s = args[0]
 	}
 
-	return man(s)
+	man(s)
 }

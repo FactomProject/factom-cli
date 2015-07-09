@@ -6,6 +6,7 @@ package main
 
 import (
     "bytes"
+    "strconv"
     "net/http"
     "encoding/hex"
     "encoding/json"
@@ -20,16 +21,18 @@ import (
 var _ = hex.EncodeToString
 var serverFct = "localhost:8089"
 
-func getCmd(cmd string, cmderror string) error {
+func getCmd(cmd string, cmderror string) {
 	resp, err := http.Get(cmd)
 	if err != nil {
-		return err
+		fmt.Println(err)
+        os.Exit(1)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body) 
 	
 	if err != nil {
-		return err
+        fmt.Println(err)
+        os.Exit(1)
 	}
 	resp.Body.Close()
 
@@ -40,164 +43,243 @@ func getCmd(cmd string, cmderror string) error {
 	b := new(x)
 	if err := json.Unmarshal(body, b); err != nil || !b.Success {
 		fmt.Println(cmderror)
-		return fmt.Errorf("Command Failed: ", string(body))
+		fmt.Println("Command Failed: ", string(body))
+        os.Exit(1)
 	}
     fmt.Println(b.Body)
-	return nil
+	return 
 }
 
-func postCmd(cmd string, cmderror string) error {
+func postCmd(cmd string) {
 	resp, err := http.PostForm(cmd, nil)
 	if err != nil {
-		return err
+		fmt.Println(err)
+        os.Exit(1)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
-	}
+        fmt.Println(err)
+        os.Exit(1)
+    }
 	resp.Body.Close()
 
-	type x struct{ Success bool }
+	type x struct{ Response string; Success bool }
 	b := new(x)
-	if err := json.Unmarshal(body, b); err != nil || !b.Success {
-		fmt.Println(cmderror)
-		return fmt.Errorf("Command Failed: ", string(body))
+	if err := json.Unmarshal(body, b); err != nil {
+        fmt.Printf("Failed to parse the response from factomd: %s\n",body)
+        os.Exit(1)
 	}
-
-	return nil
+	
+	fmt.Println(b.Response)
+    
+    if !b.Success {
+        os.Exit(1)
+    }
+      
+	return 
 }
 
 // Generates a new Address
-func generateaddress(args []string) (err error) {
+func generateaddress(args []string) {
     
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 2 {
-        return man("generatefactoidaddress")
+        man("generatefactoidaddress")
+        os.Exit(1)
     }
     
+    var err error
     var Addr string
     switch args[0]{
         case "ec": 
-            Addr,err = factom.GenerateEntryCreditAddress(args[1])
+            Addr, err= factom.GenerateEntryCreditAddress(args[1])
         case "fct":
-            Addr,err = factom.GenerateFactoidAddress(args[1])
+            Addr, err= factom.GenerateFactoidAddress(args[1])
         default:
             panic("Expected ec|fct name")
     }
     
     if err != nil {
-        return err
+        fmt.Println(err)
+        os.Exit(1)
     }
-    fmt.Println(args[0]," = ",Addr)
 
-    return nil
+    fmt.Println(args[0]," = ",Addr)
+    return 
     
 }
 
-func getaddresses(args []string) (err error){
+func getaddresses(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) > 0 {
-        return man("getaddresses")
+        man("getaddresses")
+        os.Exit(1)
     }
     
     str := fmt.Sprintf("http://%s/v1/factoid-get-addresses/", serverFct)
-    err  = getCmd(str,"Error printing addresses")
+    getCmd(str,"Error printing addresses")
     
-    return err
+    return 
     
     
 }
 
-func fctnewtrans(args []string) error {
+func fctnewtrans(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 1 {
         fmt.Println("Missing Key")
-        return fmt.Errorf("Missing Key")
+        man("newtransaction")
+        os.Exit(1)
     } 
     
     str := fmt.Sprintf("http://%s/v1/factoid-new-transaction/%s", serverFct, args[0])
-    err := postCmd(str, "Duplicate or bad key")
+    postCmd(str)
     
-    return err
+    return 
+    
+}
+
+func fctdeletetrans(args []string) {
+    os.Args = args
+    flag.Parse()
+    args = flag.Args()
+    if len(args) < 1 {
+        fmt.Println("Missing Key")
+        man("deletetransaction")
+        os.Exit(1)
+    } 
+    
+    str := fmt.Sprintf("http://%s/v1/factoid-delete-transaction/%s", serverFct, args[0])
+    postCmd(str)
+    
+    return 
     
 }
 
 
-func fctaddinput(args []string) error {
+func fctaddinput(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 3 {
         fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
-        return fmt.Errorf("Missing Arguments")
+        os.Exit(1)
     } 
-    // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
-    
-    
+
     amt,err := fct.ConvertFixedPoint(args[2])
-    if err != nil { return err }
+    if err != nil { 
+        fmt.Println(err)
+        os.Exit(1) 
+    }
+    
+    ramt,err := strconv.ParseInt(amt,10,64)
+    if err != nil { 
+        fmt.Println(err)
+        os.Exit(1) 
+    }
+ 
+    _,ok2 := fct.ValidateAmounts(uint64(ramt))
+    if !ok2 { 
+        fmt.Println("Input is too large or is negative. Command ignored") 
+        os.Exit(1)
+    }
+
     str := fmt.Sprintf("http://%s/v1/factoid-add-input/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
-    err = postCmd(str,"Failed to add input")
+    postCmd(str)
     
-    return err
+    return 
 }
 
-func fctaddoutput(args []string) error {
+func fctaddoutput(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 3 {
         fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
-        return fmt.Errorf("Missing Arguments")
+        os.Exit(1) 
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
     amt,err := fct.ConvertFixedPoint(args[2])
-    if err != nil { return err }
+    if err != nil { 
+        fmt.Println("Invalid format for a number: ",args[2])
+        man("addoutput")
+        os.Exit(1) 
+    }
+    
+    ramt,err := strconv.ParseInt(amt,10,64)
+    if err != nil { 
+        fmt.Println(err)
+        os.Exit(1) 
+    }
+
+    _,ok2 := fct.ValidateAmounts(uint64(ramt))
+    if !ok2 { 
+        fmt.Println("Input is too large or is negative. Command ignored") 
+        os.Exit(1)
+    }
+    
+    
     str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
-    err = postCmd(str,"Failed to add output")
+    postCmd(str)
     
-    return err
+    return 
 }
 
-func fctaddecoutput(args []string) error {
+func fctaddecoutput(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 3 {
         fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
-        return fmt.Errorf("Missing Arguments")
+        os.Exit(1) 
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
     amt,err := fct.ConvertFixedPoint(args[2])
-    if err != nil { return err }
+    if err != nil { 
+        fmt.Println(err)
+        os.Exit(1)  
+    }
+    
+    ramt,err := strconv.ParseInt(amt,10,64)
+    if err != nil { 
+        fmt.Println(err)
+        os.Exit(1) 
+    }
+
+    _,ok2 := fct.ValidateAmounts(uint64(ramt))
+    if !ok2 { 
+        fmt.Println("Input is too large or is negative. Command ignored") 
+        os.Exit(1)
+    }
+    
     str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s", 
                        serverFct, args[0],args[1],amt)
-    err = postCmd(str,"Failed to add Entry Credit output")
+    postCmd(str)
     
-    return err
+    return 
 }
 
-func fctgetfee(args []string) error {
+func fctgetfee(args []string) {
     resp, err := http.Get(fmt.Sprintf("http://%s/v1/factoid-get-fee/",serverFct))
     if err != nil {
         fmt.Println("Command Failed Get")
-        return err
+        os.Exit(1) 
     }
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         fmt.Println("Command Failed")
-        return err
+        os.Exit(1) 
     }
     resp.Body.Close()
     
@@ -207,7 +289,7 @@ func fctgetfee(args []string) error {
     b.Fee = -1
     if err := json.Unmarshal(body, b); err != nil || b.Fee == -1 {
         fmt.Println("Command Failed")
-        return fmt.Errorf("Command Failed")
+        os.Exit(1)
     }
     tv := b.Fee/100000000
     lv := b.Fee-(tv*100000000)
@@ -215,31 +297,30 @@ func fctgetfee(args []string) error {
     var i int; for i=len(r)-1; r[i]=='0'; i-- {}
     if string(r[i])=="." { i +=1 }
     fmt.Println(r[:i+1])
-    return nil
+     
 }
     
-func fctsign(args []string) error {
+func fctsign(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 1 {
         fmt.Println("Missing Key")
-        return fmt.Errorf("Missing Key")
+        os.Exit(1)
     } 
     
     str := fmt.Sprintf("http://%s/v1/factoid-sign-transaction/%s", serverFct, args[0])
-    err := postCmd(str,"Cannot sign transaction.  Check balances, inputs, transaction fees")
+    postCmd(str)
     
-    return err
 }
 
-func fctsubmit(args []string) error {
+func fctsubmit(args []string) {
     os.Args = args
     flag.Parse()
     args = flag.Args()
     if len(args) < 1 {
         fmt.Println("Missing Key")
-        return fmt.Errorf("Missing Key")
+        os.Exit(1) 
     } 
             
     s := struct{Transaction string}{args[0]}
@@ -247,17 +328,9 @@ func fctsubmit(args []string) error {
     jdata, err := json.Marshal(s)
     if err != nil {
         fmt.Println("Submitt failed")
-        return fmt.Errorf("Submit failed")
+        os.Exit(1) 
     }
     
-    resp, err := http.Post(
-        fmt.Sprintf("http://%s/v1/factoid-submit/", serverFct),
-                           "application/json",
-                           bytes.NewBuffer(jdata))
-    if err != nil {
-        fmt.Println("Submitt failed")
-        return fmt.Errorf("Error returned by fctwallet")
-    }
-    resp.Body.Close()
-    return nil
+    str:=fmt.Sprintf("http://%s/v1/factoid-submit/%s", serverFct,bytes.NewBuffer(jdata))
+    postCmd(str)
 }

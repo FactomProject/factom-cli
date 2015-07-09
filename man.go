@@ -4,10 +4,6 @@
 
 package main
 
-import (
-    "fmt"
-)
-
 const usage = `
 factom-cli [options] [subcommand]
 
@@ -84,7 +80,7 @@ factom-cli [options] [subcommand]
 `
 
 // man returns an usage error string for the specified sub command.
-func man(s string) error {
+func man(s string) {
     m := map[string]string{
         "testcredit":     "factom-cli testcredit [key]",
         "balance":        "factom-cli balance ec|fct [key]",
@@ -109,7 +105,7 @@ func man(s string) error {
     }
 
     if m[s] != "" {
-        return fmt.Errorf(m[s])
+        errorln(m[s])
     }
-    return fmt.Errorf(m["default"])
+    errorln(m["default"])
 }
