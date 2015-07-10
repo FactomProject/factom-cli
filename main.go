@@ -53,6 +53,7 @@ func main() {
     // two commands for the same thing    
     case "balances":            getaddresses(args)
     case "getaddresses":        getaddresses(args)
+    case "balance" :            balance(args)
     case "newtransaction":      fctnewtrans(args)
     case "deletetransaction":   fctdeletetrans(args)
     case "addinput":            fctaddinput(args)
