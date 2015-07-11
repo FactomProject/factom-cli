@@ -48,7 +48,14 @@ func mkchain(args []string) {
 	}
 	
 	c := factom.NewChain(e)
-	
+
+	if _, err := factom.GetChainHead(c.ChainID); err == nil {
+		// no error means the client found the chain
+		errorln("Chain", c.ChainID, "already exists")
+		return
+	}
+
+	fmt.Println("Creating Chain:", c.ChainID)
 	if err := factom.CommitChain(c, name); err != nil {
 		errorln(err)
 		return
@@ -58,6 +65,4 @@ func mkchain(args []string) {
 		errorln(err)
 		return
 	}
-	
-	fmt.Println("Chain:", c.ChainID)
 }

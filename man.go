@@ -106,6 +106,7 @@ func man(s string) {
 
     if m[s] != "" {
         errorln(m[s])
+        return
     }
     errorln(m["default"])
 }
