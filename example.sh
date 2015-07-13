@@ -34,7 +34,10 @@ factom-cli addinput ecpurchase michael 2
 factom-cli addecoutput ecpurchase app 1.8
 factom-cli sign ecpurchase
 factom-cli submit ecpurchase
-echo "sleep for " $st " to wait for block creation (production system will have 10 minute blocks)"
+echo "
+sleep for " $st " to wait for block creation 
+(production system will have 10 minute blocks)
+"
 sleep $st
 factom-cli getaddresses
 
@@ -43,7 +46,10 @@ factom-cli mkchain -e app1 -e mychain app <<FIRSTENTRY
 Hello Factom!
 FIRSTENTRY
 
-echo "sleep for " $st " to wait for the chain to be included in the block (procution system will have 10 minute blocks)"
+echo "
+sleep for " $st " to wait for the chain to be included 
+in the block (production system will have 10 minute blocks)
+"
 sleep $st
 
 echo "adding another entry to my chain"
@@ -51,7 +57,10 @@ factom-cli put -c 9e54c63c6ccf2f1e7bb6e86a4e026b63c5665dca2b649c1cb407d2e39d7e83
 Hello again!
 ENTRY
 
-echo "sleep for " $st " to wait for the entry to be included in the block (procution system will have 10 minute blocks)"
+echo "
+sleep for " $st " to wait for the entry to be included 
+in the block (production system will have 10 minute blocks)
+"
 sleep $st
 
 echo "get the newest entry block for my chain"
