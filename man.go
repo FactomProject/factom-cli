@@ -14,9 +14,9 @@ factom-cli [options] [subcommand]
         
     get
         head                Get current dbhead
-        dblock keymr        Get dblock by merkel root
+        dblock keymr        Get dblock by merkle root
         chain chainid       Get ebhead by chainid
-        eblock keymr        Get eblock by merkel root
+        eblock keymr        Get eblock by merkle root
         entry hash          Get entry by hash
         
     help [command]          Print help message for a sub-command

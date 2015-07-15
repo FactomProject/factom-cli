@@ -22,7 +22,7 @@ func TestGet(t *testing.T) {
 		"get":     {"get"},
 		"height":  {"get", "height"},
 		"dblocks": {"get", "dblocks", "0", "1"},
-		"eblock":  {"get", "eblock", "merkel"},
+		"eblock":  {"get", "eblock", "merkle"},
 		"entry":   {"get", "entry", "abcd"},
 	}
 	for i, v := range subs {
