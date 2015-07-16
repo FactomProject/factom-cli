@@ -72,6 +72,7 @@ func put(args []string) {
 		e.Content = hex.EncodeToString(p)
 	}
 	
+	fmt.Printf("Creating Entry: %x\n", e.Hash())
 	if err := factom.CommitEntry(e, name); err != nil {
 		errorln(err)
 		return
