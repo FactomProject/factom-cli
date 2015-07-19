@@ -33,6 +33,7 @@ factom-cli [options] [subcommand]
                             can be used multiple times
         -c [chainid]        Specify the chain that the entry belongs to
         
+    newaddress or   
     generateaddress         Generate addresses, giving them names.
         ec name             Generate an Entry Credit address, tied to the name
         fct name            Generate a Factoid address, tied to the name
@@ -71,13 +72,22 @@ factom-cli [options] [subcommand]
     submit key              Submit the transaction specified by the key
                             to Factom
     
+    balances or
     getaddresses            Returns the list of addresses known to the
                             wallet. Returns the name that can be used
                             tied to each address, as well as the base 58
                             address (which is the actual address).  This
                             command also returns the balances at each 
                             address.
+   
+    transactions            Returns a list of all the transactions being
+                            constructed by the user.  It shows the fee
+                            required (at this point) as well as the fee 
+                            the user will pay.  Some additional error 
+                            checking is done as well, with messages 
+                            provided to the user.
 `
+
 
 // man returns an usage error string for the specified sub command.
 func man(s string) {
@@ -90,8 +100,11 @@ func man(s string) {
         "getDBlock":      "factom-cli get dblock [keymr]",
         "getChain":       "factom-cli get chain [chainid]",
         "getEBlock":      "factom-cli get eblock [keymr]",
-        "getEntry":       "factom-cli get entry [hash]",
-        "help":           "factom-cli help [subcommand]",
+        "getaddresses":   "factom-cli getaddresses|balances",
+        "balances":       "factom-cli getaddresses|balances",
+        "transactions":   "factom-cli transactions",
+        "getentry":       "factom-cli get entry [hash]",
+        "help":           usage,
         "mkchain":        "factom-cli mkchain [-e extid ...] name <stdin>",
         "genfactoidaddr": "factom-cli genfactoidaddr name",
         "newtransaction": "factom-cli newtransaction key",
@@ -101,7 +114,7 @@ func man(s string) {
         "validate":       "factom-cli validate key",
         "submit":         "factom-cli submit key",
         "put":            "factom-cli put [-e extid ...] name <stdin>",
-        "default":        usage,
+        "default":        "More Help can be found by typing:\n\n  factom-cli help",
     }
 
     if m[s] != "" {

@@ -14,7 +14,7 @@ func help(args []string) {
 
 	flag.Parse()
 	args = flag.Args()
-	s := "default"
+	s := "help"
 	if len(args) > 0 {
 		s = args[0]
 	}

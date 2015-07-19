@@ -125,9 +125,23 @@ func getaddresses(args []string) {
     getCmd(str,"Error printing addresses")
     
     return 
-    
-    
 }
+
+func gettransactions(args []string) {
+    os.Args = args
+    flag.Parse()
+    args = flag.Args()
+    if len(args) > 0 {
+        man("getaddresses")
+        os.Exit(1)
+    }
+    
+    str := fmt.Sprintf("http://%s/v1/factoid-get-transactions/", serverFct)
+    getCmd(str,"Error Getting Transactions")
+    
+    return 
+}
+
 
 func fctnewtrans(args []string) {
     os.Args = args
