@@ -132,7 +132,7 @@ func gettransactions(args []string) {
     flag.Parse()
     args = flag.Args()
     if len(args) > 0 {
-        man("getaddresses")
+        man("transactions")
         os.Exit(1)
     }
     
@@ -199,9 +199,9 @@ func fctaddinput(args []string) {
         os.Exit(1) 
     }
  
-    _,ok2 := fct.ValidateAmounts(uint64(ramt))
-    if !ok2 { 
-        fmt.Println("Input is too large or is negative. Command ignored") 
+    _,err = fct.ValidateAmounts(uint64(ramt))
+    if err != nil { 
+        fmt.Println(err)
         os.Exit(1)
     }
 
@@ -235,9 +235,9 @@ func fctaddoutput(args []string) {
         os.Exit(1) 
     }
 
-    _,ok2 := fct.ValidateAmounts(uint64(ramt))
-    if !ok2 { 
-        fmt.Println("Input is too large or is negative. Command ignored") 
+    _,err = fct.ValidateAmounts(uint64(ramt))
+    if err != nil { 
+        fmt.Println(err) 
         os.Exit(1)
     }
     
@@ -271,9 +271,9 @@ func fctaddecoutput(args []string) {
         os.Exit(1) 
     }
 
-    _,ok2 := fct.ValidateAmounts(uint64(ramt))
-    if !ok2 { 
-        fmt.Println("Input is too large or is negative. Command ignored") 
+    _,err = fct.ValidateAmounts(uint64(ramt))
+    if err!=nil { 
+        fmt.Println(err)
         os.Exit(1)
     }
     
