@@ -90,7 +90,7 @@ func getChain(args []string) {
 		return
 	}
 	
-	fmt.Println(chain.EntryBlockKeyMR)
+	fmt.Println(chain.ChainHead)
 }
 
 func getEBlock(args []string) {
