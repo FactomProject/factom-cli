@@ -7,6 +7,7 @@ package main
 import (
     "bytes"
     "strconv"
+    "regexp"
     "net/http"
     "encoding/hex"
     "encoding/json"
@@ -20,6 +21,21 @@ import (
 
 var _ = hex.EncodeToString
 var serverFct = "localhost:8089"
+
+var badChar,_ = regexp.Compile("[^A-Za-z0-9_-]")
+
+func ValidateKey(key string) (msg string, valid bool) {
+    if len(key) > fct.ADDRESS_LENGTH     { 
+        return "Key is too long.  Keys must be less than 32 characters", false     
+    }
+    if badChar.FindStringIndex(key)!=nil { 
+        str := fmt.Sprintf("The key or name '%s' contains invalid characters.\n"+
+        "Keys and names are restricted to alphanumeric characters,\n"+
+        "minuses (dashes), and underscores", key)
+        return str, false
+    }
+    return "", true
+}
 
 func getCmd(cmd string, cmderror string) {
 	resp, err := http.Get(cmd)
@@ -152,7 +168,11 @@ func fctnewtrans(args []string) {
         man("newtransaction")
         os.Exit(1)
     } 
-    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
     str := fmt.Sprintf("http://%s/v1/factoid-new-transaction/%s", serverFct, args[0])
     postCmd(str)
     
@@ -169,7 +189,11 @@ func fctdeletetrans(args []string) {
         man("deletetransaction")
         os.Exit(1)
     } 
-    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
     str := fmt.Sprintf("http://%s/v1/factoid-delete-transaction/%s", serverFct, args[0])
     postCmd(str)
     
@@ -185,8 +209,14 @@ func fctaddinput(args []string) {
     if len(args) < 3 {
         fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
         os.Exit(1)
-    } 
-
+    }
+    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
+    
     amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { 
         fmt.Println(err)
@@ -221,6 +251,12 @@ func fctaddoutput(args []string) {
         os.Exit(1) 
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
+    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
     
     amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { 
@@ -258,6 +294,12 @@ func fctaddecoutput(args []string) {
         os.Exit(1) 
     } 
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
+    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
     
     amt,err := fct.ConvertFixedPoint(args[2])
     if err != nil { 
@@ -321,7 +363,13 @@ func fctsign(args []string) {
     if len(args) < 1 {
         fmt.Println("Missing Key")
         os.Exit(1)
-    } 
+    }
+    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
     
     str := fmt.Sprintf("http://%s/v1/factoid-sign-transaction/%s", serverFct, args[0])
     postCmd(str)
@@ -336,7 +384,13 @@ func fctsubmit(args []string) {
         fmt.Println("Missing Key")
         os.Exit(1) 
     } 
-            
+    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
+    
     s := struct{Transaction string}{args[0]}
     
     jdata, err := json.Marshal(s)
