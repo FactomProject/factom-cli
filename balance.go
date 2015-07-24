@@ -19,7 +19,8 @@ func balance(args []string) error {
 	os.Args = args
 	flag.Parse()
 	args = flag.Args()
-	if len(args) < 1 {
+	if len(args) < 2 {
+        fmt.Println("Too few arguments")
 		man("balance")
         return fmt.Errorf("Too Few Arguments")
 	}
