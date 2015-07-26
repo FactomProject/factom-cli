@@ -8,6 +8,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+    "crypto/sha256"
+    "encoding/hex"
 	
 	"github.com/FactomProject/factom"
 )
@@ -32,6 +34,8 @@ func get(args []string) {
 		getEBlock(args)
 	case "entry":
 		getEntry(args)
+    case "chainid":
+        getChainId(args)
 	default:
 		man("get")
 	}
@@ -45,6 +49,26 @@ func getHead() {
 	}
 	fmt.Println(head.KeyMR)
 }
+
+// We expect each element to be its own part in a chain ID
+func getChainId(args [] string) {
+    if len(args)<2 {
+        fmt.Printf("No Chain Specification provided.  See help")
+    }
+    sum := sha256.New()
+    fmt.Println("The chain components:")
+    for i, str := range args {
+        if i > 0 {
+            fmt.Println("    ",str)
+            x := sha256.Sum256([]byte(str))
+            sum.Write(x[:])
+        }
+    }
+    chainId := sum.Sum(nil)
+    fmt.Println("produce the ChainID:")
+
+    fmt.Println("    ",hex.EncodeToString(chainId),"\n")
+} 
 
 func getDBlock(args []string) {
 	os.Args = args
