@@ -201,6 +201,33 @@ func fctdeletetrans(args []string) {
     
 }
 
+func fctaddfee(args []string) {
+    os.Args = args
+    flag.Parse()
+    args = flag.Args()
+    if len(args) < 2 {
+        fmt.Println("Was expecting a transaction key, and an address used as an input to that transaction.")
+        os.Exit(1)
+    }
+    
+    msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
+    
+    msg, valid = ValidateKey(args[1]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
+    
+    str := fmt.Sprintf("http://%s/v1/factoid-add-fee/?key=%s&name=%s", 
+                       serverFct, args[0],args[1])
+    postCmd(str)
+    
+    return 
+}
 
 func fctaddinput(args []string) {
     os.Args = args
@@ -242,6 +269,7 @@ func fctaddinput(args []string) {
     return 
 }
 
+
 func fctaddoutput(args []string) {
     os.Args = args
     flag.Parse()
@@ -253,6 +281,12 @@ func fctaddoutput(args []string) {
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
     msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
+
+    msg, valid = ValidateKey(args[1]) 
     if !valid {
         fmt.Println(msg)
         os.Exit(1)
@@ -296,6 +330,12 @@ func fctaddecoutput(args []string) {
     // localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
     
     msg, valid := ValidateKey(args[0]) 
+    if !valid {
+        fmt.Println(msg)
+        os.Exit(1)
+    }
+    
+    msg, valid = ValidateKey(args[1]) 
     if !valid {
         fmt.Println(msg)
         os.Exit(1)
@@ -400,5 +440,32 @@ func fctsubmit(args []string) {
     }
     
     str:=fmt.Sprintf("http://%s/v1/factoid-submit/%s", serverFct,bytes.NewBuffer(jdata))
+    postCmd(str)
+}
+
+func fctsetup(args []string) {
+    os.Args = args
+    flag.Parse()
+    args = flag.Args()
+    if len(args) < 1 {
+        msg := "You must supply some random seed. For example (don't use this!)\n"+
+        "  factom-cli setup 'woe!#in31!%234ng)%^&$%oeg%^&*^jp45694a;gmr@#t4 q34y'\n"+
+        "would make a nice seed.  The more random the better.\n\n"+
+        "Note that if you create an address before you call Setup, you must\n"+
+        "use those address(s) as you access the fountians."
+        
+        fmt.Println(msg)
+        os.Exit(1) 
+    } 
+        
+    s := struct{Transaction string}{args[0]}
+    
+    jdata, err := json.Marshal(s)
+    if err != nil {
+        fmt.Println("Submitt failed")
+        os.Exit(1) 
+    }
+    
+    str:=fmt.Sprintf("http://%s/v1/factoid-setup/%s", serverFct,bytes.NewBuffer(jdata))
     postCmd(str)
 }

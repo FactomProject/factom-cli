@@ -86,12 +86,23 @@ factom-cli [options] [subcommand]
                             the user will pay.  Some additional error 
                             checking is done as well, with messages 
                             provided to the user.
+    
+    setup seed              Creates 10 fountain addresses (from which a
+                            test program can simply acquire factoids.  
+                            After those addresses are defined, the wallet
+                            seed is changed randomly according to the 
+                            seed provided and time.  So every call to setup
+                            changes the address sequence of the wallet.
+                            You may call setup multiple times, but the 
+                            fountain addresses are not created if any address
+                            already exists.
 `
 
 
 // man returns an usage error string for the specified sub command.
 func man(s string) {
     m := map[string]string{
+        "setup":          "factom-cli setup seed",
         "testcredit":     "factom-cli testcredit [key]",
         "balance":        "factom-cli balance ec|fct [key]",
         "buy":            "factom-cli buy #amt",

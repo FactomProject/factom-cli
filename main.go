@@ -63,6 +63,8 @@ func main() {
     case "sign":                fctsign(args)
     case "submit":              fctsubmit(args)
     case "getfee":              fctgetfee(args)
+    case "setup":               fctsetup(args)
+    case "addfee":              fctaddfee(args)
     default:
         fmt.Println("Command not found")
 		man("default")

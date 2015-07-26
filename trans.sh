@@ -1,5 +1,11 @@
 echo "
 #=====================================================================#
+#   Setting up the Wallet                                             #
+#=====================================================================#"
+factom-cli setup trans.sh
+
+echo "
+#=====================================================================#
 #   If the addresses bill, bob, dan, sally and jane are already       #
 #   created, this script will give 'Generation Failed' errors.        #
 #                                                                     #
@@ -21,6 +27,19 @@ factom-cli generateaddress ec  dan
 factom-cli generateaddress ec  jane
 factom-cli getaddresses
 
+echo "
+#=====================================================================#
+# Fund a few addresses                                                #
+#=====================================================================#"
+factom-cli deletetransaction fund
+factom-cli newtransaction fund
+factom-cli addoutput fund bill 50
+factom-cli addoutput fund george 50
+
+factom-cli addinput fund 05-Fountain 100
+factom-cli addfee fund 05-Fountain
+factom-cli sign fund
+factom-cli submit fund
 
 echo "
 #=====================================================================#
