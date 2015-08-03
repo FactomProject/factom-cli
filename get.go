@@ -51,23 +51,23 @@ func getHead() {
 }
 
 // We expect each element to be its own part in a chain ID
-func getChainId(args [] string) {
-    if len(args)<2 {
-        fmt.Printf("No Chain Specification provided.  See help")
-    }
-    sum := sha256.New()
-    fmt.Println("The chain components:")
-    for i, str := range args {
-        if i > 0 {
-            fmt.Println("    ",str)
-            x := sha256.Sum256([]byte(str))
-            sum.Write(x[:])
-        }
-    }
-    chainId := sum.Sum(nil)
-    fmt.Println("produce the ChainID:")
+func getChainId(args []string) {
+	if len(args) < 2 {
+		fmt.Printf("No Chain Specification provided.  See help")
+	}
+	sum := sha256.New()
+	fmt.Println("The chain components:")
+	for i, str := range args {
+		if i > 0 {
+			fmt.Println("    ", str)
+			x := sha256.Sum256([]byte(str))
+			sum.Write(x[:])
+		}
+	}
+	chainId := sum.Sum(nil)
+	fmt.Println("produce the ChainID:")
 
-    fmt.Println("    ",hex.EncodeToString(chainId),"\n")
+	fmt.Println("    ", hex.EncodeToString(chainId))
 } 
 
 func getDBlock(args []string) {
