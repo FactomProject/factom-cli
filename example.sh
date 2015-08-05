@@ -24,14 +24,17 @@ fi
 
 echo "Using the cli to write new data into Factom"
 
+echo "Setup the Wallet"
+factom-cli setup Setup_For_example.sh
+
 echo "creating factoid and entry credit addresses"
-factom-cli generateaddress fct michael
 factom-cli generateaddress ec app
 
 echo "buying entry credits with factoid address"
 factom-cli newtransaction ecpurchase
-factom-cli addinput ecpurchase michael 2
-factom-cli addecoutput ecpurchase app 1.8
+factom-cli addinput ecpurchase 01-Fountain 2
+factom-cli addecoutput ecpurchase app 2
+factom-cli addfee ecpurchase 01-Fountain
 factom-cli sign ecpurchase
 factom-cli submit ecpurchase
 echo "
