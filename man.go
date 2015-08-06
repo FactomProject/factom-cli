@@ -40,6 +40,8 @@ factom-cli [options] [subcommand]
                             Names must be unique, or you will get a
                             Duplicate Name or Invalid Name error.
                             Names are limited to 32 characters
+                            
+    deletetransaction key   Delete the specified transaction in flight. 
    
     balance key|address     If this is an ec balance, returns number of 
                             entry credits
