@@ -74,3 +74,8 @@ ehash=$(factom-cli get eblock $eblock | grep EntryHash | awk '{print $2}')
 echo "get the entry out of the entry block"
 factom-cli get entry $ehash
 
+echo "creating the anchor chain"
+factom-cli mkchain -e FactomAnchorChain app <<FIRSTENTRY
+This is the Factom anchor chain, which records the anchors Factom puts on Bitcoin and other networks.
+FIRSTENTRY
+
