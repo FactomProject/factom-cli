@@ -24,6 +24,11 @@ var serverFct = "localhost:8089"
 
 var badChar,_ = regexp.Compile("[^A-Za-z0-9_-]")
 
+type Response struct {
+    Response string
+    Success bool
+}
+
 func ValidateKey(key string) (msg string, valid bool) {
     if len(key) > fct.ADDRESS_LENGTH     { 
         return "Key is too long.  Keys must be less than 32 characters", false     
@@ -52,17 +57,13 @@ func getCmd(cmd string, cmderror string) {
 	}
 	resp.Body.Close()
 
-	type x struct{ 
-        Body string
-        Success bool 
-    }
-	b := new(x)
+	b := new(Response)
 	if err := json.Unmarshal(body, b); err != nil || !b.Success {
 		fmt.Println(cmderror)
 		fmt.Println("Command Failed: ", string(body))
         os.Exit(1)
 	}
-    fmt.Println(b.Body)
+    fmt.Println(b.Response)
 	return 
 }
 
@@ -80,8 +81,7 @@ func postCmd(cmd string) {
     }
 	resp.Body.Close()
 
-	type x struct{ Response string; Success bool }
-	b := new(x)
+	b := new(Response)
 	if err := json.Unmarshal(body, b); err != nil {
         fmt.Printf("Failed to parse the response from factomd: %s\n",body)
         os.Exit(1)
