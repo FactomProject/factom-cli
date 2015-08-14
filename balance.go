@@ -20,44 +20,43 @@ func balance(args []string) error {
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 2 {
-        fmt.Println("Too few arguments")
+		fmt.Println("Too few arguments")
 		man("balance")
-        return fmt.Errorf("Too Few Arguments")
+		return fmt.Errorf("Too Few Arguments")
 	}
-	
+
 	switch args[0] {
 	case "ec":
 		return ecbalance(args[1])
 	case "fct":
 		return fctbalance(args[1])
 	default:
-        fmt.Println("Must specify an address type, either 'ec' or 'fct'")
+		fmt.Println("Must specify an address type, either 'ec' or 'fct'")
 		man("balance")
-        return fmt.Errorf("")
+		return fmt.Errorf("")
 	}
 
 }
 
 func ecbalance(addr string) error {
 
-    if b, err := factom.ECBalance(addr); err != nil {
-        fmt.Println(err)
-        return err
+	if b, err := factom.ECBalance(addr); err != nil {
+		fmt.Println(err)
+		return err
 	} else {
-        fmt.Println("Balance of ", addr, " = ", b)
-    }
-	
-	return nil	
+		fmt.Println("Balance of ", addr, " = ", b)
+	}
+
+	return nil
 }
 
 func fctbalance(addr string) error {
 
-
 	if b, err := factom.FctBalance(addr); err != nil {
 		fmt.Println(err)
-        return err
+		return err
 	} else {
-        fmt.Println("Balance of ", addr, " = ", strings.TrimSpace(fct.ConvertDecimal(uint64(b))))
+		fmt.Println("Balance of ", addr, " = ", strings.TrimSpace(fct.ConvertDecimal(uint64(b))))
 	}
 
 	return nil

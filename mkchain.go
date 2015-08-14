@@ -23,15 +23,15 @@ func mkchain(args []string) {
 	flag.Var(&eids, "e", "external id for the entry")
 	flag.Parse()
 	args = flag.Args()
-	
+
 	if len(args) < 1 {
 		man("mkchain")
 		return
 	}
 	name := args[0]
-	
+
 	e := factom.NewEntry()
-	
+
 	for _, v := range eids {
 		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
 	}
@@ -46,7 +46,7 @@ func mkchain(args []string) {
 	} else {
 		e.Content = hex.EncodeToString(p)
 	}
-	
+
 	c := factom.NewChain(e)
 
 	if _, err := factom.GetChainHead(c.ChainID); err == nil {

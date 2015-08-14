@@ -100,39 +100,38 @@ factom-cli [options] [subcommand]
                             already exists.
 `
 
-
 // man returns an usage error string for the specified sub command.
 func man(s string) {
-    m := map[string]string{
-        "setup":          "factom-cli setup seed",
-        "testcredit":     "factom-cli testcredit [key]",
-        "balance":        "factom-cli balance ec|fct [key]",
-        "buy":            "factom-cli buy #amt",
-        "get":            "factom-cli get head|dblock|chain|eblock|entry",
-        "getHead":        "factom-cli get head",
-        "getDBlock":      "factom-cli get dblock [keymr]",
-        "getChain":       "factom-cli get chain [chainid]",
-        "getEBlock":      "factom-cli get eblock [keymr]",
-        "getaddresses":   "factom-cli getaddresses|balances",
-        "balances":       "factom-cli getaddresses|balances",
-        "transactions":   "factom-cli transactions",
-        "getentry":       "factom-cli get entry [hash]",
-        "help":           usage,
-        "mkchain":        "factom-cli mkchain [-e extid ...] name <stdin>",
-        "genfactoidaddr": "factom-cli genfactoidaddr name",
-        "newtransaction": "factom-cli newtransaction key",
-        "addinput":       "factom-cli addinput key name|address amount",
-        "addoutput":      "factom-cli addoutput key name|address amount",
-        "addecoutput":    "factom-cli addecoutput key name|address amount",
-        "validate":       "factom-cli validate key",
-        "submit":         "factom-cli submit key",
-        "put":            "factom-cli put [-e extid ...] name <stdin>",
-        "default":        "More Help can be found by typing:\n\n  factom-cli help",
-    }
+	m := map[string]string{
+		"setup":          "factom-cli setup seed",
+		"testcredit":     "factom-cli testcredit [key]",
+		"balance":        "factom-cli balance ec|fct [key]",
+		"buy":            "factom-cli buy #amt",
+		"get":            "factom-cli get head|dblock|chain|eblock|entry",
+		"getHead":        "factom-cli get head",
+		"getDBlock":      "factom-cli get dblock [keymr]",
+		"getChain":       "factom-cli get chain [chainid]",
+		"getEBlock":      "factom-cli get eblock [keymr]",
+		"getaddresses":   "factom-cli getaddresses|balances",
+		"balances":       "factom-cli getaddresses|balances",
+		"transactions":   "factom-cli transactions",
+		"getentry":       "factom-cli get entry [hash]",
+		"help":           usage,
+		"mkchain":        "factom-cli mkchain [-e extid ...] name <stdin>",
+		"genfactoidaddr": "factom-cli genfactoidaddr name",
+		"newtransaction": "factom-cli newtransaction key",
+		"addinput":       "factom-cli addinput key name|address amount",
+		"addoutput":      "factom-cli addoutput key name|address amount",
+		"addecoutput":    "factom-cli addecoutput key name|address amount",
+		"validate":       "factom-cli validate key",
+		"submit":         "factom-cli submit key",
+		"put":            "factom-cli put [-e extid ...] name <stdin>",
+		"default":        "More Help can be found by typing:\n\n  factom-cli help",
+	}
 
-    if m[s] != "" {
-        errorln(m[s])
-        return
-    }
-    errorln(m["default"])
+	if m[s] != "" {
+		errorln(m[s])
+		return
+	}
+	errorln(m["default"])
 }

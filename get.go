@@ -5,12 +5,12 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
-    "crypto/sha256"
-    "encoding/hex"
-	
+
 	"github.com/FactomProject/factom"
 )
 
@@ -34,8 +34,8 @@ func get(args []string) {
 		getEBlock(args)
 	case "entry":
 		getEntry(args)
-    case "chainid":
-        getChainId(args)
+	case "chainid":
+		getChainId(args)
 	default:
 		man("get")
 	}
@@ -68,7 +68,7 @@ func getChainId(args []string) {
 	fmt.Println("produce the ChainID:")
 
 	fmt.Println("    ", hex.EncodeToString(chainId))
-} 
+}
 
 func getDBlock(args []string) {
 	os.Args = args
@@ -89,7 +89,7 @@ func getDBlock(args []string) {
 	fmt.Println("PrevBlockKeyMR:", dblock.Header.PrevBlockKeyMR)
 	fmt.Println("TimeStamp:", dblock.Header.TimeStamp)
 	fmt.Println("SequenceNumber:", dblock.Header.SequenceNumber)
-	
+
 	for _, v := range dblock.EntryBlockList {
 		fmt.Println("EntryBlock {")
 		fmt.Println("	ChainID", v.ChainID)
@@ -106,14 +106,14 @@ func getChain(args []string) {
 		man("getChain")
 		return
 	}
-	
+
 	chainid := args[0]
 	chain, err := factom.GetChainHead(chainid)
 	if err != nil {
 		errorln(err)
 		return
 	}
-	
+
 	fmt.Println(chain.ChainHead)
 }
 
@@ -137,7 +137,7 @@ func getEBlock(args []string) {
 	fmt.Println("ChainID:", eblock.Header.ChainID)
 	fmt.Println("PrevKeyMR:", eblock.Header.PrevKeyMR)
 	fmt.Println("TimeStamp:", eblock.Header.TimeStamp)
-	
+
 	for _, v := range eblock.EntryList {
 		fmt.Println("EBEntry {")
 		fmt.Println("	TimeStamp", v.TimeStamp)
@@ -161,28 +161,32 @@ func getEntry(args []string) {
 		errorln(err)
 		return
 	}
-	
+
 	fmt.Println("ChainID:", entry.ChainID)
 	for _, v := range entry.ExtIDs {
 		fmt.Println("ExtID:", v)
-    }
-    data, _ := hex.DecodeString(entry.Content)
-    
-    str := fmt.Sprintf("Content:\n")
-    p := data
-    for len(p) >= 16 {
-        str = str + fmt.Sprintf("% x | % x  || ",p[:8],p[8:16])
-        str = str + fmt.Sprintf("%+q\n",p[:16])
-        p = p[:16]
-    }
-    if len(p) > 8 {
-        str = str + fmt.Sprintf("% x | % x",p[:8],p[8:])
-        for i:=len(p); i < 16; i++ { str = str + "   " }
-        str = str + fmt.Sprintf("  || %+q\n",p)
-    }else{
-        str = str + fmt.Sprintf("% x\n",p)
-        for i:=len(p); i < 8; i++ { str = str + "   " }
-        str = str + fmt.Sprintf(" |                           || %+q\n",p)
-    }
-    fmt.Print(str)
+	}
+	data, _ := hex.DecodeString(entry.Content)
+
+	str := fmt.Sprintf("Content:\n")
+	p := data
+	for len(p) >= 16 {
+		str = str + fmt.Sprintf("% x | % x  || ", p[:8], p[8:16])
+		str = str + fmt.Sprintf("%+q\n", p[:16])
+		p = p[:16]
+	}
+	if len(p) > 8 {
+		str = str + fmt.Sprintf("% x | % x", p[:8], p[8:])
+		for i := len(p); i < 16; i++ {
+			str = str + "   "
+		}
+		str = str + fmt.Sprintf("  || %+q\n", p)
+	} else {
+		str = str + fmt.Sprintf("% x\n", p)
+		for i := len(p); i < 8; i++ {
+			str = str + "   "
+		}
+		str = str + fmt.Sprintf(" |                           || %+q\n", p)
+	}
+	fmt.Print(str)
 }

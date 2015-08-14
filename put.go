@@ -36,15 +36,15 @@ func put(args []string) {
 	flag.Var(&eids, "e", "external id for the entry")
 	flag.Parse()
 	args = flag.Args()
-	
+
 	if len(args) < 1 {
 		man("put")
 		return
 	}
 	name := args[0]
-	
+
 	e := factom.NewEntry()
-	
+
 	// use the default chainid and extids from the config file
 	econf := ReadConfig().Entry
 	if econf.Chainid != "" {
@@ -56,7 +56,7 @@ func put(args []string) {
 	if econf.Extid != "" {
 		e.ExtIDs = append(e.ExtIDs, econf.Extid)
 	}
-	
+
 	for _, v := range eids {
 		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
 	}
@@ -71,7 +71,7 @@ func put(args []string) {
 	} else {
 		e.Content = hex.EncodeToString(p)
 	}
-	
+
 	fmt.Printf("Creating Entry: %x\n", e.Hash())
 	if err := factom.CommitEntry(e, name); err != nil {
 		errorln(err)

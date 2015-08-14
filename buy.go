@@ -9,7 +9,7 @@ package main
 //	"flag"
 //	"os"
 //	"strconv"
-//	
+//
 //	"github.com/FactomProject/factom"
 //)
 //
@@ -20,17 +20,17 @@ package main
 //	if len(args) < 1 {
 //		return man("buy")
 //	}
-//	
+//
 //	amt, err := strconv.Atoi(args[0])
 //	if err != nil {
 //		return err
 //	}
-//	
+//
 //	pub, err := ecPubKey()
 //	if err != nil {
 //		return err
 //	}
-//	
+//
 //	err = factom.BuyTestCredits(hex.EncodeToString(pub[:]), amt)
 //	if err != nil {
 //		return err

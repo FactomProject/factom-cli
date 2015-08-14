@@ -5,18 +5,18 @@
 package main
 
 import (
-	"os"
 	"code.google.com/p/gcfg"
+	"os"
 )
 
 type CliConf struct {
 	Main struct {
-		Server	string
-		Wallet	string
+		Server string
+		Wallet string
 	}
 	Entry struct {
-		Chainid	string
-		Extid	string
+		Chainid string
+		Extid   string
 	}
 }
 
@@ -31,7 +31,7 @@ Extid	= ""
 
 func ReadConfig() *CliConf {
 	cfg := new(CliConf)
-	filename := os.Getenv("HOME")+"/.factom/factom-cli.conf"
+	filename := os.Getenv("HOME") + "/.factom/factom-cli.conf"
 	if err := gcfg.ReadFileInto(cfg, filename); err != nil {
 		gcfg.ReadStringInto(cfg, defaultConf)
 	}

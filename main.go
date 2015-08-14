@@ -19,7 +19,7 @@ func main() {
 	cfg := ReadConfig().Main
 	server = cfg.Server
 	wallet = cfg.Wallet
-	
+
 	// command line flags overwirte conf file
 	var (
 		hflag = flag.Bool("h", false, "help")
@@ -42,31 +42,51 @@ func main() {
 	}
 
 	switch args[0] {
-	
-	case "get":		            get(args)
-	case "help":	            help(args)
-	case "mkchain":	            mkchain(args)
-    case "put":                 put(args)
-    // two commands for the same thing    
-    case "newaddress":          generateaddress(args)
-    case "generateaddress":     generateaddress(args)
-    // two commands for the same thing    
-    case "balances":            getaddresses(args)
-    case "getaddresses":        getaddresses(args)
-    case "transactions":        gettransactions(args)   
-    case "balance" :            balance(args)
-    case "newtransaction":      fctnewtrans(args)
-    case "deletetransaction":   fctdeletetrans(args)
-    case "addinput":            fctaddinput(args)
-    case "addoutput":           fctaddoutput(args)
-    case "addecoutput":         fctaddecoutput(args)
-    case "sign":                fctsign(args)
-    case "submit":              fctsubmit(args)
-    case "getfee":              fctgetfee(args)
-    case "setup":               fctsetup(args)
-    case "addfee":              fctaddfee(args)
-    default:
-        fmt.Println("Command not found")
+
+	case "get":
+		get(args)
+	case "help":
+		help(args)
+	case "mkchain":
+		mkchain(args)
+	case "put":
+		put(args)
+	// two commands for the same thing
+	case "newaddress":
+		generateaddress(args)
+	case "generateaddress":
+		generateaddress(args)
+	// two commands for the same thing
+	case "balances":
+		getaddresses(args)
+	case "getaddresses":
+		getaddresses(args)
+	case "transactions":
+		gettransactions(args)
+	case "balance":
+		balance(args)
+	case "newtransaction":
+		fctnewtrans(args)
+	case "deletetransaction":
+		fctdeletetrans(args)
+	case "addinput":
+		fctaddinput(args)
+	case "addoutput":
+		fctaddoutput(args)
+	case "addecoutput":
+		fctaddecoutput(args)
+	case "sign":
+		fctsign(args)
+	case "submit":
+		fctsubmit(args)
+	case "getfee":
+		fctgetfee(args)
+	case "setup":
+		fctsetup(args)
+	case "addfee":
+		fctaddfee(args)
+	default:
+		fmt.Println("Command not found")
 		man("default")
 	}
 }
