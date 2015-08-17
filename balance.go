@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
