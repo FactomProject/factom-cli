@@ -87,7 +87,7 @@ func getDBlock(args []string) {
 	}
 
 	fmt.Println("PrevBlockKeyMR:", dblock.Header.PrevBlockKeyMR)
-	fmt.Println("TimeStamp:", dblock.Header.TimeStamp)
+	fmt.Println("Timestamp:", dblock.Header.Timestamp)
 	fmt.Println("SequenceNumber:", dblock.Header.SequenceNumber)
 
 	for _, v := range dblock.EntryBlockList {
@@ -136,11 +136,11 @@ func getEBlock(args []string) {
 	fmt.Println("BlockSequenceNumber:", eblock.Header.BlockSequenceNumber)
 	fmt.Println("ChainID:", eblock.Header.ChainID)
 	fmt.Println("PrevKeyMR:", eblock.Header.PrevKeyMR)
-	fmt.Println("TimeStamp:", eblock.Header.TimeStamp)
+	fmt.Println("Timestamp:", eblock.Header.Timestamp)
 
 	for _, v := range eblock.EntryList {
 		fmt.Println("EBEntry {")
-		fmt.Println("	TimeStamp", v.TimeStamp)
+		fmt.Println("	Timestamp", v.Timestamp)
 		fmt.Println("	EntryHash", v.EntryHash)
 		fmt.Println("}")
 	}
