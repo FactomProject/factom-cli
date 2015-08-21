@@ -55,7 +55,7 @@ func fctbalance(addr string) error {
 		fmt.Println(err)
 		return err
 	} else {
-		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimalToString(uint64(b)))
+		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
 	}
 
 	return nil
