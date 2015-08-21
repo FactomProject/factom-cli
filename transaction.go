@@ -215,12 +215,6 @@ func fctaddfee(args []string) {
 		os.Exit(1)
 	}
 
-	msg, valid = ValidateKey(args[1])
-	if !valid {
-		fmt.Println(msg)
-		os.Exit(1)
-	}
-
 	str := fmt.Sprintf("http://%s/v1/factoid-add-fee/?key=%s&name=%s",
 		serverFct, args[0], args[1])
 	postCmd(str)
@@ -284,12 +278,6 @@ func fctaddoutput(args []string) {
 		os.Exit(1)
 	}
 
-	msg, valid = ValidateKey(args[1])
-	if !valid {
-		fmt.Println(msg)
-		os.Exit(1)
-	}
-
 	amt, err := fct.ConvertFixedPoint(args[2])
 	if err != nil {
 		fmt.Println("Invalid format for a number: ", args[2])
@@ -327,12 +315,6 @@ func fctaddecoutput(args []string) {
 	// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
 
 	msg, valid := ValidateKey(args[0])
-	if !valid {
-		fmt.Println(msg)
-		os.Exit(1)
-	}
-
-	msg, valid = ValidateKey(args[1])
 	if !valid {
 		fmt.Println(msg)
 		os.Exit(1)
