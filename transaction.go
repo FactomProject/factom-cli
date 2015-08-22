@@ -346,37 +346,45 @@ func fctaddecoutput(args []string) {
 }
 
 func fctgetfee(args []string) {
-	resp, err := http.Get(fmt.Sprintf("http://%s/v1/factoid-get-fee/", serverFct))
+	var getfeereq string
+	if len(args)>1 {
+		getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/?key=%s", serverFct,args[1])
+	}else{
+		getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/", serverFct)
+	}
+		
+	resp, err := http.Get(getfeereq)
+	
 	if err != nil {
 		fmt.Println("Command Failed Get")
 		os.Exit(1)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Command Failed")
+		fmt.Println("Failed to understand response from fctwallet")
 		os.Exit(1)
 	}
 	resp.Body.Close()
 
 	// We pull the fee.  If the fee isn't positive, or if we fail to marshal, then there is a failure
-	type x struct{ Fee int64 }
+	type x struct{ 
+		Response string
+		Success  bool 
+	}
+	
 	b := new(x)
-	b.Fee = -1
-	if err := json.Unmarshal(body, b); err != nil || b.Fee == -1 {
-		fmt.Println("Command Failed")
+	if err := json.Unmarshal(body, b); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}else if !b.Success {
+		fmt.Println(b.Response)
 		os.Exit(1)
 	}
-	tv := b.Fee / 100000000
-	lv := b.Fee - (tv * 100000000)
-	r := fmt.Sprintf("Fee: %d.%08d", tv, lv)
-	var i int
-	for i = len(r) - 1; r[i] == '0'; i-- {
+	if len(args)<2 {
+		fmt.Printf("Currently, Entry Credits are %s Factoids each\n",b.Response)
+	}else{
+		fmt.Printf("The fee due for this transaction is %s Factoids\n", b.Response)
 	}
-	if string(r[i]) == "." {
-		i += 1
-	}
-	fmt.Println(r[:i+1])
-
 }
 
 func fctsign(args []string) {
