@@ -68,9 +68,9 @@ factom-cli [options] [subcommand]
         
     getfee key              Get the current fee required for this 
                             transaction.  If a transaction is specified,
-							then getfee returns the fee due for the 
-							transaction.  If no transaction is provided,
-							then the cost of an Entry Credit is returned.
+                            then getfee returns the fee due for the 
+                            transaction.  If no transaction is provided,
+                            then the cost of an Entry Credit is returned.
     
     sign key                Sign the transaction specified by the key
     
