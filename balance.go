@@ -8,9 +8,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
-
+	"strings"
+	
 	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
+	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
 // balance prints the current balance of the specified address
@@ -38,7 +40,10 @@ func balance(args []string) error {
 }
 
 func ecbalance(addr string) error {
-
+	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"FA") {
+		fmt.Println("Not a valid Entry Credit Address")
+		return fmt.Errorf("Not a valid Entry Credit Address")
+	}
 	if b, err := factom.ECBalance(addr); err != nil {
 		fmt.Println(err)
 		return err
@@ -50,7 +55,11 @@ func ecbalance(addr string) error {
 }
 
 func fctbalance(addr string) error {
-
+	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"EC") {
+		fmt.Println("Not a valid Entry Credit Address")
+		return fmt.Errorf("Not a valid Entry Credit Address")
+	}
+	
 	if b, err := factom.FctBalance(addr); err != nil {
 		fmt.Println(err)
 		return err
