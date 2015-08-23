@@ -67,7 +67,10 @@ factom-cli [options] [subcommand]
         key address amount  Use an address
         
     getfee key              Get the current fee required for this 
-                            transaction
+                            transaction.  If a transaction is specified,
+							then getfee returns the fee due for the 
+							transaction.  If no transaction is provided,
+							then the cost of an Entry Credit is returned.
     
     sign key                Sign the transaction specified by the key
     
