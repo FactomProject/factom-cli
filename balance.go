@@ -45,7 +45,7 @@ func ecbalance(addr string) error {
 		return fmt.Errorf("Not a valid Entry Credit Address")
 	}
 	if b, err := factom.ECBalance(addr); err != nil {
-		fmt.Println(err)
+		fmt.Println("Address undefined or invalid")
 		return err
 	} else {
 		fmt.Println("Balance of ", addr, " = ", b)
@@ -61,7 +61,7 @@ func fctbalance(addr string) error {
 	}
 	
 	if b, err := factom.FctBalance(addr); err != nil {
-		fmt.Println(err)
+		fmt.Println("Address undefined or invalid")
 		return err
 	} else {
 		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
