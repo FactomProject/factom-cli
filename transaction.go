@@ -109,13 +109,24 @@ func generateaddress(args []string) {
 
 	var err error
 	var Addr string
-	switch args[0] {
-	case "ec":
-		Addr, err = factom.GenerateEntryCreditAddress(args[1])
-	case "fct":
-		Addr, err = factom.GenerateFactoidAddress(args[1])
-	default:
-		panic("Expected ec|fct name")
+	if len(args) == 2 {
+		switch args[0] {
+		case "ec":
+			Addr, err = factom.GenerateEntryCreditAddress(args[1])
+		case "fct":
+			Addr, err = factom.GenerateFactoidAddress(args[1])
+		default:
+			panic("Expected ec|fct name")
+		}
+	} else {
+		switch args[0] {
+		case "ec":
+			Addr, err = factom.GenerateEntryCreditAddressFromPrivateKey(args[1], args[2])
+		case "fct":
+			Addr, err = factom.GenerateFactoidAddressFromPrivateKey(args[1], args[2])
+		default:
+			panic("Expected ec|fct name")
+		}
 	}
 
 	if err != nil {
@@ -347,14 +358,14 @@ func fctaddecoutput(args []string) {
 
 func fctgetfee(args []string) {
 	var getfeereq string
-	if len(args)>1 {
-		getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/?key=%s", serverFct,args[1])
-	}else{
+	if len(args) > 1 {
+		getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/?key=%s", serverFct, args[1])
+	} else {
 		getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/", serverFct)
 	}
-		
+
 	resp, err := http.Get(getfeereq)
-	
+
 	if err != nil {
 		fmt.Println("Command Failed Get")
 		os.Exit(1)
@@ -367,22 +378,22 @@ func fctgetfee(args []string) {
 	resp.Body.Close()
 
 	// We pull the fee.  If the fee isn't positive, or if we fail to marshal, then there is a failure
-	type x struct{ 
+	type x struct {
 		Response string
-		Success  bool 
+		Success  bool
 	}
-	
+
 	b := new(x)
 	if err := json.Unmarshal(body, b); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
-	}else if !b.Success {
+	} else if !b.Success {
 		fmt.Println(b.Response)
 		os.Exit(1)
 	}
-	if len(args)<2 {
-		fmt.Printf("Currently, Entry Credits are %s Factoids each\n",b.Response)
-	}else{
+	if len(args) < 2 {
+		fmt.Printf("Currently, Entry Credits are %s Factoids each\n", b.Response)
+	} else {
 		fmt.Printf("The fee due for this transaction is %s Factoids\n", b.Response)
 	}
 }
