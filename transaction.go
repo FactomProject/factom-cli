@@ -121,9 +121,31 @@ func generateaddress(args []string) {
 	} else {
 		switch args[0] {
 		case "ec":
+			Addr, err = factom.GenerateEntryCreditAddressFromHumanReadiblePrivateKey(args[1], args[2])
+			if err == nil {
+				break
+			}
+			Addr, err = factom.GenerateEntryCreditAddressFromMnemonic(args[1], args[2])
+			if err == nil {
+				break
+			}
 			Addr, err = factom.GenerateEntryCreditAddressFromPrivateKey(args[1], args[2])
+			if err == nil {
+				break
+			}
 		case "fct":
+			Addr, err = factom.GenerateFactoidAddressFromHumanReadiblePrivateKey(args[1], args[2])
+			if err == nil {
+				break
+			}
+			Addr, err = factom.GenerateFactoidAddressFromMnemonic(args[1], args[2])
+			if err == nil {
+				break
+			}
 			Addr, err = factom.GenerateFactoidAddressFromPrivateKey(args[1], args[2])
+			if err == nil {
+				break
+			}
 		default:
 			panic("Expected ec|fct name")
 		}
