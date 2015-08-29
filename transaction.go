@@ -31,7 +31,7 @@ type Response struct {
 
 func ValidateKey(key string) (msg string, valid bool) {
 	if len(key) > fct.ADDRESS_LENGTH {
-		return "Key is too long.  Keys must be less than 32 characters", false
+		return "Key is too long.  Keys must be less than or equal to 32 characters", false
 	}
 	if badChar.FindStringIndex(key) != nil {
 		str := fmt.Sprintf("The key or name '%s' contains invalid characters.\n"+
@@ -107,6 +107,12 @@ func generateaddress(args []string) {
 		os.Exit(1)
 	}
 
+	msg, valid := ValidateKey(args[1])
+	if !valid {
+		fmt.Println(msg)
+		os.Exit(1)
+	}
+	
 	var err error
 	var Addr string
 	switch args[0] {
