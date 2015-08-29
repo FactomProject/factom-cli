@@ -121,11 +121,7 @@ func generateaddress(args []string) {
 	} else {
 		switch args[0] {
 		case "ec":
-			Addr, err = factom.GenerateEntryCreditAddressFromHumanReadiblePrivateKey(args[1], args[2])
-			if err == nil {
-				break
-			}
-			Addr, err = factom.GenerateEntryCreditAddressFromMnemonic(args[1], args[2])
+			Addr, err = factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2])
 			if err == nil {
 				break
 			}
@@ -134,7 +130,7 @@ func generateaddress(args []string) {
 				break
 			}
 		case "fct":
-			Addr, err = factom.GenerateFactoidAddressFromHumanReadiblePrivateKey(args[1], args[2])
+			Addr, err = factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2])
 			if err == nil {
 				break
 			}
