@@ -40,6 +40,9 @@ factom-cli [options] [subcommand]
                             Names must be unique, or you will get a
                             Duplicate Name or Invalid Name error.
                             Names are limited to 32 characters
+        ec name Es...       Import a secret EC key to the wallet
+        fct name Fs...      Import a secret Factoid key to the wallet
+        fct name "12 words" Import the Factoid key from the Token Sale
                             
     deletetransaction key   Delete the specified transaction in flight. 
    
