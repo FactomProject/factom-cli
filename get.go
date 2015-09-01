@@ -168,25 +168,6 @@ func getEntry(args []string) {
 	}
 	data, _ := hex.DecodeString(entry.Content)
 
-	str := fmt.Sprintf("Content:\n")
-	p := data
-	for len(p) >= 16 {
-		str = str + fmt.Sprintf("% x | % x  || ", p[:8], p[8:16])
-		str = str + fmt.Sprintf("%+q\n", p[:16])
-		p = p[:16]
-	}
-	if len(p) > 8 {
-		str = str + fmt.Sprintf("% x | % x", p[:8], p[8:])
-		for i := len(p); i < 16; i++ {
-			str = str + "   "
-		}
-		str = str + fmt.Sprintf("  || %+q\n", p)
-	} else {
-		str = str + fmt.Sprintf("% x\n", p)
-		for i := len(p); i < 8; i++ {
-			str = str + "   "
-		}
-		str = str + fmt.Sprintf(" |                           || %+q\n", p)
-	}
-	fmt.Print(str)
+	fmt.Println("Content:")
+	fmt.Println(string(data))
 }
