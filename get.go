@@ -166,8 +166,8 @@ func getEntry(args []string) {
 	for _, v := range entry.ExtIDs {
 		fmt.Println("ExtID:", v)
 	}
+	
 	data, _ := hex.DecodeString(entry.Content)
-
 	fmt.Println("Content:")
 	fmt.Println(string(data))
 }
