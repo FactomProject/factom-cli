@@ -17,6 +17,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 var _ = hex.EncodeToString
@@ -112,7 +113,7 @@ func generateaddress(args []string) {
 		fmt.Println(msg)
 		os.Exit(1)
 	}
-	
+
 	var err error
 	var Addr string
 	if len(args) == 2 {
@@ -140,12 +141,21 @@ func generateaddress(args []string) {
 			if err == nil {
 				break
 			}
+			if strings.Contains(err.Error(), "unexpected end of JSON input") == false {
+				break
+			}
 			Addr, err = factom.GenerateFactoidAddressFromMnemonic(args[1], args[2])
 			if err == nil {
 				break
 			}
+			if strings.Contains(err.Error(), "unexpected end of JSON input") == false {
+				break
+			}
 			Addr, err = factom.GenerateFactoidAddressFromPrivateKey(args[1], args[2])
 			if err == nil {
+				break
+			}
+			if strings.Contains(err.Error(), "unexpected end of JSON input") == false {
 				break
 			}
 		default:
