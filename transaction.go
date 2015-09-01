@@ -469,29 +469,3 @@ func fctsubmit(args []string) {
 	postCmd(str)
 }
 
-func fctsetup(args []string) {
-	os.Args = args
-	flag.Parse()
-	args = flag.Args()
-	if len(args) < 1 {
-		msg := "You must supply some random seed. For example (don't use this!)\n" +
-			"  factom-cli setup 'woe!#in31!%234ng)%^&$%oeg%^&*^jp45694a;gmr@#t4 q34y'\n" +
-			"would make a nice seed.  The more random the better.\n\n" +
-			"Note that if you create an address before you call Setup, you must\n" +
-			"use those address(s) as you access the fountians."
-
-		fmt.Println(msg)
-		os.Exit(1)
-	}
-
-	s := struct{ Transaction string }{args[0]}
-
-	jdata, err := json.Marshal(s)
-	if err != nil {
-		fmt.Println("Submitt failed")
-		os.Exit(1)
-	}
-
-	str := fmt.Sprintf("http://%s/v1/factoid-setup/%s", serverFct, bytes.NewBuffer(jdata))
-	postCmd(str)
-}

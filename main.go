@@ -81,8 +81,6 @@ func main() {
 		fctsubmit(args)
 	case "getfee":
 		fctgetfee(args)
-	case "setup":
-		fctsetup(args)
 	case "addfee":
 		fctaddfee(args)
 	default:
