@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	
+
 	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
@@ -40,7 +40,7 @@ func balance(args []string) error {
 }
 
 func ecbalance(addr string) error {
-	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"FA") {
+	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr, "FA") {
 		fmt.Println("Not a valid Entry Credit Address")
 		return fmt.Errorf("Not a valid Entry Credit Address")
 	}
@@ -55,16 +55,16 @@ func ecbalance(addr string) error {
 }
 
 func fctbalance(addr string) error {
-	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"EC") {
+	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr, "EC") {
 		fmt.Println("Not a valid Entry Credit Address")
 		return fmt.Errorf("Not a valid Entry Credit Address")
 	}
-	
+
 	if b, err := factom.FctBalance(addr); err != nil {
 		fmt.Println("Address undefined or invalid")
 		return err
 	} else {
-		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
+		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimalToPaddedString(uint64(b)))
 	}
 
 	return nil
