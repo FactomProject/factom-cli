@@ -94,7 +94,10 @@ factom-cli [options] [subcommand]
                             the user will pay.  Some additional error 
                             checking is done as well, with messages 
                             provided to the user.
-    
+
+    properties              Returns information about factomd, fctwallet,
+                            the Protocol version, the version of this CLI,
+                            and more.
 `
 
 // man returns an usage error string for the specified sub command.
@@ -122,6 +125,7 @@ func man(s string) {
 		"addecoutput":    "factom-cli addecoutput key name|address amount",
 		"validate":       "factom-cli validate key",
 		"submit":         "factom-cli submit key",
+		"properties":     "factom-cli properties",
 		"put":            "factom-cli put [-e extid ...] name <stdin>",
 		"default":        "More Help can be found by typing:\n\n  factom-cli help",
 	}
