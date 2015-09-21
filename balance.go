@@ -61,7 +61,7 @@ func fctbalance(addr string) error {
 	}
 	
 	if b, err := factom.FctBalance(addr); err != nil {
-		fmt.Println("Address undefined or invalid")
+		fmt.Println("Address undefined or invalid: "+err.Error())
 		return err
 	} else {
 		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
