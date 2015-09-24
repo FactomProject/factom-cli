@@ -75,6 +75,15 @@ factom-cli [options] [subcommand]
                             transaction.  If no transaction is provided,
                             then the cost of an Entry Credit is returned.
     
+    addfee trans address    Adds the needed fee to the given transaction.
+                            The address specified must be an input to
+                            the transaction, and it must have a balance
+                            able to cover the additional fee. Also, the
+                            inputs must exactly balance the outputs, 
+                            since the logic to understand what to do
+                            otherwise is quite complicated, and prone
+                            to odd behavior.
+    
     sign key                Sign the transaction specified by the key
     
     submit key              Submit the transaction specified by the key
