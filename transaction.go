@@ -203,6 +203,31 @@ func gettransactions(args []string) {
 	return
 }
 
+func getlist(args [] string) {
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) < 1 {
+		fmt.Println("Nothing to List.  Consider list transactions, or list transactions addr.")
+		return
+	}
+	var list string 
+	if len(args) == 0 {
+		list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactions/",serverFct)
+	}else if len(args)==1 && args[0] == "all" {
+		list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactions/?cmd=all",serverFct)
+	}else if len(args)==1 {
+		list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactions/?address=%s",serverFct,args[0])
+	}else {
+		fmt.Println("Did not understand the arguments.  Proper syntax is either list by itself,\n")
+		fmt.Println("Did not understand the arguments.  Proper syntax is either list by itself,\n")
+		fmt.Println("list <address> where <address> can be any valid Factoid or Entry Credit\n")
+		fmt.Println("address\n")
+	}
+	postCmd(list)
+	return
+}
+
 func fctnewtrans(args []string) {
 	os.Args = args
 	flag.Parse()

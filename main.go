@@ -88,6 +88,8 @@ func main() {
 		fctaddfee(args)
 	case "properties":
 		fctproperties(args)
+	case "list":
+		getlist(args)
 	default:
 		fmt.Println("Command not found")
 		man("default")
