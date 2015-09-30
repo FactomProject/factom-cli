@@ -97,7 +97,7 @@ factom-cli [options] [subcommand]
                             command also returns the balances at each 
                             address.
    
-    transactions            Prints information about transactions.
+    transactions            Prints information about pending transactions.
                             Returns a list of all the transactions being
                             constructed by the user.  It shows the fee
                             required (at this point) as well as the fee 
@@ -105,10 +105,10 @@ factom-cli [options] [subcommand]
                             checking is done as well, with messages 
                             provided to the user.
 
-    list  [address]         List transactions. If no address is specified, 
-                            list dumps all Factoid Transactions to date.
-        address             Dumps all Factoid Transactions that use the
-                            given address as an input or an output
+    list                    List confirmed transactions' details. 
+         [address]          Dumps all Factoid transactions that use the 
+                            given address as an input or an output.
+         all                Dumps all Factoid transactions to date.
 
     properties              Returns information about factomd, fctwallet,
                             the Protocol version, the version of this CLI,

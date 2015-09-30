@@ -208,7 +208,7 @@ func getlist(args [] string) {
 	flag.Parse()
 	args = flag.Args()
 	if len(args) < 1 {
-		fmt.Println("Nothing to List.  Consider list transactions, or list transactions addr.")
+		fmt.Println("Nothing to List.  Consider list all, or list [address].")
 		return
 	}
 	var list string 
