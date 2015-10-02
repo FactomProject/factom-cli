@@ -226,6 +226,31 @@ func getlist(args [] string) {
 	return
 }
 
+func getlistj(args [] string) {
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) < 1 {
+		fmt.Println("Nothing to List.  Consider 'list all', or 'list [address]'.")
+		return
+	}
+	var list string 
+	if len(args) == 0 {
+		list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactionsj/",serverFct)
+	}else if len(args)==1 && args[0] == "all" {
+		list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactionsj/?cmd=all",serverFct)
+	}else if len(args)==1 {
+		list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactionsj/?address=%s",serverFct,args[0])
+	}else {
+		fmt.Println("Did not understand the arguments.  Proper syntax is either 'list all' or")
+		fmt.Println("'list <address>' where <address> can be a valid Factoid or Entry Credit address")
+	}
+	postCmd(list)
+	return
+}
+
+
+
 func fctnewtrans(args []string) {
 	os.Args = args
 	flag.Parse()

@@ -90,6 +90,8 @@ func main() {
 		fctproperties(args)
 	case "list":
 		getlist(args)
+	case "listj":
+		getlistj(args)
 	default:
 		fmt.Println("Command not found")
 		man("default")
