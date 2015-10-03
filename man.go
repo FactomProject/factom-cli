@@ -13,8 +13,9 @@ factom-cli [options] [subcommand]
         -s                  path to the factomclient. default: localhost:8083    
         
     get
-        head                Get current dbhead
-        dblock keymr        Get dblock by merkle root
+        head                Get the keymr of the last completed directory block
+        height              Get the current directory block height
+        dblock keymr        Get dblock contents by merkle root
         chain chainid       Get ebhead by chainid
         eblock keymr        Get eblock by merkle root
         entry hash          Get entry by hash
@@ -106,6 +107,8 @@ factom-cli [options] [subcommand]
                             provided to the user.
 
     list                    List confirmed transactions' details. 
+         [transaction id]   Lists the confirmed transactions with the given 
+                            transaction id.
          [address]          Dumps all Factoid transactions that use the 
                             given address as an input or an output.
          all                Dumps all Factoid transactions to date.
@@ -122,7 +125,7 @@ func man(s string) {
 		"testcredit":     "factom-cli testcredit [key]",
 		"balance":        "factom-cli balance ec|fct [key]",
 		"buy":            "factom-cli buy #amt",
-		"get":            "factom-cli get head|dblock|chain|eblock|entry",
+		"get":            "factom-cli get head|dblock|height|chain|eblock|entry",
 		"getHead":        "factom-cli get head",
 		"getDBlock":      "factom-cli get dblock [keymr]",
 		"getChain":       "factom-cli get chain [chainid]",
