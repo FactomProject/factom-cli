@@ -26,6 +26,8 @@ func get(args []string) {
 	switch args[0] {
 	case "head":
 		getHead()
+	case "height":
+		getHeight()
 	case "dblock":
 		getDBlock(args)
 	case "chain":
@@ -49,6 +51,16 @@ func getHead() {
 	}
 	fmt.Println(head.KeyMR)
 }
+
+func getHeight() {
+	height, err := factom.GetDBlockHeight()
+	if err != nil {
+		errorln(err)
+		return
+	}
+	fmt.Printf("DirectoryBlockHeight=%d\n",height)
+}
+
 
 // We expect each element to be its own part in a chain ID
 func getChainId(args []string) {
