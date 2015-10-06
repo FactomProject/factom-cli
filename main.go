@@ -15,7 +15,7 @@ var (
 	wallet string
 )
 
-const Version = 1002
+const Version = 1003
 
 
 func main() {
