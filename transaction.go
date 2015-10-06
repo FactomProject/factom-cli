@@ -12,6 +12,7 @@ import (
 	"fmt"
 	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
+	"github.com/FactomProject/fctwallet/Wallet/Utility"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -516,10 +517,15 @@ func fctproperties(args []string) {
 	mid := (Version % 1000000) / 1000
 	low := Version % 1000
 	
-	ret := fmt.Sprintf("factom-cli Version: %d.%d.%d\n",top,mid,low)
+	ret := b.Response + fmt.Sprintf("factom-cli Version: %d.%d.%d\n",top,mid,low)
 
-	fmt.Println(b.Response+ret)
-
+	total,err := Utility.TotalFactoids()
+	if err == nil {	
+		ret = ret+ fmt.Sprintf("    Total Factoids: %s", strings.TrimSpace(fct.ConvertDecimal(total)))
+	}
+	
+	fmt.Println(ret)
+	
 }
 
 func fctsign(args []string) {
