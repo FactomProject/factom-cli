@@ -15,6 +15,9 @@ var (
 	wallet string
 )
 
+const Version = 1001
+
+
 func main() {
 	cfg := ReadConfig().Main
 	server = cfg.Server
@@ -83,6 +86,8 @@ func main() {
 		fctgetfee(args)
 	case "addfee":
 		fctaddfee(args)
+	case "properties":
+		fctproperties(args)
 	default:
 		fmt.Println("Command not found")
 		man("default")

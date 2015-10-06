@@ -432,6 +432,48 @@ func fctgetfee(args []string) {
 	}
 }
 
+func fctproperties(args []string) {
+	
+	getproperties := fmt.Sprintf("http://%s/v1/properties/", serverFct)	
+	
+	resp, err := http.Get(getproperties)
+	
+	if err != nil {
+		fmt.Println("Get Properties failed")
+		os.Exit(1)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Failed to understand response from fctwallet")
+		os.Exit(1)
+	}
+	resp.Body.Close()
+	
+	// We pull the fee.  If the fee isn't positive, or if we fail to marshal, then there is a failure
+	type x struct {
+		Response string
+		Success  bool
+	}
+	
+	b := new(x)
+	if err := json.Unmarshal(body, b); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	} else if !b.Success {
+		fmt.Println(b.Response)
+		os.Exit(1)
+	}
+	
+	top := Version/1000000
+	mid := (Version % 1000000) / 1000
+	low := Version % 1000
+	
+	ret := fmt.Sprintf("factom-cli Version: %d.%d.%d\n",top,mid,low)
+
+	fmt.Println(b.Response+ret)
+
+}
+
 func fctsign(args []string) {
 	os.Args = args
 	flag.Parse()
