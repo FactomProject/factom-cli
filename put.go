@@ -61,6 +61,12 @@ func put(args []string) {
 		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
 	}
 
+	// Make sure the Chain exists for the.
+	if _, err := factom.GetChainHead(e.ChainID); err != nil {
+		errorln("Chain:", e.ChainID, "does not exist")
+		return
+	}
+
 	// Entry.Content is read from stdin
 	if p, err := ioutil.ReadAll(os.Stdin); err != nil {
 		errorln(err)
