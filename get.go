@@ -36,6 +36,8 @@ func get(args []string) {
 		getEBlock(args)
 	case "entry":
 		getEntry(args)
+	case "firstentry":
+		getFirstEntry(args)
 	case "chainid":
 		getChainId(args)
 	default:
@@ -174,12 +176,35 @@ func getEntry(args []string) {
 		return
 	}
 
-	fmt.Println("ChainID:", entry.ChainID)
-	for _, v := range entry.ExtIDs {
-		fmt.Println("ExtID:", v)
+	printEntry(entry)
+}
+
+func getFirstEntry(args []string) {
+	os.Args = args
+	flag.Parse()
+	args = flag.Args()
+	if len(args) < 1 {
+		man("getFirstEntry")
+		return
+	}
+
+	chainid := args[0]
+	entry, err := factom.GetFirstEntry(chainid)
+	if err != nil {
+		errorln(err)
+		return
+	}
+	printEntry(entry)
+}
+
+func printEntry(e *factom.Entry) {
+	fmt.Println("ChainID:", e.ChainID)
+	for _, v := range e.ExtIDs {
+		p, _ := hex.DecodeString(v)
+		fmt.Println("ExtID:", string(p))
 	}
 	
-	data, _ := hex.DecodeString(entry.Content)
+	data, _ := hex.DecodeString(e.Content)
 	fmt.Println("Content:")
 	fmt.Println(string(data))
 }

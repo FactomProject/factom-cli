@@ -19,6 +19,7 @@ factom-cli [options] [subcommand]
         chain chainid       Get ebhead by chainid
         eblock keymr        Get eblock by merkle root
         entry hash          Get entry by hash
+        firstentry chainid  Get the first entry in a chain
         
     help [command]          Print help message for a sub-command
 
@@ -130,10 +131,11 @@ func man(s string) {
 		"getDBlock":      "factom-cli get dblock [keymr]",
 		"getChain":       "factom-cli get chain [chainid]",
 		"getEBlock":      "factom-cli get eblock [keymr]",
+		"getEntry":       "factom-cli get entry [hash]",
+		"getFirstEntry":  "factom-cli get firstentry [chainid]",
 		"getaddresses":   "factom-cli getaddresses|balances",
 		"balances":       "factom-cli getaddresses|balances",
 		"transactions":   "factom-cli transactions",
-		"getentry":       "factom-cli get entry [hash]",
 		"help":           usage,
 		"mkchain":        "factom-cli mkchain [-e extid ...] name <stdin>",
 		"genfactoidaddr": "factom-cli genfactoidaddr name",

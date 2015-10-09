@@ -72,6 +72,12 @@ func put(args []string) {
 		e.Content = hex.EncodeToString(p)
 	}
 
+	// Make sure the Chain exists before writing the Entry
+	if _, err := factom.GetChainHead(e.ChainID); err != nil {
+		errorln("Chain:", e.ChainID, "does not exist")
+		return
+	}
+
 	fmt.Printf("Creating Entry: %x\n", e.Hash())
 	if err := factom.CommitEntry(e, name); err != nil {
 		errorln(err)
