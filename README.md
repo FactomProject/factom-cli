@@ -27,7 +27,7 @@ Submiting arbitrary data to factom:
 
 Submitting a file:
 
-	$ factom-cli -s "facom.org/demo" -c <my chainid> -e filename <file
+	$ factom-cli -s "factom.org/demo" -c <my chainid> -e filename <file
 
 Getting a list of all Factom and Entry Credit addresses and balances in your wallet:
 
