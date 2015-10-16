@@ -199,12 +199,10 @@ func getFirstEntry(args []string) {
 
 func printEntry(e *factom.Entry) {
 	fmt.Println("ChainID:", e.ChainID)
-	for _, v := range e.ExtIDs {
-		p, _ := hex.DecodeString(v)
-		fmt.Println("ExtID:", string(p))
+	for _, id := range e.ExtIDs {
+		fmt.Println("ExtID:", string(id))
 	}
 	
-	data, _ := hex.DecodeString(e.Content)
 	fmt.Println("Content:")
-	fmt.Println(string(data))
+	fmt.Println(string(e.Content))
 }

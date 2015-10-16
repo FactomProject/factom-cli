@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -54,11 +53,11 @@ func put(args []string) {
 		e.ChainID = *cid
 	}
 	if econf.Extid != "" {
-		e.ExtIDs = append(e.ExtIDs, econf.Extid)
+		e.ExtIDs = append(e.ExtIDs, []byte(econf.Extid))
 	}
 
 	for _, v := range eids {
-		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
+		e.ExtIDs = append(e.ExtIDs, []byte(v))
 	}
 
 	// Entry.Content is read from stdin
@@ -69,7 +68,7 @@ func put(args []string) {
 		errorln(fmt.Errorf("Entry of %d bytes is too large", size))
 		return
 	} else {
-		e.Content = hex.EncodeToString(p)
+		e.Content = p
 	}
 
 	// Make sure the Chain exists before writing the Entry

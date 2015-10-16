@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -32,8 +31,8 @@ func mkchain(args []string) {
 
 	e := factom.NewEntry()
 
-	for _, v := range eids {
-		e.ExtIDs = append(e.ExtIDs, hex.EncodeToString([]byte(v)))
+	for _, id := range eids {
+		e.ExtIDs = append(e.ExtIDs, []byte(id))
 	}
 
 	// Entry.Content is read from stdin
@@ -44,7 +43,7 @@ func mkchain(args []string) {
 		errorln(fmt.Errorf("Entry of %d bytes is too large", size))
 		return
 	} else {
-		e.Content = hex.EncodeToString(p)
+		e.Content = p
 	}
 
 	c := factom.NewChain(e)
