@@ -89,17 +89,7 @@ var getDBlock = func() *fctCmd {
 			errorln(err)
 			return
 		}
-	
-		fmt.Println("PrevBlockKeyMR:", dblock.Header.PrevBlockKeyMR)
-		fmt.Println("Timestamp:", dblock.Header.Timestamp)
-		fmt.Println("SequenceNumber:", dblock.Header.SequenceNumber)
-	
-		for _, v := range dblock.EntryBlockList {
-			fmt.Println("EntryBlock {")
-			fmt.Println("	ChainID", v.ChainID)
-			fmt.Println("	KeyMR", v.KeyMR)
-			fmt.Println("}")
-		}
+		fmt.Println(dblock)
 	}
 	return cmd
 }()
@@ -148,18 +138,7 @@ var getEBlock = func() *fctCmd {
 			errorln(err)
 			return
 		}
-	
-		fmt.Println("BlockSequenceNumber:", eblock.Header.BlockSequenceNumber)
-		fmt.Println("ChainID:", eblock.Header.ChainID)
-		fmt.Println("PrevKeyMR:", eblock.Header.PrevKeyMR)
-		fmt.Println("Timestamp:", eblock.Header.Timestamp)
-	
-		for _, v := range eblock.EntryList {
-			fmt.Println("EBEntry {")
-			fmt.Println("	Timestamp", v.Timestamp)
-			fmt.Println("	EntryHash", v.EntryHash)
-			fmt.Println("}")
-		}
+		fmt.Println(eblock)
 	}
 	return cmd
 }()
@@ -183,8 +162,7 @@ var getEntry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-	
-		printEntry(entry)
+		fmt.Println(entry)
 	}
 	return cmd
 }()
@@ -208,20 +186,10 @@ var getFirstEntry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		printEntry(entry)
+		fmt.Println(entry)
 	}
 	return cmd
 }()
-
-func printEntry(e *factom.Entry) {
-	fmt.Println("ChainID:", e.ChainID)
-	for _, id := range e.ExtIDs {
-		fmt.Println("ExtID:", string(id))
-	}
-	
-	fmt.Println("Content:")
-	fmt.Println(string(e.Content))
-}
 
 // TODO - replace getChainId with something
 // We expect each element to be its own part in a chain ID
