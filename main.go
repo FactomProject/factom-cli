@@ -47,7 +47,7 @@ func main() {
 
 	c := cli.New()
 	c.Handle("get", get)
-//	c.Handle("help", help)
+//	c.Handle("help", help)	// TODO
 	c.Handle("mkchain", mkchain)
 	c.Handle("put", put)
 	c.Handle("newaddress", generateaddress)

@@ -296,7 +296,7 @@ var fctnewtrans = func() *fctCmd {
 
 var fctdeletetrans = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli deletetransaction key"
+	cmd.helpMsg = "factom-cli deletetransaction transaction"
 	cmd.description = "Delete the specified transaction in flight."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
