@@ -39,15 +39,15 @@ var put = func() *fctCmd {
 		flag.Var(&eids, "e", "external id for the entry")
 		flag.Parse()
 		args = flag.Args()
-	
+
 		if len(args) < 1 {
-			man("put")
+			fmt.Println(cmd.helpMsg)
 			return
 		}
 		name := args[0]
-	
+
 		e := factom.NewEntry()
-	
+
 		// use the default chainid and extids from the config file
 		econf := ReadConfig().Entry
 		if econf.Chainid != "" {
@@ -59,11 +59,11 @@ var put = func() *fctCmd {
 		if econf.Extid != "" {
 			e.ExtIDs = append(e.ExtIDs, []byte(econf.Extid))
 		}
-	
+
 		for _, v := range eids {
 			e.ExtIDs = append(e.ExtIDs, []byte(v))
 		}
-	
+
 		// Entry.Content is read from stdin
 		if p, err := ioutil.ReadAll(os.Stdin); err != nil {
 			errorln(err)
@@ -74,13 +74,13 @@ var put = func() *fctCmd {
 		} else {
 			e.Content = p
 		}
-	
+
 		// Make sure the Chain exists before writing the Entry
 		if _, err := factom.GetChainHead(e.ChainID); err != nil {
 			errorln("Chain:", e.ChainID, "does not exist")
 			return
 		}
-	
+
 		fmt.Printf("Creating Entry: %x\n", e.Hash())
 		if err := factom.CommitEntry(e, name); err != nil {
 			errorln(err)
@@ -91,7 +91,7 @@ var put = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 	}
 	return cmd
 }()
