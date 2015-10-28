@@ -13,59 +13,71 @@ import (
 	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
+	"github.com/FactomProject/cli"
 )
 
 // balance prints the current balance of the specified address
-func balance(args []string) error {
-	os.Args = args
-	flag.Parse()
-	args = flag.Args()
-	if len(args) < 2 {
-		fmt.Println("Too few arguments")
-		man("balance")
-		return fmt.Errorf("Too Few Arguments")
-	}
-
-	switch args[0] {
-	case "ec":
-		return ecbalance(args[1])
-	case "fct":
-		return fctbalance(args[1])
-	default:
-		fmt.Println("Must specify an address type, either 'ec' or 'fct'")
-		man("balance")
-		return fmt.Errorf("")
-	}
-
-}
-
-func ecbalance(addr string) error {
-	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"FA") {
-		fmt.Println("Not a valid Entry Credit Address")
-		return fmt.Errorf("Not a valid Entry Credit Address")
-	}
-	if b, err := factom.ECBalance(addr); err != nil {
-		fmt.Println("Address undefined or invalid")
-		return err
-	} else {
-		fmt.Println("Balance of ", addr, " = ", b)
-	}
-
-	return nil
-}
-
-func fctbalance(addr string) error {
-	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"EC") {
-		fmt.Println("Not a valid Entry Credit Address")
-		return fmt.Errorf("Not a valid Entry Credit Address")
-	}
+var balance = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli balance ec|fct [key]"
+	cmd.description = "If this is an ec balance, returns number of entry credits. If this is a Factoid balance, returns the factoids at that address."
+	cmd.execFunc = func(args []string) {	
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
 	
-	if b, err := factom.FctBalance(addr); err != nil {
-		fmt.Println("Address undefined or invalid: "+err.Error())
-		return err
-	} else {
-		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
+		c := cli.New()
+		c.Handle("ec", ecBalance)
+		c.Handle("fct", fctBalance)
+		c.HandleDefaultFunc(func(args []string) {
+			fmt.Println(cmd.helpMsg)
+		})
+		c.Execute(args)
 	}
+	return cmd
+}()
 
-	return nil
-}
+var ecBalance = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli balance ec [addr]"
+	cmd.description = "Return number of entry credits at the address"
+	cmd.execFunc = func(args []string) {
+		var addr string
+		if len(args) >= 2 {
+			addr = args[1]
+		}
+		
+		if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"FA") {
+			fmt.Println("Not a valid Entry Credit Address")
+		}
+		if b, err := factom.ECBalance(addr); err != nil {
+			fmt.Println("Address undefined or invalid")
+		} else {
+			fmt.Println("Balance of ", addr, " = ", b)
+		}
+	}
+	return cmd
+}()
+
+var fctBalance = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli balance fct [addr]"
+	cmd.description = "Return number of factoids at the address"
+	cmd.execFunc = func(args []string) {	
+		var addr string
+		if len(args) >= 2 {
+			addr = args[1]
+		}
+		
+		if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"EC") {
+			fmt.Println("Not a valid Entry Credit Address")
+		}
+		
+		if b, err := factom.FctBalance(addr); err != nil {
+			fmt.Println("Address undefined or invalid")
+		} else {
+			fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
+		}
+	}
+	return cmd
+}()

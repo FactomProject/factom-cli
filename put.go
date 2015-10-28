@@ -26,65 +26,72 @@ func (e *extids) Set(s string) error {
 }
 
 // put commits then reveals an entry to factomd
-func put(args []string) {
-	os.Args = args
-	var (
-		cid  = flag.String("c", "", "hex encoded chainid for the entry")
-		eids extids
-	)
-	flag.Var(&eids, "e", "external id for the entry")
-	flag.Parse()
-	args = flag.Args()
-
-	if len(args) < 1 {
-		man("put")
-		return
+var put = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli put [-e extid ...] name <stdin>"
+	cmd.description = "Read data from stdin and write to factom. Use the entry credits from the named entry credit address."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		var (
+			cid  = flag.String("c", "", "hex encoded chainid for the entry")
+			eids extids
+		)
+		flag.Var(&eids, "e", "external id for the entry")
+		flag.Parse()
+		args = flag.Args()
+	
+		if len(args) < 1 {
+			man("put")
+			return
+		}
+		name := args[0]
+	
+		e := factom.NewEntry()
+	
+		// use the default chainid and extids from the config file
+		econf := ReadConfig().Entry
+		if econf.Chainid != "" {
+			e.ChainID = econf.Chainid
+		}
+		if *cid != "" {
+			e.ChainID = *cid
+		}
+		if econf.Extid != "" {
+			e.ExtIDs = append(e.ExtIDs, []byte(econf.Extid))
+		}
+	
+		for _, v := range eids {
+			e.ExtIDs = append(e.ExtIDs, []byte(v))
+		}
+	
+		// Entry.Content is read from stdin
+		if p, err := ioutil.ReadAll(os.Stdin); err != nil {
+			errorln(err)
+			return
+		} else if size := len(p); size > 10240 {
+			errorln(fmt.Errorf("Entry of %d bytes is too large", size))
+			return
+		} else {
+			e.Content = p
+		}
+	
+		// Make sure the Chain exists before writing the Entry
+		if _, err := factom.GetChainHead(e.ChainID); err != nil {
+			errorln("Chain:", e.ChainID, "does not exist")
+			return
+		}
+	
+		fmt.Printf("Creating Entry: %x\n", e.Hash())
+		if err := factom.CommitEntry(e, name); err != nil {
+			errorln(err)
+			return
+		}
+		time.Sleep(10 * time.Second)
+		if err := factom.RevealEntry(e); err != nil {
+			errorln(err)
+			return
+		}
+		
 	}
-	name := args[0]
-
-	e := factom.NewEntry()
-
-	// use the default chainid and extids from the config file
-	econf := ReadConfig().Entry
-	if econf.Chainid != "" {
-		e.ChainID = econf.Chainid
-	}
-	if *cid != "" {
-		e.ChainID = *cid
-	}
-	if econf.Extid != "" {
-		e.ExtIDs = append(e.ExtIDs, []byte(econf.Extid))
-	}
-
-	for _, v := range eids {
-		e.ExtIDs = append(e.ExtIDs, []byte(v))
-	}
-
-	// Entry.Content is read from stdin
-	if p, err := ioutil.ReadAll(os.Stdin); err != nil {
-		errorln(err)
-		return
-	} else if size := len(p); size > 10240 {
-		errorln(fmt.Errorf("Entry of %d bytes is too large", size))
-		return
-	} else {
-		e.Content = p
-	}
-
-	// Make sure the Chain exists before writing the Entry
-	if _, err := factom.GetChainHead(e.ChainID); err != nil {
-		errorln("Chain:", e.ChainID, "does not exist")
-		return
-	}
-
-	fmt.Printf("Creating Entry: %x\n", e.Hash())
-	if err := factom.CommitEntry(e, name); err != nil {
-		errorln(err)
-		return
-	}
-	time.Sleep(10 * time.Second)
-	if err := factom.RevealEntry(e); err != nil {
-		errorln(err)
-		return
-	}
-}
+	return cmd
+}()

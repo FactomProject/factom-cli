@@ -174,20 +174,23 @@ func generateaddress(args []string) {
 
 }
 
-func getaddresses(args []string) {
-	os.Args = args
-	flag.Parse()
-	args = flag.Args()
-	if len(args) > 0 {
-		man("getaddresses")
-		os.Exit(1)
+var getaddresses = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli getaddresses|balances"
+	cmd.description = "Returns the list of addresses known to the wallet. Returns the name that can be used tied to each address, as well as the base 58 address (which is the actual address). This command also returns the balances at each address."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+		if len(args) > 0 {
+			fmt.Println(cmd.helpMsg)
+		}
+	
+		str := fmt.Sprintf("http://%s/v1/factoid-get-addresses/", serverFct)
+		getCmd(str, "Error printing addresses")
 	}
-
-	str := fmt.Sprintf("http://%s/v1/factoid-get-addresses/", serverFct)
-	getCmd(str, "Error printing addresses")
-
-	return
-}
+	return cmd
+}()
 
 func gettransactions(args []string) {
 	os.Args = args

@@ -8,6 +8,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	
+	"github.com/FactomProject/cli"
 )
 
 var (
@@ -16,7 +18,6 @@ var (
 )
 
 const Version = 1003
-
 
 func main() {
 	cfg := ReadConfig().Main
@@ -44,58 +45,33 @@ func main() {
 		args = append(args, "help")
 	}
 
-	switch args[0] {
-
-	case "get":
-		get(args)
-	case "help":
-		help(args)
-	case "mkchain":
-		mkchain(args)
-	case "put":
-		put(args)
-	// two commands for the same thing
-	case "newaddress":
-		generateaddress(args)
-	case "generateaddress":
-		generateaddress(args)
-	// two commands for the same thing
-	case "balances":
-		getaddresses(args)
-	case "getaddresses":
-		getaddresses(args)
-	case "transactions":
-		gettransactions(args)
-	case "balance":
-		balance(args)
-	case "newtransaction":
-		fctnewtrans(args)
-	case "deletetransaction":
-		fctdeletetrans(args)
-	case "addinput":
-		fctaddinput(args)
-	case "addoutput":
-		fctaddoutput(args)
-	case "addecoutput":
-		fctaddecoutput(args)
-	case "sign":
-		fctsign(args)
-	case "submit":
-		fctsubmit(args)
-	case "getfee":
-		fctgetfee(args)
-	case "addfee":
-		fctaddfee(args)
-	case "properties":
-		fctproperties(args)
-	case "list":
-		getlist(args)
-	case "listj":
-		getlistj(args)
-	default:
-		fmt.Println("Command not found")
-		man("default")
-	}
+	c := cli.New()
+	c.Handle("get", get)
+//	c.Handle("help", help)
+	c.Handle("mkchain", mkchain)
+	c.Handle("put", put)
+//	c.Handle("newaddress", generateaddress)
+//	c.Handle("generateaddress", generateaddress)
+	c.Handle("balances", getaddresses)
+	c.Handle("getaddresses", getaddresses)
+//	c.Handle("transactions", transactions)
+	c.Handle("balance", balance)
+//	c.Handle("newtransaction", fctnewtrans)
+//	c.Handle("deletetransaction", fctdeletetrans)
+//	c.Handle("addinput", fctaddinput)
+//	c.Handle("addoutput", fctaddoutput)
+//	c.Handle("addecoutput", fctaddecoutput)
+//	c.Handle("sign", fctsign)
+//	c.Handle("submit", fctsubmit)
+//	c.Handle("getfee", fctgetfee)
+//	c.Handle("addfee", fctaddfee)
+//	c.Handle("properties", fctproperties)
+//	c.Handle("list", getlist)
+//	c.Handle("listj", getlistj)
+	c.HandleDefaultFunc(func(args []string) {
+		fmt.Println("DEBUG: default func triggered")
+	})
+	c.Execute(args)
 }
 
 func errorln(a ...interface{}) (n int, err error) {
