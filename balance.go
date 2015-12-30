@@ -9,9 +9,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
+	"github.com/FactomProject/factomd/common/primitives"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
@@ -64,7 +63,7 @@ func fctbalance(addr string) error {
 		fmt.Println("Address undefined or invalid: "+err.Error())
 		return err
 	} else {
-		fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimalToPaddedString(uint64(b)))
+		fmt.Println("Balance of ", addr, " = ", primitives.ConvertDecimalToPaddedString(uint64(b)))
 	}
 
 	return nil
