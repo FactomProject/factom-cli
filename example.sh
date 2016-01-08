@@ -24,9 +24,6 @@ fi
 
 echo "Using the cli to write new data into Factom"
 
-echo "Setup the Wallet"
-factom-cli setup Setup_For_example.sh
-
 echo "creating factoid and entry credit addresses"
 factom-cli generateaddress ec app
 

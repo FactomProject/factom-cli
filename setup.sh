@@ -1,4 +1,3 @@
-factom-cli setup sjdflkajflkasjkfoiewrtuoewuljalvldklfjla
 
 factom-cli generateaddress ec ec01
 factom-cli generateaddress ec ec02

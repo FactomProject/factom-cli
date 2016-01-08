@@ -1,11 +1,5 @@
 echo "
 #=====================================================================#
-#   Setting up the Wallet                                             #
-#=====================================================================#"
-factom-cli setup trans.sh
-
-echo "
-#=====================================================================#
 #   If the addresses bill, bob, dan, sally and jane are already       #
 #   created, this script will give 'Generation Failed' errors.        #
 #                                                                     #
