@@ -40,6 +40,9 @@ func put(args []string) {
 		man("put")
 		return
 	}
+
+	factom.SetServer(server)
+
 	name := args[0]
 
 	e := factom.NewEntry()

@@ -40,6 +40,8 @@ func balance(args []string) error {
 }
 
 func ecbalance(addr string) error {
+	factom.SetServer(server)
+
 	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"FA") {
 		fmt.Println("Not a valid Entry Credit Address")
 		return fmt.Errorf("Not a valid Entry Credit Address")
@@ -55,6 +57,8 @@ func ecbalance(addr string) error {
 }
 
 func fctbalance(addr string) error {
+	factom.SetServer(server)
+
 	if Utility.IsValidAddress(addr) && strings.HasPrefix(addr,"EC") {
 		fmt.Println("Not a valid Entry Credit Address")
 		return fmt.Errorf("Not a valid Entry Credit Address")

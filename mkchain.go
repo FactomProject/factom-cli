@@ -27,6 +27,9 @@ func mkchain(args []string) {
 		man("mkchain")
 		return
 	}
+
+	factom.SetServer(server)
+
 	name := args[0]
 
 	e := factom.NewEntry()

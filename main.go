@@ -45,7 +45,6 @@ func main() {
 	}
 
 	switch args[0] {
-
 	case "get":
 		get(args)
 	case "help":

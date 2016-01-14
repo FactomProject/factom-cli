@@ -22,6 +22,8 @@ func get(args []string) {
 		man("get")
 		return
 	}
+	
+	factom.SetServer(server)
 
 	switch args[0] {
 	case "head":

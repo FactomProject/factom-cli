@@ -109,6 +109,8 @@ func generateaddress(args []string) {
 		os.Exit(1)
 	}
 
+	factom.SetServer(server)
+
 	msg, valid := ValidateKey(args[1])
 	if !valid {
 		fmt.Println(msg)
