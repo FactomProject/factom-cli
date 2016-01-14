@@ -122,7 +122,6 @@ factom-cli [options] [subcommand]
 // man returns an usage error string for the specified sub command.
 func man(s string) {
 	m := map[string]string{
-		"setup":          "factom-cli setup seed",
 		"testcredit":     "factom-cli testcredit [key]",
 		"balance":        "factom-cli balance ec|fct [key]",
 		"buy":            "factom-cli buy #amt",
