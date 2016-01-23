@@ -10,6 +10,7 @@ import (
 	"os"
 	
 	"github.com/FactomProject/cli"
+	"github.com/FactomProject/factom"
 )
 
 var (
@@ -44,6 +45,8 @@ func main() {
 	if len(args) == 0 {
 		args = append(args, "help")
 	}
+	
+	factom.SetServer(server)
 
 	c := cli.New()
 	c.Handle("get", get)
