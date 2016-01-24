@@ -34,6 +34,7 @@ var balance = func() *fctCmd {
 		})
 		c.Execute(args)
 	}
+	help.Add("balance", cmd)
 	return cmd
 }()
 
@@ -56,6 +57,7 @@ var ecBalance = func() *fctCmd {
 			fmt.Println("Balance of ", addr, " = ", b)
 		}
 	}
+	help.Add("balance ec", cmd)
 	return cmd
 }()
 
@@ -79,5 +81,6 @@ var fctBalance = func() *fctCmd {
 			fmt.Println("Balance of ", addr, " = ", fct.ConvertDecimal(uint64(b)))
 		}
 	}
+	help.Add("balance fct", cmd)
 	return cmd
 }()

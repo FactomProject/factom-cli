@@ -93,5 +93,6 @@ var put = func() *fctCmd {
 		}
 
 	}
+	help.Add("put", cmd)
 	return cmd
 }()

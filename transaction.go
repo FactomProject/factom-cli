@@ -174,6 +174,7 @@ var generateaddress = func() *fctCmd {
 
 		fmt.Println(args[0], " = ", Addr)
 	}
+	help.Add("generateaddress", cmd)
 	return cmd
 }()
 
@@ -192,6 +193,8 @@ var getaddresses = func() *fctCmd {
 		str := fmt.Sprintf("http://%s/v1/factoid-get-addresses/", serverFct)
 		getCmd(str, "Error printing addresses")
 	}
+	help.Add("getaddress", cmd)
+	help.Add("balances", cmd)
 	return cmd
 }()
 
@@ -211,6 +214,7 @@ var transactions = func() *fctCmd {
 		str := fmt.Sprintf("http://%s/v1/factoid-get-transactions/", serverFct)
 		getCmd(str, "Error Getting Transactions")
 	}
+	help.Add("transactions", cmd)
 	return cmd
 }()
 
@@ -239,6 +243,7 @@ var getlist = func() *fctCmd {
 		}
 		postCmd(list)
 	}
+	help.Add("list", cmd)
 	return cmd
 }()
 
@@ -267,6 +272,7 @@ var getlistj = func() *fctCmd {
 		}
 		postCmd(list)
 	}
+	help.Add("listj", cmd)
 	return cmd
 }()
 
@@ -291,6 +297,7 @@ var fctnewtrans = func() *fctCmd {
 		str := fmt.Sprintf("http://%s/v1/factoid-new-transaction/%s", serverFct, args[0])
 		postCmd(str)
 	}
+	help.Add("newtransaction", cmd)
 	return cmd
 }()
 
@@ -315,6 +322,7 @@ var fctdeletetrans = func() *fctCmd {
 		str := fmt.Sprintf("http://%s/v1/factoid-delete-transaction/%s", serverFct, args[0])
 		postCmd(str)
 	}
+	help.Add("deletetransaction", cmd)
 	return cmd
 }()
 
@@ -342,6 +350,7 @@ var fctaddfee = func() *fctCmd {
 			serverFct, args[0], args[1])
 		postCmd(str)
 	}
+	help.Add("addfee", cmd)
 	return cmd
 }()
 
@@ -387,6 +396,7 @@ var fctaddinput = func() *fctCmd {
 			serverFct, args[0], args[1], amt)
 		postCmd(str)
 	}
+	help.Add("addinput", cmd)
 	return cmd
 }()
 
@@ -434,6 +444,7 @@ var fctaddoutput = func() *fctCmd {
 			serverFct, args[0], args[1], amt)
 		postCmd(str)
 	}
+	help.Add("addoutput", cmd)
 	return cmd
 }()
 
@@ -480,6 +491,7 @@ var fctaddecoutput = func() *fctCmd {
 			serverFct, args[0], args[1], amt)
 		postCmd(str)
 	}
+	help.Add("addecoutput", cmd)
 	return cmd
 }()
 
@@ -529,6 +541,7 @@ var fctgetfee = func() *fctCmd {
 			fmt.Printf("The fee due for this transaction is %s Factoids\n", b.Response)
 		}
 	}
+	help.Add("getfee", cmd)
 	return cmd
 }()
 
@@ -580,6 +593,7 @@ var fctproperties = func() *fctCmd {
 
 		fmt.Println(ret)
 	}
+	help.Add("properties", cmd)
 	return cmd
 }()
 
@@ -607,6 +621,7 @@ var fctsign = func() *fctCmd {
 		postCmd(str)
 
 	}
+	help.Add("sign", cmd)
 	return cmd
 }()
 
@@ -641,5 +656,6 @@ var fctsubmit = func() *fctCmd {
 		str := fmt.Sprintf("http://%s/v1/factoid-submit/%s", serverFct, bytes.NewBuffer(jdata))
 		postCmd(str)
 	}
+	help.Add("submit", cmd)
 	return cmd
 }()

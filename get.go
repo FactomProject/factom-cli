@@ -17,7 +17,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get head|dblock|height|chainhead|eblock|entry"
+	cmd.helpMsg = "factom-cli get head|dblock|height|chain|eblock|entry|firstentry"
 	cmd.description = "get Block or Entry data from factomd"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -28,7 +28,7 @@ var get = func() *fctCmd {
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
-		c.Handle("chainhead", getChainHead)
+		c.Handle("chain", getChainHead)
 		c.Handle("eblock", getEBlock)
 		c.Handle("entry", getEntry)
 		c.Handle("firstentry", getFirstEntry)
@@ -37,6 +37,7 @@ var get = func() *fctCmd {
 		})
 		c.Execute(args)
 	}
+	help.Add("get", cmd)
 	return cmd
 }()
 
@@ -52,6 +53,7 @@ var getHead = func() *fctCmd {
 		}
 		fmt.Println(head.KeyMR)
 	}
+	help.Add("get head", cmd)
 	return cmd
 }()
 
@@ -67,6 +69,7 @@ var getHeight = func() *fctCmd {
 		}
 		fmt.Println(height)
 	}
+	help.Add("get height", cmd)
 	return cmd
 }()
 
@@ -91,12 +94,13 @@ var getDBlock = func() *fctCmd {
 		}
 		fmt.Println(dblock)
 	}
+	help.Add("get dblock", cmd)
 	return cmd
 }()
 
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chainhead [chainid]"
+	cmd.helpMsg = "factom-cli get chain [chainid]"
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -116,6 +120,7 @@ var getChainHead = func() *fctCmd {
 	
 		fmt.Println(chain.ChainHead)
 	}
+	help.Add("get chain", cmd)
 	return cmd
 }()
 
@@ -140,6 +145,7 @@ var getEBlock = func() *fctCmd {
 		}
 		fmt.Println(eblock)
 	}
+	help.Add("get eblock", cmd)
 	return cmd
 }()
 
@@ -164,6 +170,7 @@ var getEntry = func() *fctCmd {
 		}
 		fmt.Println(entry)
 	}
+	help.Add("get entry", cmd)
 	return cmd
 }()
 
@@ -188,26 +195,6 @@ var getFirstEntry = func() *fctCmd {
 		}
 		fmt.Println(entry)
 	}
+	help.Add("get firstentry", cmd)
 	return cmd
 }()
-
-// TODO - replace getChainId with something
-// We expect each element to be its own part in a chain ID
-//func getChainId(args []string) {
-//	if len(args) < 2 {
-//		fmt.Printf("No Chain Specification provided.  See help")
-//	}
-//	sum := sha256.New()
-//	fmt.Println("The chain components:")
-//	for i, str := range args {
-//		if i > 0 {
-//			fmt.Println("    ", str)
-//			x := sha256.Sum256([]byte(str))
-//			sum.Write(x[:])
-//		}
-//	}
-//	chainId := sum.Sum(nil)
-//	fmt.Println("produce the ChainID:")
-//
-//	fmt.Println("    ", hex.EncodeToString(chainId))
-//}

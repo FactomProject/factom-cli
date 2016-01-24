@@ -69,5 +69,6 @@ var mkchain = func() *fctCmd {
 			return
 		}
 	}
+	help.Add("mkchain", cmd)
 	return cmd
 }()

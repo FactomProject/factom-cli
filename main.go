@@ -29,7 +29,7 @@ func main() {
 	var (
 		hflag = flag.Bool("h", false, "help")
 		sflag = flag.String("s", "", "address of api server")
-		wflag = flag.String("w", "", "wallet address")
+		wflag = flag.String("w", "", "address of wallet api server")
 	)
 	flag.Parse()
 	args := flag.Args()
@@ -42,15 +42,15 @@ func main() {
 	if *hflag {
 		args = []string{"help"}
 	}
-	if len(args) == 0 {
-		args = append(args, "help")
-	}
+//	if len(args) == 0 {
+//		args = append(args, "help")
+//	}
 	
 	factom.SetServer(server)
 
 	c := cli.New()
 	c.Handle("get", get)
-//	c.Handle("help", help)	// TODO
+	c.Handle("help", help)
 	c.Handle("mkchain", mkchain)
 	c.Handle("put", put)
 	c.Handle("newaddress", generateaddress)
@@ -71,9 +71,7 @@ func main() {
 	c.Handle("properties", fctproperties)
 	c.Handle("list", getlist)
 	c.Handle("listj", getlistj)
-	c.HandleDefaultFunc(func(args []string) {
-		fmt.Println("DEBUG: default func triggered")
-	})
+	c.HandleDefault(help)
 	c.Execute(args)
 }
 
