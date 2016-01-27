@@ -42,23 +42,20 @@ func main() {
 	if *hflag {
 		args = []string{"help"}
 	}
-//	if len(args) == 0 {
-//		args = append(args, "help")
-//	}
 	
 	factom.SetServer(server)
 
 	c := cli.New()
-	c.Handle("get", get)
 	c.Handle("help", help)
+	c.Handle("get", get)
 	c.Handle("mkchain", mkchain)
 	c.Handle("put", put)
 	c.Handle("newaddress", generateaddress)
 	c.Handle("generateaddress", generateaddress)
 	c.Handle("balances", getaddresses)
+	c.Handle("balance", balance)
 	c.Handle("getaddresses", getaddresses)
 	c.Handle("transactions", transactions)
-	c.Handle("balance", balance)
 	c.Handle("newtransaction", fctnewtrans)
 	c.Handle("deletetransaction", fctdeletetrans)
 	c.Handle("addinput", fctaddinput)

@@ -25,8 +25,7 @@ func (h *helper) Add(s string, c *fctCmd) {
 
 func (h *helper) All() {
 	for _, v := range h.topics {
-		fmt.Println(v.description)
-		fmt.Println(v.helpMsg)
+		fmt.Printf("%s\n\t%s\n\n", v.helpMsg, v.description)
 	}
 }
 
@@ -49,8 +48,7 @@ func (h *helper) Execute(args []string) {
 			return
 		}
 	}
-	fmt.Println(c.description)
-	fmt.Println(c.helpMsg)
+	fmt.Printf("%s\n\t%s\n", c.helpMsg, c.description)
 }
 
 var help = NewHelper()
