@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -24,8 +25,15 @@ func (h *helper) Add(s string, c *fctCmd) {
 }
 
 func (h *helper) All() {
-	for _, v := range h.topics {
-		fmt.Printf("%s\n\t%s\n\n", v.helpMsg, v.description)
+	keys := make([]string, 0)
+	for k := range h.topics {
+		keys = append(keys, k)
+	}
+	
+	sort.Strings(keys)
+	
+	for _, v := range keys {
+		fmt.Printf("%s\n\t%s\n\n", h.topics[v].helpMsg, h.topics[v].description)
 	}
 }
 
