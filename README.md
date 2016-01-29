@@ -27,7 +27,7 @@ Submiting arbitrary data to factom:
 
 Submitting a file:
 
-	$ factom-cli -s "facom.org/demo" -c <my chainid> -e filename <file
+	$ factom-cli -s "factom.org/demo" -c <my chainid> -e filename <file
 
 Getting a list of all Factom and Entry Credit addresses and balances in your wallet:
 
@@ -35,10 +35,10 @@ Getting a list of all Factom and Entry Credit addresses and balances in your wal
 	
 Getting the balance of any address (either by name, or by address):
 
-	$ factom-cli balance MyAddressName
-	$ factom-cli balance FA3Y6ZZbiuCjrQ5WKLFq3GaEi9drsyTJQagFVLmUU5pfPH33Dgqg
-	$ factom-cli balance MyEntryCreditAddress
-	$ factom-cli balance EC2W1KAv9KevaUKqA25978yMU6EJ7yBfygRmzcdpa3oHzYZRKh17
+	$ factom-cli balance fct MyAddressName
+	$ factom-cli balance fct FA3Y6ZZbiuCjrQ5WKLFq3GaEi9drsyTJQagFVLmUU5pfPH33Dgqg
+	$ factom-cli balance ec MyEntryCreditAddress
+	$ factom-cli balance ec EC2W1KAv9KevaUKqA25978yMU6EJ7yBfygRmzcdpa3oHzYZRKh17
 
 Creating and submitting a transaction to move 10 factoids from MyAddress to BobsAddress 
 
