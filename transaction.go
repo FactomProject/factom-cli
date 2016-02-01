@@ -227,7 +227,7 @@ var importaddr = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 		}
 	}
-	help.Add("import", cmd)
+	help.Add("importaddress", cmd)
 	return cmd
 }()
 

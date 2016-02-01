@@ -50,7 +50,7 @@ func main() {
 	c.Handle("get", get)
 	c.Handle("mkchain", mkchain)
 	c.Handle("put", put)
-	c.Handle("import", importaddr)
+	c.Handle("importaddress", importaddr)
 	c.Handle("newaddress", generateaddress)
 	c.Handle("generateaddress", generateaddress)
 	c.Handle("balances", getaddresses)
