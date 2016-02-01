@@ -10,15 +10,17 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	fct "github.com/FactomProject/factoid"
-	"github.com/FactomProject/factom"
-	"github.com/FactomProject/fctwallet/Wallet/Utility"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/FactomProject/cli"
+	"github.com/FactomProject/factoid"
+	"github.com/FactomProject/factom"
+	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
 var _ = hex.EncodeToString
@@ -32,7 +34,7 @@ type Response struct {
 }
 
 func ValidateKey(key string) (msg string, valid bool) {
-	if len(key) > fct.ADDRESS_LENGTH {
+	if len(key) > factoid.ADDRESS_LENGTH {
 		return "Key is too long.  Keys must be less than or equal to 32 characters", false
 	}
 	if badChar.FindStringIndex(key) != nil {
@@ -42,6 +44,47 @@ func ValidateKey(key string) (msg string, valid bool) {
 		return str, false
 	}
 	return "", true
+}
+
+// VerifyAddressType returns a bool success and a string describing the address
+// type
+func VerifyAddressType(address string)(string, bool) {
+  	var resp string = "Not a Valid Factoid Address"
+	var pass bool = false
+  
+  	if (strings.HasPrefix(address,"FA")) {
+		if (factoid.ValidateFUserStr(address)) {
+			resp = "Factoid - Public"
+			pass = true
+		}
+	} else if (strings.HasPrefix(address,"EC")) {
+		if (factoid.ValidateECUserStr(address)) {
+			resp = "Entry Credit - Public"
+			pass = true
+		}
+	} else if (strings.HasPrefix(address,"Fs")) {
+		if (factoid.ValidateFPrivateUserStr(address)) {
+			resp = "Factoid - Private"
+			pass = true
+		}
+	} else if (strings.HasPrefix(address,"Es")) {
+		if (factoid.ValidateECPrivateUserStr(address)) {
+			resp = "Entry Credit - Private"
+			pass = true
+		}
+	} 
+
+
+
+	//  Add Netki resolution here
+	//else if (checkNetki) {
+	//	if (factoid.ValidateECPrivateUserStr(address)) {
+	//		resp = "{\"AddressType\":\"Factoid - Public\", \"TypeCode\":4 ,\"Success\":true}"
+	//	}
+	//} 
+
+
+	return resp, pass
 }
 
 func getCmd(cmd string, cmderror string) {
@@ -102,79 +145,89 @@ func postCmd(cmd string) {
 var generateaddress = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli generateaddress fct|ec name"
-	cmd.description = "Generate and name a new fct or ec address"
+	cmd.description = "Generate and name a new factoid or ec address"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		if len(args) < 2 {
+		
+		c := cli.New()
+		c.Handle("ec", ecGenerateAddr)
+		c.Handle("fct", fctGenerateAddr)
+		c.HandleDefaultFunc(func(args []string) {
+			fmt.Println(cmd.helpMsg)
+		})
+		c.Execute(args)
+	}
+	help.Add("generateaddress", cmd)
+	help.Add("newaddress", cmd)
+	return cmd
+}()
+
+// Generate a new Entry Credit Address
+var ecGenerateAddr = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli generateaddress ec name"
+	cmd.description = "Generate and name a new ec address"
+	cmd.execFunc = func(args []string) {
+		if addr, err := factom.GenerateEntryCreditAddress(args[1]); err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(addr)
+		}
+	}
+	help.Add("generateaddress ec", cmd)
+	help.Add("newaddress ec", cmd)
+	return cmd
+
+}()
+
+// Generate a new Factoid Address
+var fctGenerateAddr = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli generateaddress fct name"
+	cmd.description = "Generate and name a new factoid address"
+	cmd.execFunc = func(args []string) {
+		if addr, err := factom.GenerateFactoidAddress(args[1]); err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(addr)
+		}
+	}
+	help.Add("generateaddress fct", cmd)
+	help.Add("newaddress fct", cmd)
+	return cmd
+}()
+
+var importaddr = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli import name key"
+	cmd.description = "Import an Entry Credit or Factoid Private Key"
+	cmd.execFunc = func(args []string) {
+		if len(args) < 3 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-
-		msg, valid := ValidateKey(args[1])
-		if !valid {
-			fmt.Println(msg)
-			return
-		}
-
-		var err error
-		var Addr string
-		if len(args) == 2 {
-			switch args[0] {
-			case "ec":
-				Addr, err = factom.GenerateEntryCreditAddress(args[1])
-			case "fct":
-				Addr, err = factom.GenerateFactoidAddress(args[1])
-			default:
-				panic("Expected ec|fct name")
+		if strings.HasPrefix(args[2], "Fs") {
+			if addr, err := factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
+				fmt.Println(err)
+				return
+			} else {
+				fmt.Println(args[1], addr)
+			}
+		} else if strings.HasPrefix(args[2], "Es") {
+			if addr, err := factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
+				fmt.Println(err)
+				return
+			} else {
+				fmt.Println(args[1], addr)
 			}
 		} else {
-			switch args[0] {
-			case "ec":
-				Addr, err = factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2])
-				if err == nil {
-					break
-				}
-				Addr, err = factom.GenerateEntryCreditAddressFromPrivateKey(args[1], args[2])
-				if err == nil {
-					break
-				}
-			case "fct":
-				Addr, err = factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2])
-				if err == nil {
-					break
-				}
-				if strings.Contains(err.Error(), "unexpected end of JSON input") == false {
-					break
-				}
-				Addr, err = factom.GenerateFactoidAddressFromMnemonic(args[1], args[2])
-				if err == nil {
-					break
-				}
-				if strings.Contains(err.Error(), "unexpected end of JSON input") == false {
-					break
-				}
-				Addr, err = factom.GenerateFactoidAddressFromPrivateKey(args[1], args[2])
-				if err == nil {
-					break
-				}
-				if strings.Contains(err.Error(), "unexpected end of JSON input") == false {
-					break
-				}
-			default:
-				panic("Expected ec|fct name")
-			}
+			fmt.Println("Invalid Key")
+			fmt.Println(cmd.helpMsg)
 		}
-
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		fmt.Println(args[0], " = ", Addr)
 	}
-	help.Add("generateaddress", cmd)
+	help.Add("import", cmd)
 	return cmd
 }()
 
@@ -374,7 +427,7 @@ var fctaddinput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		amt, err := fct.ConvertFixedPoint(args[2])
+		amt, err := factoid.ConvertFixedPoint(args[2])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -386,7 +439,7 @@ var fctaddinput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		_, err = fct.ValidateAmounts(uint64(ramt))
+		_, err = factoid.ValidateAmounts(uint64(ramt))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -421,7 +474,7 @@ var fctaddoutput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		amt, err := fct.ConvertFixedPoint(args[2])
+		amt, err := factoid.ConvertFixedPoint(args[2])
 		if err != nil {
 			fmt.Println("Invalid format for a number: ", args[2])
 			fmt.Println(cmd.helpMsg)
@@ -434,7 +487,7 @@ var fctaddoutput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		_, err = fct.ValidateAmounts(uint64(ramt))
+		_, err = factoid.ValidateAmounts(uint64(ramt))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -469,7 +522,7 @@ var fctaddecoutput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		amt, err := fct.ConvertFixedPoint(args[2])
+		amt, err := factoid.ConvertFixedPoint(args[2])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -481,7 +534,7 @@ var fctaddecoutput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		_, err = fct.ValidateAmounts(uint64(ramt))
+		_, err = factoid.ValidateAmounts(uint64(ramt))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -588,7 +641,7 @@ var fctproperties = func() *fctCmd {
 
 		total, err := Utility.TotalFactoids()
 		if err == nil {
-			ret = ret + fmt.Sprintf("    Total Factoids: %s", strings.TrimSpace(fct.ConvertDecimal(total)))
+			ret = ret + fmt.Sprintf("    Total Factoids: %s", strings.TrimSpace(factoid.ConvertDecimal(total)))
 		}
 
 		fmt.Println(ret)
