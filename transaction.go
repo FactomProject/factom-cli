@@ -46,47 +46,6 @@ func ValidateKey(key string) (msg string, valid bool) {
 	return "", true
 }
 
-// VerifyAddressType returns a bool success and a string describing the address
-// type
-func VerifyAddressType(address string)(string, bool) {
-  	var resp string = "Not a Valid Factoid Address"
-	var pass bool = false
-  
-  	if (strings.HasPrefix(address,"FA")) {
-		if (factoid.ValidateFUserStr(address)) {
-			resp = "Factoid - Public"
-			pass = true
-		}
-	} else if (strings.HasPrefix(address,"EC")) {
-		if (factoid.ValidateECUserStr(address)) {
-			resp = "Entry Credit - Public"
-			pass = true
-		}
-	} else if (strings.HasPrefix(address,"Fs")) {
-		if (factoid.ValidateFPrivateUserStr(address)) {
-			resp = "Factoid - Private"
-			pass = true
-		}
-	} else if (strings.HasPrefix(address,"Es")) {
-		if (factoid.ValidateECPrivateUserStr(address)) {
-			resp = "Entry Credit - Private"
-			pass = true
-		}
-	} 
-
-
-
-	//  Add Netki resolution here
-	//else if (checkNetki) {
-	//	if (factoid.ValidateECPrivateUserStr(address)) {
-	//		resp = "{\"AddressType\":\"Factoid - Public\", \"TypeCode\":4 ,\"Success\":true}"
-	//	}
-	//} 
-
-
-	return resp, pass
-}
-
 func getCmd(cmd string, cmderror string) {
 	resp, err := http.Get(cmd)
 	if err != nil {
@@ -201,7 +160,7 @@ var fctGenerateAddr = func() *fctCmd {
 
 var importaddr = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli import name fctKey|ecKey|'12words'"
+	cmd.helpMsg = "factom-cli import name EsKey|FsKey|'12Words'"
 	cmd.description = "Import an Entry Credit or Factoid Private Key"
 	cmd.execFunc = func(args []string) {
 		if len(args) < 3 {
@@ -209,22 +168,27 @@ var importaddr = func() *fctCmd {
 			return
 		}
 		if strings.HasPrefix(args[2], "Fs") {
-			if addr, err := factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2]); err == nil {
+			if addr, err := factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
+				fmt.Println(err)
+				fmt.Println(cmd.helpMsg)
+			} else {
 				fmt.Println(args[1], addr)
-				return
 			}
 		} else if strings.HasPrefix(args[2], "Es") {
-			if addr, err := factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2]); err == nil {
+			if addr, err := factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
+				fmt.Println(err)
+				fmt.Println(cmd.helpMsg)
+			} else {
 				fmt.Println(args[1], addr)
-				return
+			}
+		} else {
+			if addr, err := factom.GenerateFactoidAddressFromMnemonic(args[1], args[2]); err != nil {
+				fmt.Println(err)
+				fmt.Println(cmd.helpMsg)
+			} else {
+				fmt.Println(args[1], addr)
 			}
 		}
-		if addr, err := factom.GenerateFactoidAddressFromMnemonic(args[1], args[2]); err == nil {
-			fmt.Println(args[1], addr)
-			return
-		}
-		fmt.Println("Could not import address")
-		fmt.Println(cmd.helpMsg)
 	}
 	help.Add("importaddress", cmd)
 	return cmd
