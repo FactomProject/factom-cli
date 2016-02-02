@@ -265,8 +265,8 @@ var getlist = func() *fctCmd {
 
 var getlistj = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli "
-	cmd.description = ""
+	cmd.helpMsg = "factom-cli listj [transaction id|address|all]"
+	cmd.description = "List confirmed transactions' details."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
