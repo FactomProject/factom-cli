@@ -201,7 +201,7 @@ var fctGenerateAddr = func() *fctCmd {
 
 var importaddr = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli import name key"
+	cmd.helpMsg = "factom-cli import name fctKey|ecKey|'12words'"
 	cmd.description = "Import an Entry Credit or Factoid Private Key"
 	cmd.execFunc = func(args []string) {
 		if len(args) < 3 {
@@ -209,23 +209,22 @@ var importaddr = func() *fctCmd {
 			return
 		}
 		if strings.HasPrefix(args[2], "Fs") {
-			if addr, err := factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
-				fmt.Println(err)
-				return
-			} else {
+			if addr, err := factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2]); err == nil {
 				fmt.Println(args[1], addr)
+				return
 			}
 		} else if strings.HasPrefix(args[2], "Es") {
-			if addr, err := factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
-				fmt.Println(err)
-				return
-			} else {
+			if addr, err := factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2]); err == nil {
 				fmt.Println(args[1], addr)
+				return
 			}
-		} else {
-			fmt.Println("Invalid Key")
-			fmt.Println(cmd.helpMsg)
 		}
+		if addr, err := factom.GenerateFactoidAddressFromMnemonic(args[1], args[2]); err == nil {
+			fmt.Println(args[1], addr)
+			return
+		}
+		fmt.Println("Could not import address")
+		fmt.Println(cmd.helpMsg)
 	}
 	help.Add("importaddress", cmd)
 	return cmd
