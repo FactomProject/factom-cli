@@ -8,7 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	
+
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 )
@@ -42,7 +42,7 @@ func main() {
 	if *hflag {
 		args = []string{"help"}
 	}
-	
+
 	factom.SetServer(server)
 
 	c := cli.New()

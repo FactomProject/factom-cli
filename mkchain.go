@@ -26,19 +26,19 @@ var mkchain = func() *fctCmd {
 		flag.Var(&eids, "e", "external id for the entry")
 		flag.Parse()
 		args = flag.Args()
-	
+
 		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
 		name := args[0]
-	
+
 		e := factom.NewEntry()
-	
+
 		for _, id := range eids {
 			e.ExtIDs = append(e.ExtIDs, []byte(id))
 		}
-	
+
 		// Entry.Content is read from stdin
 		if p, err := ioutil.ReadAll(os.Stdin); err != nil {
 			errorln(err)
@@ -49,15 +49,15 @@ var mkchain = func() *fctCmd {
 		} else {
 			e.Content = p
 		}
-	
+
 		c := factom.NewChain(e)
-	
+
 		if _, err := factom.GetChainHead(c.ChainID); err == nil {
 			// no error means the client found the chain
 			errorln("Chain", c.ChainID, "already exists")
 			return
 		}
-	
+
 		fmt.Println("Creating Chain:", c.ChainID)
 		if err := factom.CommitChain(c, name); err != nil {
 			errorln(err)
