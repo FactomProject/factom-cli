@@ -450,9 +450,7 @@ var fctproperties = func() *fctCmd {
 	cmd.helpMsg = "factom-cli properties"
 	cmd.description = "Returns information about factomd, fctwallet, the Protocol version, the version of this CLI, and more." // TODO
 	cmd.execFunc = func(args []string) {
-		getproperties := fmt.Sprintf("http://%s/v1/properties/", serverFct)
-
-		resp, err := http.Get(getproperties)
+		resp, err := http.Get(fmt.Sprintf("http://%s/v1/properties/", serverFct))
 
 		if err != nil {
 			fmt.Println("Get Properties failed")
@@ -480,11 +478,7 @@ var fctproperties = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		top := Version / 1000000
-		mid := (Version % 1000000) / 1000
-		low := Version % 1000
-
-		ret := b.Response + fmt.Sprintf("factom-cli Version: %d.%d.%d\n", top, mid, low)
+		ret := b.Response + fmt.Sprintln("factom-cli Version:", Version)
 
 		total, err := Utility.TotalFactoids()
 		if err == nil {

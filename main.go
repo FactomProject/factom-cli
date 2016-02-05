@@ -18,7 +18,7 @@ var (
 	wallet string
 )
 
-const Version = 1004
+const Version = "0.1.4"
 
 func main() {
 	cfg := ReadConfig().Main
