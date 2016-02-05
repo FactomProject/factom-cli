@@ -5,8 +5,8 @@
 package main
 
 type fctCmd struct {
-	execFunc func([]string)
-	helpMsg string
+	execFunc    func([]string)
+	helpMsg     string
 	description string
 }
 

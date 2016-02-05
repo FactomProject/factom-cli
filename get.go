@@ -5,14 +5,14 @@
 package main
 
 import (
-//	"crypto/sha256"
-//	"encoding/hex"
+	//	"crypto/sha256"
+	//	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
 
-	"github.com/FactomProject/factom"
 	"github.com/FactomProject/cli"
+	"github.com/FactomProject/factom"
 )
 
 var get = func() *fctCmd {
@@ -23,7 +23,7 @@ var get = func() *fctCmd {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		
+
 		c := cli.New()
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
@@ -61,7 +61,7 @@ var getHeight = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get height"
 	cmd.description = "Get the current directory block height"
-	cmd.execFunc = func(args []string) {	
+	cmd.execFunc = func(args []string) {
 		height, err := factom.GetDBlockHeight()
 		if err != nil {
 			errorln(err)
@@ -77,7 +77,7 @@ var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get dblock [keymr]"
 	cmd.description = "Get dblock contents by merkle root"
-	cmd.execFunc = func(args []string) {	
+	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -85,7 +85,7 @@ var getDBlock = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-	
+
 		keymr := args[0]
 		dblock, err := factom.GetDBlock(keymr)
 		if err != nil {
@@ -110,14 +110,14 @@ var getChainHead = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-	
+
 		chainid := args[0]
 		chain, err := factom.GetChainHead(chainid)
 		if err != nil {
 			errorln(err)
 			return
 		}
-	
+
 		fmt.Println(chain.ChainHead)
 	}
 	help.Add("get chain", cmd)
@@ -128,7 +128,7 @@ var getEBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get eblock [keymr]"
 	cmd.description = "Get eblock by merkle root"
-	cmd.execFunc = func(args []string) {	
+	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -136,7 +136,7 @@ var getEBlock = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-	
+
 		keymr := args[0]
 		eblock, err := factom.GetEBlock(keymr)
 		if err != nil {
@@ -161,7 +161,7 @@ var getEntry = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-	
+
 		hash := args[0]
 		entry, err := factom.GetEntry(hash)
 		if err != nil {
@@ -186,7 +186,7 @@ var getFirstEntry = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-	
+
 		chainid := args[0]
 		entry, err := factom.GetFirstEntry(chainid)
 		if err != nil {

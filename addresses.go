@@ -23,7 +23,7 @@ var generateaddress = func() *fctCmd {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		
+
 		c := cli.New()
 		c.Handle("ec", ecGenerateAddr)
 		c.Handle("fct", fctGenerateAddr)

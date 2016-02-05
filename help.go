@@ -29,9 +29,9 @@ func (h *helper) All() {
 	for k := range h.topics {
 		keys = append(keys, k)
 	}
-	
+
 	sort.Strings(keys)
-	
+
 	for _, v := range keys {
 		fmt.Printf("%s\n\t%s\n\n", h.topics[v].helpMsg, h.topics[v].description)
 	}
@@ -46,9 +46,9 @@ func (h *helper) Execute(args []string) {
 		h.All()
 		return
 	}
-	
+
 	topic := strings.Join(args[1:], " ")
-	
+
 	c, ok := h.topics[topic]
 	if !ok {
 		if c, ok = h.topics[args[1]]; !ok {
