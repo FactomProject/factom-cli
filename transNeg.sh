@@ -6,18 +6,18 @@ echo "
 #   These error(s) do not prevent the construction and submission     # 
 #   of the transaction                                                #
 #=====================================================================#"
-echo "factom-cli newaddress fct bill"
-factom-cli newaddress fct bill
-echo "factom-cli newaddress fct bob"
-factom-cli newaddress fct bob
-echo "factom-cli newaddress fct sally"
-factom-cli newaddress fct sally
-echo "factom-cli newaddress fct george"
-factom-cli newaddress fct george
-echo "factom-cli newaddress ec  dan"
-factom-cli newaddress ec  dan
-echo "factom-cli newaddress ec  jane"
-factom-cli newaddress ec  jane
+echo "factom-cli generateaddress fct bill"
+factom-cli generateaddress fct bill
+echo "factom-cli generateaddress fct bob"
+factom-cli generateaddress fct bob
+echo "factom-cli generateaddress fct sally"
+factom-cli generateaddress fct sally
+echo "factom-cli generateaddress fct george"
+factom-cli generateaddress fct george
+echo "factom-cli generateaddress ec dan"
+factom-cli generateaddress ec dan
+echo "factom-cli generateaddress ec jane"
+factom-cli generateaddress ec jane
 echo "factom-cli balances"
 factom-cli balances
 

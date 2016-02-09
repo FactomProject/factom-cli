@@ -1,43 +1,32 @@
-factom-cli setup sjdflkajflkasjkfoiewrtuoewuljalvldklfjla
 
-factom-cli generateaddress ec ec01
-factom-cli generateaddress ec ec02
-factom-cli generateaddress ec ec03
-factom-cli generateaddress ec ec04
-factom-cli generateaddress ec ec05
-factom-cli generateaddress ec ec06
-factom-cli generateaddress ec ec07
-factom-cli generateaddress ec ec08
-factom-cli generateaddress ec ec09
+echo ">factom-cli importaddress zeros Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG"
+factom-cli importaddress zeros Es2Rf7iM6PdsqfYCo3D1tnAR65SkLENyWJG1deUzpRMQmbh9F3eG
 
-factom-cli generateaddress fct fct01
-factom-cli generateaddress fct fct02
-factom-cli generateaddress fct fct03
-factom-cli generateaddress fct fct04
-factom-cli generateaddress fct fct05
-factom-cli generateaddress fct fct06
-factom-cli generateaddress fct fct07
-factom-cli generateaddress fct fct08
-factom-cli generateaddress fct fct09
-factom-cli generateaddress fct fct10
+echo ">factom-cli importaddress sand Fs3E9gV6DXsYzf7Fqx1fVBQPQXV695eP3k5XbmHEZVRLkMdD9qCK"
+factom-cli importaddress sand Fs3E9gV6DXsYzf7Fqx1fVBQPQXV695eP3k5XbmHEZVRLkMdD9qCK
 
+echo ">factom-cli newtransaction trans1"
+factom-cli newtransaction trans1
 
-factom-cli newtransaction newtrans
-factom-cli addinput newtrans 01-Fountain 1000
-factom-cli addinput newtrans 02-Fountain 1000
-factom-cli addinput newtrans 03-Fountain 1000
-factom-cli addinput newtrans 04-Fountain 1000
-factom-cli addinput newtrans 05-Fountain 1000
+echo ">factom-cli addinput trans1 sand 10"
+factom-cli addinput trans1 sand 10
 
-factom-cli addecoutput newtrans ec01  1000
-factom-cli addoutput   newtrans fct01 1000
-factom-cli addoutput   newtrans fct02 1000
-factom-cli addoutput   newtrans fct03 1000
-factom-cli addoutput   newtrans fct04 1000
+echo ">factom-cli addecoutput trans1 zeros 10"
+factom-cli addecoutput trans1 zeros 10
 
-factom-cli addfee newtrans 01-Fountain 
-factom-cli sign newtrans
+echo ">factom-cli addfee trans1 sand"
+factom-cli addfee trans1 sand
+
+echo ">factom-cli sign trans1"
+factom-cli sign trans1
+
+echo ">factom-cli transactions"
 factom-cli transactions
-factom-cli submit newtrans
 
+echo ">factom-cli submit trans1"
+factom-cli submit trans1
+
+
+echo ">this may take a while, scanning the blockchain for balances"
+echo ">factom-cli balances"
 factom-cli balances
