@@ -120,7 +120,7 @@ var transactions = func() *fctCmd {
 
 var getlist = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli list [transaction id|address|all]"
+	cmd.helpMsg = "factom-cli list TXNAME|ADDRESS|all"
 	cmd.description = "List confirmed transactions' details."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -149,7 +149,7 @@ var getlist = func() *fctCmd {
 
 var getlistj = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listj [transaction id|address|all]"
+	cmd.helpMsg = "factom-cli listj TXNAME|ADDRESS|all"
 	cmd.description = "List confirmed transactions' details."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -178,14 +178,14 @@ var getlistj = func() *fctCmd {
 
 var fctnewtrans = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli newtransaction key"
-	cmd.description = "Create a new transaction. The key is used to add inputs, outputs, and ecoutputs (to buy entry credits).  Once the transaction is built, call validate, and if all is good, submit"
+	cmd.helpMsg = "factom-cli newtransaction TXNAME"
+	cmd.description = "Create a new transaction. The TXNAME is used to add inputs, outputs, and ecoutputs (to buy entry credits).  Once the transaction is built, call validate, and if all is good, submit"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
-			fmt.Println("Missing Key")
+			fmt.Println("Missing Name")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -203,14 +203,14 @@ var fctnewtrans = func() *fctCmd {
 
 var fctdeletetrans = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli deletetransaction transaction"
+	cmd.helpMsg = "factom-cli deletetransaction TXNAME"
 	cmd.description = "Delete the specified transaction in flight."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
-			fmt.Println("Missing Key")
+			fmt.Println("Missing Name")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -228,14 +228,14 @@ var fctdeletetrans = func() *fctCmd {
 
 var fctaddfee = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addfee transaction fctaddress"
-	cmd.description = "Adds the needed fee to the given transaction. The address specified must be an input to the transaction, and it must have a balance able to cover the additional fee. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
+	cmd.helpMsg = "factom-cli addfee TXNAME FCADDRESS"
+	cmd.description = "Adds the needed fee to the given transaction. The Factoid Address specified must be an input to the transaction, and it must have a balance able to cover the additional fee. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 2 {
-			fmt.Println("Was expecting a transaction key, and an address used as an input to that transaction.")
+			fmt.Println("Was expecting a transaction name, and an address used as an input to that transaction.")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -256,14 +256,14 @@ var fctaddfee = func() *fctCmd {
 
 var fctaddinput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addinput key name|address amount"
+	cmd.helpMsg = "factom-cli addinput TXNAME NAME|FCADDRESS AMOUNT"
 	cmd.description = "Add an input to a transaction."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 3 {
-			fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
+			fmt.Println("Expecting a 1) transaction name, 2) an Address or Address name, and 3) an amount.")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -302,14 +302,14 @@ var fctaddinput = func() *fctCmd {
 
 var fctaddoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addoutput key name|address amount"
+	cmd.helpMsg = "factom-cli addoutput TXNAME NAME|FCADDRESS AMOUNT"
 	cmd.description = "Add an output to a transaction."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 3 {
-			fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
+			fmt.Println("Expecting a 1) transaction name, 2) an Address or Address name, and 3) an amount.")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -350,14 +350,14 @@ var fctaddoutput = func() *fctCmd {
 
 var fctaddecoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addecoutput key name|address amount"
-	cmd.description = "Add an ecoutput (purchase of entry credits to a transaction."
+	cmd.helpMsg = "factom-cli addecoutput TXNAME NAME|ECADDRESS AMOUNT"
+	cmd.description = "Add an ecoutput (purchase of entry credits to a transaction. Amount is denominated in factoids"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 3 {
-			fmt.Println("Expecting a 1) transaction key, 2) an Address or Address name, and 3) an amount.")
+			fmt.Println("Expecting a 1) transaction name, 2) an Address or Address name, and 3) an amount.")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -493,14 +493,14 @@ var fctproperties = func() *fctCmd {
 
 var fctsign = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sign transaction"
-	cmd.description = "Sign the transaction specified by the key."
+	cmd.helpMsg = "factom-cli sign TXNAME"
+	cmd.description = "Sign the transaction specified by the TXNAME."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
-			fmt.Println("Missing Key")
+			fmt.Println("Missing Name")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -521,14 +521,14 @@ var fctsign = func() *fctCmd {
 
 var fctsubmit = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli submit transaction"
-	cmd.description = "Submit the transaction specified by the key to Factom."
+	cmd.helpMsg = "factom-cli submit TXNAME"
+	cmd.description = "Submit the transaction specified by the TXNAME to Factom."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
-			fmt.Println("Missing Key")
+			fmt.Println("Missing Name")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -543,7 +543,7 @@ var fctsubmit = func() *fctCmd {
 
 		jdata, err := json.Marshal(s)
 		if err != nil {
-			fmt.Println("Submitt failed")
+			fmt.Println("Submit failed")
 			os.Exit(1)
 		}
 
