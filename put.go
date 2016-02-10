@@ -57,11 +57,11 @@ var put = func() *fctCmd {
 			e.ChainID = *cid
 		}
 		if econf.Extid != "" {
-			e.ExtIDs = append(e.ExtIDs, []byte(econf.Extid))
+			e.ExtIDs = append(e.ExtIDs, econf.Extid)
 		}
 
 		for _, v := range eids {
-			e.ExtIDs = append(e.ExtIDs, []byte(v))
+			e.ExtIDs = append(e.ExtIDs, v)
 		}
 
 		// Entry.Content is read from stdin
@@ -72,7 +72,7 @@ var put = func() *fctCmd {
 			errorln(fmt.Errorf("Entry of %d bytes is too large", size))
 			return
 		} else {
-			e.Content = p
+			e.Content = string(p)
 		}
 
 		// Make sure the Chain exists before writing the Entry
@@ -87,7 +87,7 @@ var put = func() *fctCmd {
 			return
 		}
 		time.Sleep(10 * time.Second)
-		if err := factom.RevealEntry(e); err != nil {
+		if _, err := factom.RevealEntry(e); err != nil {
 			errorln(err)
 			return
 		}
