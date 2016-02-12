@@ -26,7 +26,7 @@ var get = func() *fctCmd {
 
 		c := cli.New()
 		c.Handle("head", getHead)
-		//c.Handle("height", getHeight)
+		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
 		c.Handle("chain", getChainHead)
 		c.Handle("eblock", getEBlock)
@@ -56,7 +56,7 @@ var getHead = func() *fctCmd {
 	help.Add("get head", cmd)
 	return cmd
 }()
-/*
+
 var getHeight = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get height"
@@ -72,7 +72,7 @@ var getHeight = func() *fctCmd {
 	help.Add("get height", cmd)
 	return cmd
 }()
-*/
+
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get dblock [keymr]"
