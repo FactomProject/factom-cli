@@ -1,4 +1,4 @@
-// Copyright 2015 Factom Foundation
+// Copyright 2016 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
@@ -19,8 +19,8 @@ import (
 // balance prints the current balance of the specified address
 var balance = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli balance ec|fct [key]"
-	cmd.description = "If this is an ec balance, returns number of entry credits. If this is a Factoid balance, returns the factoids at that address."
+	cmd.helpMsg = "factom-cli balance ec|fct ADDRESS"
+	cmd.description = "If this is an EC Address, returns number of Entry Credits. If this is a Factoid Address, returns the factoid balance."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -40,7 +40,7 @@ var balance = func() *fctCmd {
 
 var ecBalance = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli balance ec [addr]"
+	cmd.helpMsg = "factom-cli balance ec ADDRESS"
 	cmd.description = "Return number of entry credits at the address"
 	cmd.execFunc = func(args []string) {
 		var addr string
@@ -63,7 +63,7 @@ var ecBalance = func() *fctCmd {
 
 var fctBalance = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli balance fct [addr]"
+	cmd.helpMsg = "factom-cli balance fct ADDRESS"
 	cmd.description = "Return number of factoids at the address"
 	cmd.execFunc = func(args []string) {
 		var addr string

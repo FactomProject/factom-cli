@@ -1,4 +1,4 @@
-// Copyright 2015 Factom Foundation
+// Copyright 2016 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
@@ -16,7 +16,7 @@ import (
 
 var mkchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli mkchain [-e extid ...] name <stdin>"
+	cmd.helpMsg = "factom-cli mkchain [-e EXTID1 -e EXTID2 ...] NAME <STDIN>"
 	cmd.description = "Create a new factom chain. Read the data for the first entry from stdin. Use the entry credits from the specified name."
 	cmd.execFunc = func(args []string) {
 		os.Args = args

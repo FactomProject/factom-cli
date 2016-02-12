@@ -1,4 +1,4 @@
-// Copyright 2015 Factom Foundation
+// Copyright 2016 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
@@ -28,7 +28,7 @@ func (e *extids) Set(s string) error {
 // put commits then reveals an entry to factomd
 var put = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli put [-e extid ...] name <stdin>"
+	cmd.helpMsg = "factom-cli put [-e EXTID1 -e EXTID2 ...] NAME <STDIN>"
 	cmd.description = "Read data from stdin and write to factom. Use the entry credits from the named entry credit address."
 	cmd.execFunc = func(args []string) {
 		os.Args = args

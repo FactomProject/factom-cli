@@ -1,4 +1,4 @@
-// Copyright 2015 Factom Foundation
+// Copyright 2016 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
@@ -75,7 +75,7 @@ var getHeight = func() *fctCmd {
 
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dblock [keymr]"
+	cmd.helpMsg = "factom-cli get dblock KEYMR"
 	cmd.description = "Get dblock contents by merkle root"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -100,7 +100,7 @@ var getDBlock = func() *fctCmd {
 
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chain [chainid]"
+	cmd.helpMsg = "factom-cli get chain CHAINID"
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -126,7 +126,7 @@ var getChainHead = func() *fctCmd {
 
 var getEBlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get eblock [keymr]"
+	cmd.helpMsg = "factom-cli get eblock KEYMR"
 	cmd.description = "Get eblock by merkle root"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -151,7 +151,7 @@ var getEBlock = func() *fctCmd {
 
 var getEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get entry [hash]"
+	cmd.helpMsg = "factom-cli get entry HASH"
 	cmd.description = "Get entry by hash"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -176,7 +176,7 @@ var getEntry = func() *fctCmd {
 
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get firstentry [chainid]"
+	cmd.helpMsg = "factom-cli get firstentry CHAINID"
 	cmd.description = "Get the first entry from a chain"
 	cmd.execFunc = func(args []string) {
 		os.Args = args

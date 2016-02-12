@@ -1,4 +1,4 @@
-// Copyright 2015 Factom Foundation
+// Copyright 2016 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
@@ -17,7 +17,7 @@ import (
 // Generate a new Address
 var generateaddress = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli generateaddress fct|ec name"
+	cmd.helpMsg = "factom-cli generateaddress fct|ec NAME"
 	cmd.description = "Generate and name a new factoid or ec address"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -40,7 +40,7 @@ var generateaddress = func() *fctCmd {
 // Generate a new Entry Credit Address
 var ecGenerateAddr = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli generateaddress ec name"
+	cmd.helpMsg = "factom-cli generateaddress ec NAME"
 	cmd.description = "Generate and name a new ec address"
 	cmd.execFunc = func(args []string) {
 		if addr, err := factom.GenerateEntryCreditAddress(args[1]); err != nil {
@@ -58,7 +58,7 @@ var ecGenerateAddr = func() *fctCmd {
 // Generate a new Factoid Address
 var fctGenerateAddr = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli generateaddress fct name"
+	cmd.helpMsg = "factom-cli generateaddress fct NAME"
 	cmd.description = "Generate and name a new factoid address"
 	cmd.execFunc = func(args []string) {
 		if addr, err := factom.GenerateFactoidAddress(args[1]); err != nil {
@@ -96,7 +96,7 @@ var getaddresses = func() *fctCmd {
 // address to the wallet database.
 var importaddr = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli importaddress name EsKey|FsKey|'12Words'"
+	cmd.helpMsg = "factom-cli importaddress NAME ESKEY|FSKEY|'12WORDS'"
 	cmd.description = "Import an Entry Credit or Factoid Private Key"
 	cmd.execFunc = func(args []string) {
 		if len(args) < 3 {
