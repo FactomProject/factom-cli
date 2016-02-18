@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/FactomProject/cli"
-	"github.com/FactomProject/factomd/common/primitives"
 	"github.com/FactomProject/factom"
+	"github.com/FactomProject/factomd/common/primitives"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
