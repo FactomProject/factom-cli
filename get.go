@@ -28,7 +28,7 @@ var get = func() *fctCmd {
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
-		c.Handle("chain", getChainHead)
+		c.Handle("chainhead", getChainHead)
 		c.Handle("eblock", getEBlock)
 		c.Handle("entry", getEntry)
 		c.Handle("firstentry", getFirstEntry)
@@ -100,7 +100,7 @@ var getDBlock = func() *fctCmd {
 
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chain CHAINID"
+	cmd.helpMsg = "factom-cli get chainhead CHAINID"
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -120,7 +120,7 @@ var getChainHead = func() *fctCmd {
 
 		fmt.Println(chain.ChainHead)
 	}
-	help.Add("get chain", cmd)
+	help.Add("get chainhead", cmd)
 	return cmd
 }()
 
