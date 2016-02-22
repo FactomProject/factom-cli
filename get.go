@@ -64,7 +64,6 @@ var getAllEntries = func() *fctCmd {
 
 		for _, e := range es {
 			fmt.Println(e)
-			fmt.Println()
 		}
 	}
 	help.Add("get head", cmd)
