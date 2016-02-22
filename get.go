@@ -25,6 +25,7 @@ var get = func() *fctCmd {
 		args = flag.Args()
 
 		c := cli.New()
+		c.Handle("allentries", getAllEntries)
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
@@ -38,6 +39,35 @@ var get = func() *fctCmd {
 		c.Execute(args)
 	}
 	help.Add("get", cmd)
+	return cmd
+}()
+
+var getAllEntries = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get allentries CHAINID"
+	cmd.description = "Get all of the Entries in a Chain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		chainid := args[0]
+		es, err := factom.GetAllChainEntries(chainid)
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		for _, e := range es {
+			fmt.Println(e)
+			fmt.Println()
+		}
+	}
+	help.Add("get head", cmd)
 	return cmd
 }()
 
