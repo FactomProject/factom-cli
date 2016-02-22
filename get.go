@@ -62,8 +62,8 @@ var getAllEntries = func() *fctCmd {
 			return
 		}
 
-		for _, e := range es {
-			fmt.Println(e)
+		for i, e := range es {
+			fmt.Printf("Entry [%d] {\n%s}\n", i, e)
 		}
 	}
 	help.Add("get head", cmd)
