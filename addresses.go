@@ -96,7 +96,7 @@ var getaddresses = func() *fctCmd {
 // address to the wallet database.
 var importaddr = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli importaddress NAME ESKEY|FSKEY|'12WORDS'"
+	cmd.helpMsg = "factom-cli importaddress NAME ESKEY|FSKEY|\"12WORDS\""
 	cmd.description = "Import an Entry Credit or Factoid Private Key"
 	cmd.execFunc = func(args []string) {
 		if len(args) < 3 {
