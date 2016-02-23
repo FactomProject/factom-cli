@@ -70,35 +70,35 @@ var getAllEntries = func() *fctCmd {
 	return cmd
 }()
 
-var getHead = func() *fctCmd {
+var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get head"
-	cmd.description = "Get the keymr of the last completed directory block"
+	cmd.helpMsg = "factom-cli get chainhead CHAINID"
+	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
-		head, err := factom.GetDBlockHead()
-		if err != nil {
-			errorln(err)
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
 			return
 		}
-		fmt.Println(head.KeyMR)
-	}
-	help.Add("get head", cmd)
-	return cmd
-}()
 
-var getHeight = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get height"
-	cmd.description = "Get the current directory block height"
-	cmd.execFunc = func(args []string) {
-		height, err := factom.GetDBlockHeight()
+		chainid := args[0]
+		head, err := factom.GetChainHead(chainid)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println(height)
+		eblock, err := factom.GetEBlock(head.ChainHead)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		
+		fmt.Println("EBlock:", head.ChainHead)
+		fmt.Println(eblock)
 	}
-	help.Add("get height", cmd)
+	help.Add("get chainhead", cmd)
 	return cmd
 }()
 
@@ -124,32 +124,6 @@ var getDBlock = func() *fctCmd {
 		fmt.Println(dblock)
 	}
 	help.Add("get dblock", cmd)
-	return cmd
-}()
-
-var getChainHead = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chainhead CHAINID"
-	cmd.description = "Get ebhead by chainid"
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-
-		chainid := args[0]
-		chain, err := factom.GetChainHead(chainid)
-		if err != nil {
-			errorln(err)
-			return
-		}
-
-		fmt.Println(chain.ChainHead)
-	}
-	help.Add("get chainhead", cmd)
 	return cmd
 }()
 
@@ -225,5 +199,43 @@ var getFirstEntry = func() *fctCmd {
 		fmt.Println(entry)
 	}
 	help.Add("get firstentry", cmd)
+	return cmd
+}()
+
+var getHead = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get head"
+	cmd.description = "Get the latest completed directory block"
+	cmd.execFunc = func(args []string) {
+		head, err := factom.GetDBlockHead()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		dblock, err := factom.GetDBlock(head.KeyMR)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println("DBlock:", head.KeyMR)
+		fmt.Println(dblock)
+	}
+	help.Add("get head", cmd)
+	return cmd
+}()
+
+var getHeight = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get height"
+	cmd.description = "Get the current directory block height"
+	cmd.execFunc = func(args []string) {
+		height, err := factom.GetDBlockHeight()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(height)
+	}
+	help.Add("get height", cmd)
 	return cmd
 }()
