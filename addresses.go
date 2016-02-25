@@ -13,7 +13,6 @@ import (
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 	fct "github.com/FactomProject/factoid"
-	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
 // balance prints the current balance of the specified address
@@ -32,28 +31,12 @@ var balance = func() *fctCmd {
 		}
 		addr := args[0]
 		
-		if strings.HasPrefix(addr, "FA") {
-			if !Utility.IsValidAddress(addr) {
-				fmt.Println("Invalid Factoid Address")
-			}
-			
-			if b, err := factom.FctBalance(addr); err != nil {
-				fmt.Println("Undefined or invalid address")
-			} else {
-				fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
-			}
-		} else if strings.HasPrefix(addr, "EC") {
-			if !Utility.IsValidAddress(addr) {
-				fmt.Println("Invalid EC Address")
-			}
-			
-			if b, err := factom.ECBalance(addr); err != nil {
-				fmt.Println("Undefined or invalid address")
-			} else {
-				fmt.Println(addr, b)
-			}
+		if b, err := factom.FctBalance(addr); err == nil {
+			fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
+		} else if c, err := factom.ECBalance(addr); err == nil {
+			fmt.Println(addr, c)
 		} else {
-			fmt.Println("Invalid address")
+			fmt.Println("Undefined or invalid address")
 		}
 	}
 	help.Add("balance", cmd)
