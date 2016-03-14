@@ -22,6 +22,7 @@ var balance = func() *fctCmd {
 	cmd.description = "If this is an EC Address, returns number of Entry Credits. If this is a Factoid Address, returns the Factoid balance."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
 		flag.Parse()
 		args = flag.Args()
 		
@@ -33,11 +34,23 @@ var balance = func() *fctCmd {
 		
 		if b, err := factom.FctBalance(addr); err == nil {
 			fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
+			return
 		} else if c, err := factom.ECBalance(addr); err == nil {
 			fmt.Println(addr, c)
-		} else {
-			fmt.Println("Undefined or invalid address")
+			return
+		} 
+		
+		if *res {
+			f, e, err := factom.DnsBalance(addr)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println(addr, "fct", f)
+			fmt.Println(addr, "ec", e)
 		}
+		
+		fmt.Println("Undefined or invalid address")
 	}
 	help.Add("balance", cmd)
 	return cmd
