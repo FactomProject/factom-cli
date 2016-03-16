@@ -12,7 +12,7 @@ import (
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
-	fct "github.com/FactomProject/factoid"
+	"github.com/FactomProject/factomd/common/primitives"
 )
 
 // balance prints the current balance of the specified address
@@ -24,15 +24,15 @@ var balance = func() *fctCmd {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		
+
 		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
 		addr := args[0]
-		
+
 		if b, err := factom.FctBalance(addr); err == nil {
-			fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
+			fmt.Println(addr, primitives.ConvertDecimalToString(uint64(b)))
 		} else if c, err := factom.ECBalance(addr); err == nil {
 			fmt.Println(addr, c)
 		} else {

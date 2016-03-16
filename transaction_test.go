@@ -5,13 +5,13 @@
 package main
 
 import (
-	fct "github.com/FactomProject/factoid"
+	"github.com/FactomProject/factomd/common/primitives"
 	"testing"
 )
 
 func Test_Input_Amounts(test *testing.T) {
 
-	str, err := fct.ConvertFixedPoint("10")
+	str, err := primitives.ConvertFixedPoint("10")
 	if err != nil {
 		test.Fail()
 	}
@@ -19,7 +19,7 @@ func Test_Input_Amounts(test *testing.T) {
 		test.Fail()
 	}
 
-	str, err = fct.ConvertFixedPoint("10.08")
+	str, err = primitives.ConvertFixedPoint("10.08")
 	if err != nil {
 		test.Fail()
 	}
@@ -27,7 +27,7 @@ func Test_Input_Amounts(test *testing.T) {
 		test.Fail()
 	}
 
-	str, err = fct.ConvertFixedPoint("10.08000001")
+	str, err = primitives.ConvertFixedPoint("10.08000001")
 	if err != nil {
 		test.Fail()
 	}

@@ -15,9 +15,10 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 
-	"github.com/FactomProject/factoid"
+	"github.com/FactomProject/factomd/common/constants"
+	"github.com/FactomProject/factomd/common/factoid"
+	"github.com/FactomProject/factomd/common/primitives"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
@@ -32,7 +33,7 @@ type Response struct {
 }
 
 func ValidateKey(key string) (msg string, valid bool) {
-	if len(key) > factoid.ADDRESS_LENGTH {
+	if len(key) > constants.ADDRESS_LENGTH {
 		return "Key is too long.  Keys must be less than or equal to 32 characters", false
 	}
 	if badChar.FindStringIndex(key) != nil {
@@ -274,7 +275,7 @@ var fctaddinput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		amt, err := factoid.ConvertFixedPoint(args[2])
+		amt, err := primitives.ConvertFixedPoint(args[2])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -321,7 +322,7 @@ var fctaddoutput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		amt, err := factoid.ConvertFixedPoint(args[2])
+		amt, err := primitives.ConvertFixedPoint(args[2])
 		if err != nil {
 			fmt.Println("Invalid format for a number: ", args[2])
 			fmt.Println(cmd.helpMsg)
@@ -369,7 +370,7 @@ var fctaddecoutput = func() *fctCmd {
 			os.Exit(1)
 		}
 
-		amt, err := factoid.ConvertFixedPoint(args[2])
+		amt, err := primitives.ConvertFixedPoint(args[2])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -482,7 +483,7 @@ var fctproperties = func() *fctCmd {
 
 		total, err := Utility.TotalFactoids()
 		if err == nil {
-			ret = ret + fmt.Sprintf("    Total Factoids: %s", strings.TrimSpace(factoid.ConvertDecimal(total)))
+			ret = ret + fmt.Sprintf("    Total Factoids: %s", primitives.ConvertDecimalToString(total))
 		}
 
 		fmt.Println(ret)
