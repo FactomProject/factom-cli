@@ -12,7 +12,36 @@ import (
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
+	fct "github.com/FactomProject/factoid"
 )
+
+// balance prints the current balance of the specified address
+var balance = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli balance ADDRESS"
+	cmd.description = "If this is an EC Address, returns number of Entry Credits. If this is a Factoid Address, returns the Factoid balance."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+		
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		addr := args[0]
+		
+		if b, err := factom.FctBalance(addr); err == nil {
+			fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
+		} else if c, err := factom.ECBalance(addr); err == nil {
+			fmt.Println(addr, c)
+		} else {
+			fmt.Println("Undefined or invalid address")
+		}
+	}
+	help.Add("balance", cmd)
+	return cmd
+}()
 
 // Generate a new Address
 var generateaddress = func() *fctCmd {
