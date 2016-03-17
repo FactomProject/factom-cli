@@ -18,6 +18,7 @@ import (
 	"strings"
 
 	"github.com/FactomProject/factoid"
+	"github.com/FactomProject/factom"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
@@ -305,6 +306,7 @@ var fctaddoutput = func() *fctCmd {
 	cmd.helpMsg = "factom-cli addoutput TXNAME NAME|FCADDRESS AMOUNT"
 	cmd.description = "Add an output to a transaction."
 	cmd.execFunc = func(args []string) {
+		var res = flag.Bool("r", false, "resolve dns address")
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -314,7 +316,22 @@ var fctaddoutput = func() *fctCmd {
 			return
 		}
 		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
+		
+		addr := args[1]
 
+		if *res {
+			f, _, err := factom.ResolveDnsName(addr)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			} else if f == "" {
+				fmt.Println("Could not resolve address")
+				os.Exit(1)
+			}
+			
+			addr = f
+		}
+		
 		msg, valid := ValidateKey(args[0])
 		if !valid {
 			fmt.Println(msg)
@@ -341,7 +358,7 @@ var fctaddoutput = func() *fctCmd {
 		}
 
 		str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], args[1], amt)
+			serverFct, args[0], addr, amt)
 		postCmd(str)
 	}
 	help.Add("addoutput", cmd)
@@ -353,6 +370,7 @@ var fctaddecoutput = func() *fctCmd {
 	cmd.helpMsg = "factom-cli addecoutput TXNAME NAME|ECADDRESS AMOUNT"
 	cmd.description = "Add an ecoutput (purchase of entry credits to a transaction. Amount is denominated in factoids"
 	cmd.execFunc = func(args []string) {
+		var res = flag.Bool("r", false, "resolve dns address")
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -363,6 +381,21 @@ var fctaddecoutput = func() *fctCmd {
 		}
 		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
 
+		addr := args[1]
+
+		if *res {
+			_, e, err := factom.ResolveDnsName(addr)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			} else if e == "" {
+				fmt.Println("Could not resolve address")
+				os.Exit(1)
+			}
+			
+			addr = e
+		}
+		
 		msg, valid := ValidateKey(args[0])
 		if !valid {
 			fmt.Println(msg)
@@ -388,7 +421,7 @@ var fctaddecoutput = func() *fctCmd {
 		}
 
 		str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], args[1], amt)
+			serverFct, args[0], addr, amt)
 		postCmd(str)
 	}
 	help.Add("addecoutput", cmd)

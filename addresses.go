@@ -40,6 +40,8 @@ var balance = func() *fctCmd {
 			return
 		} 
 		
+		// if -r flag is present, resolve dns address then get the fct and ec
+		// blance
 		if *res {
 			f, e, err := factom.DnsBalance(addr)
 			if err != nil {
