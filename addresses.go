@@ -48,7 +48,7 @@ var balance = func() *fctCmd {
 				fmt.Println(err)
 				return
 			}
-			fmt.Println(addr, "fct", f)
+			fmt.Println(addr, "fct", fct.ConvertDecimal(uint64(f)))
 			fmt.Println(addr, "ec", e)
 		} else {
 			fmt.Println("Undefined or invalid address")
