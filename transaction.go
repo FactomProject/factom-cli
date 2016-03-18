@@ -303,7 +303,7 @@ var fctaddinput = func() *fctCmd {
 
 var fctaddoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addoutput TXNAME NAME|FCADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addoutput [-r] TXNAME NAME|FCADDRESS|DNSADDRESS AMOUNT"
 	cmd.description = "Add an output to a transaction."
 	cmd.execFunc = func(args []string) {
 		var res = flag.Bool("r", false, "resolve dns address")
@@ -367,7 +367,7 @@ var fctaddoutput = func() *fctCmd {
 
 var fctaddecoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addecoutput TXNAME NAME|ECADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addecoutput [-r] TXNAME NAME|ECADDRESS|DNSADDRESS AMOUNT"
 	cmd.description = "Add an ecoutput (purchase of entry credits to a transaction. Amount is denominated in factoids"
 	cmd.execFunc = func(args []string) {
 		var res = flag.Bool("r", false, "resolve dns address")

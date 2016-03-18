@@ -18,7 +18,7 @@ import (
 // balance prints the current balance of the specified address
 var balance = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli balance ADDRESS"
+	cmd.helpMsg = "factom-cli balance [-r] ADDRESS"
 	cmd.description = "If this is an EC Address, returns number of Entry Credits. If this is a Factoid Address, returns the Factoid balance."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
