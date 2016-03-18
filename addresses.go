@@ -50,9 +50,9 @@ var balance = func() *fctCmd {
 			}
 			fmt.Println(addr, "fct", f)
 			fmt.Println(addr, "ec", e)
+		} else {
+			fmt.Println("Undefined or invalid address")
 		}
-		
-		fmt.Println("Undefined or invalid address")
 	}
 	help.Add("balance", cmd)
 	return cmd
