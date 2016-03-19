@@ -94,7 +94,7 @@ var getChainHead = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		fmt.Println("EBlock:", head.ChainHead)
 		fmt.Println(eblock)
 	}

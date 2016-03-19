@@ -316,7 +316,7 @@ var fctaddoutput = func() *fctCmd {
 			return
 		}
 		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
-		
+
 		addr := args[1]
 
 		if *res {
@@ -328,10 +328,10 @@ var fctaddoutput = func() *fctCmd {
 				fmt.Println("Could not resolve address")
 				os.Exit(1)
 			}
-			
+
 			addr = f
 		}
-		
+
 		msg, valid := ValidateKey(args[0])
 		if !valid {
 			fmt.Println(msg)
@@ -392,10 +392,10 @@ var fctaddecoutput = func() *fctCmd {
 				fmt.Println("Could not resolve address")
 				os.Exit(1)
 			}
-			
+
 			addr = e
 		}
-		
+
 		msg, valid := ValidateKey(args[0])
 		if !valid {
 			fmt.Println(msg)

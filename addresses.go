@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/FactomProject/cli"
-	"github.com/FactomProject/factom"
 	fct "github.com/FactomProject/factoid"
+	"github.com/FactomProject/factom"
 )
 
 // balance prints the current balance of the specified address
@@ -25,21 +25,21 @@ var balance = func() *fctCmd {
 		var res = flag.Bool("r", false, "resolve dns address")
 		flag.Parse()
 		args = flag.Args()
-		
+
 		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
 		addr := args[0]
-		
+
 		if b, err := factom.FctBalance(addr); err == nil {
 			fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
 			return
 		} else if c, err := factom.ECBalance(addr); err == nil {
 			fmt.Println(addr, c)
 			return
-		} 
-		
+		}
+
 		// if -r flag is present, resolve dns address then get the fct and ec
 		// blance
 		if *res {
@@ -68,13 +68,17 @@ var generateaddress = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		c := cli.New()
-		c.Handle("ec", ecGenerateAddr)
-		c.Handle("fct", fctGenerateAddr)
-		c.HandleDefaultFunc(func(args []string) {
+		if len(args) == 2 {
+			c := cli.New()
+			c.Handle("ec", ecGenerateAddr)
+			c.Handle("fct", fctGenerateAddr)
+			c.HandleDefaultFunc(func(args []string) {
+				fmt.Println(cmd.helpMsg)
+			})
+			c.Execute(args)
+		} else {
 			fmt.Println(cmd.helpMsg)
-		})
-		c.Execute(args)
+		}
 	}
 	help.Add("generateaddress", cmd)
 	help.Add("newaddress", cmd)
