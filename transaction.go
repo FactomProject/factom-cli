@@ -255,6 +255,35 @@ var fctaddfee = func() *fctCmd {
 	return cmd
 }()
 
+
+var fctsubfee = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli subfee TXNAME FCADDRESS"
+	cmd.description = "Subtracts the needed fee to the given transaction. The Factoid Address specified must be an input to the transaction. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 2 {
+			fmt.Println("Was expecting a transaction name, and an address used as an input to that transaction.")
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		msg, valid := ValidateKey(args[0])
+		if !valid {
+			fmt.Println(msg)
+			os.Exit(1)
+		}
+
+		str := fmt.Sprintf("http://%s/v1/factoid-sub-fee/?key=%s&name=%s",
+			serverFct, args[0], args[1])
+		postCmd(str)
+	}
+	help.Add("subfee", cmd)
+	return cmd
+}()
+
 var fctaddinput = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli addinput TXNAME NAME|FCADDRESS AMOUNT"

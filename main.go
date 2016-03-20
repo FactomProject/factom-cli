@@ -66,6 +66,7 @@ func main() {
 	c.Handle("submit", fctsubmit)
 	c.Handle("getfee", fctgetfee)
 	c.Handle("addfee", fctaddfee)
+	c.Handle("subfee", fctsubfee)
 	c.Handle("properties", fctproperties)
 	c.Handle("list", getlist)
 	c.Handle("listj", getlistj)
