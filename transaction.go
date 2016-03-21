@@ -261,6 +261,7 @@ var fctsubfee = func() *fctCmd {
 	cmd.helpMsg = "factom-cli subfee TXNAME FCADDRESS"
 	cmd.description = "Subtracts the needed fee to the given transaction. The Factoid Address specified must be an input to the transaction. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
 	cmd.execFunc = func(args []string) {
+		var res = flag.Bool("r", false, "resolve dns address")
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -276,8 +277,26 @@ var fctsubfee = func() *fctCmd {
 			os.Exit(1)
 		}
 
+		addr := args[1]
+
+		if *res {
+			f, e, err := factom.ResolveDnsName(addr)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			} else if f == "" {
+				if e == "" {
+					fmt.Println("Could not resolve address")
+					os.Exit(1)
+				}
+				addr = e
+				return
+			}
+			addr = f
+		}
+		
 		str := fmt.Sprintf("http://%s/v1/factoid-sub-fee/?key=%s&name=%s",
-			serverFct, args[0], args[1])
+			serverFct, args[0], addr)
 		postCmd(str)
 	}
 	help.Add("subfee", cmd)
