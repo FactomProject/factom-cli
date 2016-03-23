@@ -20,6 +20,7 @@ import (
 	"github.com/FactomProject/factomd/common/factoid"
 	"github.com/FactomProject/factomd/common/primitives"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
+	"github.com/FactomProject/factom"
 )
 
 var _ = hex.EncodeToString
@@ -255,6 +256,54 @@ var fctaddfee = func() *fctCmd {
 	return cmd
 }()
 
+
+var fctsubfee = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli subfee TXNAME FCADDRESS"
+	cmd.description = "Subtracts the needed fee to the given transaction. The Factoid Address specified must be an input to the transaction. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
+	cmd.execFunc = func(args []string) {
+		var res = flag.Bool("r", false, "resolve dns address")
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 2 {
+			fmt.Println("Was expecting a transaction name, and an address used as an input to that transaction.")
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		msg, valid := ValidateKey(args[0])
+		if !valid {
+			fmt.Println(msg)
+			os.Exit(1)
+		}
+
+		addr := args[1]
+
+		if *res {
+			f, e, err := factom.ResolveDnsName(addr)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			} else if f == "" {
+				if e == "" {
+					fmt.Println("Could not resolve address")
+					os.Exit(1)
+				}
+				addr = e
+				return
+			}
+			addr = f
+		}
+		
+		str := fmt.Sprintf("http://%s/v1/factoid-sub-fee/?key=%s&name=%s",
+			serverFct, args[0], addr)
+		postCmd(str)
+	}
+	help.Add("subfee", cmd)
+	return cmd
+}()
+
 var fctaddinput = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli addinput TXNAME NAME|FCADDRESS AMOUNT"
@@ -303,9 +352,10 @@ var fctaddinput = func() *fctCmd {
 
 var fctaddoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addoutput TXNAME NAME|FCADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addoutput [-r] TXNAME NAME|FCADDRESS|DNSADDRESS AMOUNT"
 	cmd.description = "Add an output to a transaction."
 	cmd.execFunc = func(args []string) {
+		var res = flag.Bool("r", false, "resolve dns address")
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -315,6 +365,21 @@ var fctaddoutput = func() *fctCmd {
 			return
 		}
 		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
+
+		addr := args[1]
+
+		if *res {
+			f, _, err := factom.ResolveDnsName(addr)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			} else if f == "" {
+				fmt.Println("Could not resolve address")
+				os.Exit(1)
+			}
+
+			addr = f
+		}
 
 		msg, valid := ValidateKey(args[0])
 		if !valid {
@@ -342,7 +407,7 @@ var fctaddoutput = func() *fctCmd {
 		}
 
 		str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], args[1], amt)
+			serverFct, args[0], addr, amt)
 		postCmd(str)
 	}
 	help.Add("addoutput", cmd)
@@ -351,9 +416,10 @@ var fctaddoutput = func() *fctCmd {
 
 var fctaddecoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addecoutput TXNAME NAME|ECADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addecoutput [-r] TXNAME NAME|ECADDRESS|DNSADDRESS AMOUNT"
 	cmd.description = "Add an ecoutput (purchase of entry credits to a transaction. Amount is denominated in factoids"
 	cmd.execFunc = func(args []string) {
+		var res = flag.Bool("r", false, "resolve dns address")
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
@@ -363,6 +429,21 @@ var fctaddecoutput = func() *fctCmd {
 			return
 		}
 		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
+
+		addr := args[1]
+
+		if *res {
+			_, e, err := factom.ResolveDnsName(addr)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			} else if e == "" {
+				fmt.Println("Could not resolve address")
+				os.Exit(1)
+			}
+
+			addr = e
+		}
 
 		msg, valid := ValidateKey(args[0])
 		if !valid {
@@ -389,7 +470,7 @@ var fctaddecoutput = func() *fctCmd {
 		}
 
 		str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], args[1], amt)
+			serverFct, args[0], addr, amt)
 		postCmd(str)
 	}
 	help.Add("addecoutput", cmd)

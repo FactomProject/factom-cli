@@ -18,7 +18,7 @@ var (
 	wallet string
 )
 
-const Version = "0.1.5.0"
+const Version = "0.1.6.0"
 
 func main() {
 	cfg := ReadConfig().Main
@@ -44,6 +44,7 @@ func main() {
 	}
 
 	factom.SetServer(server)
+	factom.SetWallet(wallet)
 
 	c := cli.New()
 	c.Handle("help", help)
@@ -66,6 +67,7 @@ func main() {
 	c.Handle("submit", fctsubmit)
 	c.Handle("getfee", fctgetfee)
 	c.Handle("addfee", fctaddfee)
+	c.Handle("subfee", fctsubfee)
 	c.Handle("properties", fctproperties)
 	c.Handle("list", getlist)
 	c.Handle("listj", getlistj)
