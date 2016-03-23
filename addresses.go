@@ -13,7 +13,6 @@ import (
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 	"github.com/FactomProject/factomd/common/primitives"
-
 )
 
 // balance prints the current balance of the specified address

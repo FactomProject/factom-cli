@@ -16,11 +16,11 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/FactomProject/factom"
 	"github.com/FactomProject/factomd/common/constants"
 	"github.com/FactomProject/factomd/common/factoid"
 	"github.com/FactomProject/factomd/common/primitives"
 	"github.com/FactomProject/fctwallet/Wallet/Utility"
-	"github.com/FactomProject/factom"
 )
 
 var _ = hex.EncodeToString
@@ -256,7 +256,6 @@ var fctaddfee = func() *fctCmd {
 	return cmd
 }()
 
-
 var fctsubfee = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli subfee TXNAME FCADDRESS"
@@ -295,7 +294,7 @@ var fctsubfee = func() *fctCmd {
 			}
 			addr = f
 		}
-		
+
 		str := fmt.Sprintf("http://%s/v1/factoid-sub-fee/?key=%s&name=%s",
 			serverFct, args[0], addr)
 		postCmd(str)
