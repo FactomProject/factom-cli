@@ -45,6 +45,7 @@ func main() {
 
 	factom.SetServer(server)
 	factom.SetWallet(wallet)
+	serverFct = wallet
 
 	c := cli.New()
 	c.Handle("help", help)
