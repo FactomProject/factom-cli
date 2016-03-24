@@ -255,7 +255,6 @@ var fctaddfee = func() *fctCmd {
 	return cmd
 }()
 
-
 var fctsubfee = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli subfee TXNAME FCTADDRESS"
@@ -294,7 +293,7 @@ var fctsubfee = func() *fctCmd {
 			}
 			addr = f
 		}
-		
+
 		str := fmt.Sprintf("http://%s/v1/factoid-sub-fee/?key=%s&name=%s",
 			serverFct, args[0], addr)
 		postCmd(str)
