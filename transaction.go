@@ -258,8 +258,8 @@ var fctaddfee = func() *fctCmd {
 
 var fctsubfee = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli subfee TXNAME FCADDRESS"
-	cmd.description = "Subtracts the needed fee to the given transaction. The Factoid Address specified must be an input to the transaction. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
+	cmd.helpMsg = "factom-cli subfee TXNAME FCTADDRESS"
+	cmd.description = "Subtracts the needed fee to the given transaction. The Factoid Address specified must be an output to the transaction. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
 	cmd.execFunc = func(args []string) {
 		var res = flag.Bool("r", false, "resolve dns address")
 		os.Args = args
