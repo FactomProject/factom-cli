@@ -43,8 +43,8 @@ func main() {
 		args = []string{"help"}
 	}
 
-	factom.SetServer(server)
-	factom.SetWallet(wallet)
+	factom.SetFactomdServer(server)
+	factom.SetWalletServer(wallet)
 	serverFct = wallet
 
 	c := cli.New()

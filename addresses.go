@@ -32,10 +32,10 @@ var balance = func() *fctCmd {
 		}
 		addr := args[0]
 
-		if b, err := factom.FctBalance(addr); err == nil {
+		if b, err := factom.GetFctBalance(addr); err == nil {
 			fmt.Println(addr, primitives.ConvertDecimalToString(uint64(b)))
 			return
-		} else if c, err := factom.ECBalance(addr); err == nil {
+		} else if c, err := factom.GetECBalance(addr); err == nil {
 			fmt.Println(addr, c)
 			return
 		}
