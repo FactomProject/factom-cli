@@ -33,7 +33,7 @@ var mkchain = func() *fctCmd {
 		}
 		name := args[0]
 
-		e := factom.NewEntry()
+		e := new(factom.EntryStrings)
 
 		for _, id := range eids {
 			e.ExtIDs = append(e.ExtIDs, id)
@@ -49,8 +49,13 @@ var mkchain = func() *fctCmd {
 		} else {
 			e.Content = string(p)
 		}
+		ent, err := e.ToEntry()
+		if err != nil {
+			errorln(err)
+			return
+		}
 
-		c := factom.NewChain(e)
+		c := factom.NewChain(ent)
 
 		if _, err := factom.GetChainHead(c.ChainID); err == nil {
 			// no error means the client found the chain

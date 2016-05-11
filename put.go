@@ -46,7 +46,7 @@ var put = func() *fctCmd {
 		}
 		name := args[0]
 
-		e := factom.NewEntry()
+		e := new(factom.EntryStrings)
 
 		// use the default chainid and extids from the config file
 		econf := ReadConfig().Entry
@@ -81,13 +81,19 @@ var put = func() *fctCmd {
 			return
 		}
 
-		fmt.Printf("Creating Entry: %x\n", e.Hash())
-		if err := factom.CommitEntry(e, name); err != nil {
+		ent, err := e.ToEntry()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		fmt.Printf("Creating Entry: %x\n", ent.Hash())
+		if err := factom.CommitEntry(ent, name); err != nil {
 			errorln(err)
 			return
 		}
 		time.Sleep(10 * time.Second)
-		if _, err := factom.RevealEntry(e); err != nil {
+		if _, err := factom.RevealEntry(ent); err != nil {
 			errorln(err)
 			return
 		}
