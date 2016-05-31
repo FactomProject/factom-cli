@@ -72,6 +72,7 @@ func main() {
 	c.Handle("properties", fctproperties)
 	c.Handle("list", getlist)
 	c.Handle("listj", getlistj)
+	c.Handle("ack", ack)
 	c.HandleDefault(help)
 	c.Execute(args)
 }
