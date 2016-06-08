@@ -73,6 +73,7 @@ func main() {
 	c.Handle("list", getlist)
 	c.Handle("listj", getlistj)
 	c.Handle("ack", ack)
+	c.Handle("receipt", receipt)
 	c.HandleDefault(help)
 	c.Execute(args)
 }
