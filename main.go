@@ -32,8 +32,8 @@ func main() {
 	
 	c := cli.New()
 	c.Handle("help", help)
-	c.Handle("addchain", addchain)
-	c.Handle("addentry", addentry)
+//	c.Handle("addchain", addchain)
+//	c.Handle("addentry", addentry)
 	c.Handle("balance", balance)
 	c.Handle("get", get)
 	c.Handle("importaddresses", importaddresses)
