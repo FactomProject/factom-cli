@@ -7,17 +7,27 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"time"
 
 	"github.com/FactomProject/factom"
 )
 
-var mkchain = func() *fctCmd {
+// extids will be a flag receiver for adding chains and entries
+type extids []string
+
+func (e *extids) String() string {
+	return fmt.Sprint(*e)
+}
+
+func (e *extids) Set(s string) error {
+	*e = append(*e, s)
+	return nil
+}
+
+var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli mkchain [-e EXTID1 -e EXTID2 ...] NAME <STDIN>"
-	cmd.description = "Create a new factom chain. Read the data for the first entry from stdin. Use the entry credits from the specified name."
+	cmd.helpMsg = "factom-cli mkchain [-e EXTID1 -e EXTID2 ...] ECADDRESS <STDIN>"
+	cmd.description = "Create a new factom chain. Read data for the first entry from stdin. Use the entry credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -31,12 +41,12 @@ var mkchain = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		name := args[0]
+		ecpub := args[0]
 
-		e := new(factom.EntryStrings)
+		e := new(factom.Entry)
 
 		for _, id := range eids {
-			e.ExtIDs = append(e.ExtIDs, id)
+			e.ExtIDs = append(e.ExtIDs, []byte(id))
 		}
 
 		// Entry.Content is read from stdin
@@ -47,15 +57,10 @@ var mkchain = func() *fctCmd {
 			errorln(fmt.Errorf("Entry of %d bytes is too large", size))
 			return
 		} else {
-			e.Content = string(p)
-		}
-		ent, err := e.ToEntry()
-		if err != nil {
-			errorln(err)
-			return
+			e.Content = p
 		}
 
-		c := factom.NewChain(ent)
+		c := factom.NewChain(e)
 
 		if _, err := factom.GetChainHead(c.ChainID); err == nil {
 			// no error means the client found the chain
@@ -63,17 +68,21 @@ var mkchain = func() *fctCmd {
 			return
 		}
 
-		fmt.Println("Creating Chain:", c.ChainID)
-		if err := factom.CommitChain(c, name); err != nil {
+		// get the ec address from the wallet
+		ec, err := factom.FetchECAddress(ecpub)
+		if err != nil {
 			errorln(err)
 			return
 		}
-		time.Sleep(10 * time.Second)
-		if err := factom.RevealChain(c); err != nil {
+		// commit the chain
+		if err := factom.CommitChain(c, ec); err != nil {
 			errorln(err)
 			return
 		}
+		// get commit acknowledgement
+		// reveal chain
+		// ? get reveal ack
 	}
-	help.Add("mkchain", cmd)
+	help.Add("addchain", addchain)
 	return cmd
 }()
