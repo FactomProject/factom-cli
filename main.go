@@ -41,6 +41,8 @@ func main() {
 	c.Handle("newecaddress", newecaddress)
 	c.Handle("newfctaddress", newfctaddress)
 	c.Handle("listaddresses", listaddresses)
+	c.Handle("ack", ack)
+	c.Handle("receipt", receipt)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
