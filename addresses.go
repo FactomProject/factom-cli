@@ -79,9 +79,16 @@ var importaddresses = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if err := factom.ImportAddresses(args...); err != nil {
+		fs, es, err := factom.ImportAddresses(args...)
+		if err != nil {
 			errorln(err)
 			return
+		}
+		for _, a := range fs {
+			fmt.Println(a)
+		}
+		for _, a := range es {
+			fmt.Println(a)
 		}
 	}
 	help.Add("importaddresses", cmd)
