@@ -29,13 +29,14 @@ func main() {
 	}
 	factom.SetFactomdServer(*sflag)
 	factom.SetWalletServer(*wflag)
-	
+
 	c := cli.New()
 	c.Handle("help", help)
-//	c.Handle("addchain", addchain)
-//	c.Handle("addentry", addentry)
+	c.Handle("addchain", addchain)
+	c.Handle("addentry", addentry)
 	c.Handle("balance", balance)
 	c.Handle("get", get)
+	c.Handle("importaddress", importaddresses)
 	c.Handle("importaddresses", importaddresses)
 	c.Handle("newecaddress", newecaddress)
 	c.Handle("newfctaddress", newfctaddress)
@@ -52,7 +53,7 @@ func main() {
 	c.Handle("subtxfee", subtxfee)
 	c.Handle("signtx", signtx)
 	c.Handle("composetx", composetx)
-	
+
 	c.HandleDefault(help)
 	c.Execute(args)
 }

@@ -268,4 +268,3 @@ var composetx = func() *fctCmd {
 	help.Add("signtx", cmd)
 	return cmd
 }()
-
