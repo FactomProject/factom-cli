@@ -32,16 +32,17 @@ func main() {
 
 	c := cli.New()
 	c.Handle("help", help)
+	c.Handle("ack", ack)
 	c.Handle("addchain", addchain)
 	c.Handle("addentry", addentry)
 	c.Handle("balance", balance)
+	c.Handle("ecrate", ecrate)
 	c.Handle("get", get)
 	c.Handle("importaddress", importaddresses)
 	c.Handle("importaddresses", importaddresses)
+	c.Handle("listaddresses", listaddresses)
 	c.Handle("newecaddress", newecaddress)
 	c.Handle("newfctaddress", newfctaddress)
-	c.Handle("listaddresses", listaddresses)
-	c.Handle("ack", ack)
 	c.Handle("receipt", receipt)
 
 	// transaction commands

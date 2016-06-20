@@ -35,7 +35,7 @@ var balance = func() *fctCmd {
 			if err != nil {
 				errorln(err)
 			}
-			fmt.Println(b)
+			fmt.Println(float64(b) / 1e8)
 			return
 		case factom.ECPub:
 			c, err := factom.GetECBalance(addr)
@@ -54,12 +54,29 @@ var balance = func() *fctCmd {
 				fmt.Println(err)
 				return
 			}
-			n := float64(f)
-			fmt.Println(addr, "fct",  n / 1e8)
+			fmt.Println(addr, "fct",  float64(f) / 1e8)
 			fmt.Println(addr, "ec", e)
 		} else {
 			fmt.Println("Undefined or invalid address")
 		}
+	}
+	help.Add("balance", cmd)
+	return cmd
+}()
+
+// ecrate shows the entry credit conversion rate in factoids
+var ecrate = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli ecrate"
+	cmd.description = "Show the current Entry Credit conversion rate in the Factom Network"
+	cmd.execFunc = func(args []string) {
+		rate, err := factom.GetRate()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(float64(rate) / 1e8)
+		
 	}
 	help.Add("balance", cmd)
 	return cmd
@@ -92,6 +109,7 @@ var importaddresses = func() *fctCmd {
 		}
 	}
 	help.Add("importaddresses", cmd)
+	help.Add("importaddress", cmd)
 	return cmd
 }()
 
