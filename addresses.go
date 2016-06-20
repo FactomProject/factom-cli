@@ -171,7 +171,22 @@ var listaddresses = func() *fctCmd {
 			return
 		}
 		for _, a := range as {
-			fmt.Println(a)
+			switch factom.AddressStringType(a) {
+			case factom.FactoidPub:
+				b, err := factom.GetFactoidBalance(a)
+				if err != nil {
+					errorln(err)
+				}
+				fmt.Println(a, float64(b) / 1e8)
+				return
+			case factom.ECPub:
+				c, err := factom.GetECBalance(a)
+				if err != nil {
+					errorln(err)
+				}
+				fmt.Printf("%s %d\n", a, c)
+				return
+			}
 		}
 	}
 	help.Add("listaddresses", cmd)
