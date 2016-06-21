@@ -15,8 +15,8 @@ import (
 
 var receipt = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli receipt EntryHash"
-	cmd.description = "Returns a receipt for a given entry"
+	cmd.helpMsg = "factom-cli receipt ENTRYHASH"
+	cmd.description = "Returns a Receipt for a given Entry"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()

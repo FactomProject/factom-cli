@@ -78,7 +78,7 @@ var ecrate = func() *fctCmd {
 		fmt.Println(float64(rate) / 1e8)
 		
 	}
-	help.Add("balance", cmd)
+	help.Add("ecrate", cmd)
 	return cmd
 }()
 
@@ -184,7 +184,7 @@ var listaddresses = func() *fctCmd {
 				if err != nil {
 					errorln(err)
 				}
-				fmt.Printf("%s %d\n", a, c)
+				fmt.Println(a, c)
 				return
 			}
 		}

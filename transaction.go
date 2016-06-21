@@ -265,6 +265,6 @@ var composetx = func() *fctCmd {
 		}
 		fmt.Println(string(p))
 	}
-	help.Add("signtx", cmd)
+	help.Add("composetx", cmd)
 	return cmd
 }()
