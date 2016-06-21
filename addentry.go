@@ -15,11 +15,12 @@ import (
 
 var addentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addentry [-e EXTID1 -e EXTID2 ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addentry -c CHAINID [-e EXTID1 -e EXTID2 ...] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Entry. Read data for the Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
+			cid  = flag.String("c", "", "hex encoded chainid for the entry")
 			eids extids
 		)
 		flag.Var(&eids, "e", "external id for the entry")
@@ -34,6 +35,12 @@ var addentry = func() *fctCmd {
 
 		e := new(factom.Entry)
 
+		if *cid == "" {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		e.ChainID = *cid
+		
 		for _, id := range eids {
 			e.ExtIDs = append(e.ExtIDs, []byte(id))
 		}
