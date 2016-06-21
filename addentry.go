@@ -20,10 +20,13 @@ var addentry = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
-			cid  = flag.String("c", "", "hex encoded chainid for the entry")
-			eids extids
+			cid   = flag.String("c", "", "hex encoded chainid for the entry")
+			eAcii extidsAscii
+			eHex  extidsHex
 		)
-		flag.Var(&eids, "e", "external id for the entry")
+		exidCollector = make([][]byte, 0)
+		flag.Var(&eAcii, "e", "external id for the entry in ascii")
+		flag.Var(&eHex, "E", "external id for the entry in hex")
 		flag.Parse()
 		args = flag.Args()
 
@@ -40,10 +43,11 @@ var addentry = func() *fctCmd {
 			return
 		}
 		e.ChainID = *cid
-		
-		for _, id := range eids {
-			e.ExtIDs = append(e.ExtIDs, []byte(id))
-		}
+
+		//for _, id := range eids {
+		//	e.ExtIDs = append(e.ExtIDs, []byte(id))
+		//}
+		e.ExtIDs = exidCollector
 
 		// Entry.Content is read from stdin
 		if p, err := ioutil.ReadAll(os.Stdin); err != nil {
@@ -67,6 +71,7 @@ var addentry = func() *fctCmd {
 			errorln(err)
 			return
 		}
+
 		// commit the chain
 		if _, err := factom.CommitEntry(e, ec); err != nil {
 			errorln(err)

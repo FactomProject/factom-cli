@@ -202,7 +202,7 @@ var addtxfee = func() *fctCmd {
 var subtxfee = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli subtxfee TXNAME ADDRESS"
-	cmd.description = "Subtranct the transaction fee to an input of a transaction in the wallet"
+	cmd.description = "Subtract the transaction fee to an input of a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()

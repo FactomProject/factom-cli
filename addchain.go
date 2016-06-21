@@ -5,6 +5,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -13,15 +14,37 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-// extids will be a flag receiver for adding chains and entries
-type extids []string
+var exidCollector [][]byte
 
-func (e *extids) String() string {
+// extids will be a flag receiver for adding chains and entries
+// In ASCII
+type extidsAscii []string
+
+func (e *extidsAscii) String() string {
 	return fmt.Sprint(*e)
 }
 
-func (e *extids) Set(s string) error {
+func (e *extidsAscii) Set(s string) error {
 	*e = append(*e, s)
+	exidCollector = append(exidCollector[:], []byte(s))
+	return nil
+}
+
+// extids will be a flag receiver for adding chains and entries
+// In HEX
+type extidsHex []string
+
+func (e *extidsHex) String() string {
+	return fmt.Sprint(*e)
+}
+
+func (e *extidsHex) Set(s string) error {
+	*e = append(*e, s)
+	b, err := hex.DecodeString(s)
+	if err != nil {
+		return err
+	}
+	exidCollector = append(exidCollector[:], b)
 	return nil
 }
 
@@ -32,9 +55,12 @@ var addchain = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
-			eids extids
+			eAcii extidsAscii
+			eHex  extidsHex
 		)
-		flag.Var(&eids, "e", "external id for the entry")
+		exidCollector = make([][]byte, 0)
+		flag.Var(&eAcii, "e", "external id for the entry in ascii")
+		flag.Var(&eHex, "E", "external id for the entry in hex")
 		flag.Parse()
 		args = flag.Args()
 
@@ -46,9 +72,10 @@ var addchain = func() *fctCmd {
 
 		e := new(factom.Entry)
 
-		for _, id := range eids {
-			e.ExtIDs = append(e.ExtIDs, []byte(id))
-		}
+		//for _, id := range eAcii {
+		//	e.ExtIDs = append(e.ExtIDs, []byte(id))
+		//}
+		e.ExtIDs = exidCollector
 
 		// Entry.Content is read from stdin
 		if p, err := ioutil.ReadAll(os.Stdin); err != nil {
@@ -82,7 +109,7 @@ var addchain = func() *fctCmd {
 		}
 
 		// TODO - get commit acknowledgement
-		
+
 		// reveal chain
 		if err := factom.RevealChain(c); err != nil {
 			errorln(err)
