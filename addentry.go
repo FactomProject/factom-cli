@@ -73,17 +73,22 @@ var addentry = func() *fctCmd {
 		}
 
 		// commit the chain
-		if _, err := factom.CommitEntry(e, ec); err != nil {
+		if txID, err := factom.CommitEntry(e, ec); err != nil {
 			errorln(err)
 			return
+		} else {
+			fmt.Println("Commiting Entry Transaction ID: " + txID)
 		}
 
 		// TODO - get commit acknowledgement
 
 		// reveal chain
-		if err := factom.RevealEntry(e); err != nil {
+		if hash, err := factom.RevealEntry(e); err != nil {
 			errorln(err)
 			return
+		} else {
+			fmt.Println("ChainID  : " + *cid)
+			fmt.Println("Entryhash: " + hash)
 		}
 		// ? get reveal ack
 	}

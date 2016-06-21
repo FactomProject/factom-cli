@@ -103,17 +103,22 @@ var addchain = func() *fctCmd {
 			return
 		}
 		// commit the chain
-		if _, err := factom.CommitChain(c, ec); err != nil {
+		if txID, err := factom.CommitChain(c, ec); err != nil {
 			errorln(err)
 			return
+		} else {
+			fmt.Println("Commiting Chain Transaction ID: " + txID)
 		}
 
 		// TODO - get commit acknowledgement
 
 		// reveal chain
-		if err := factom.RevealChain(c); err != nil {
+		if hash, err := factom.RevealChain(c); err != nil {
 			errorln(err)
 			return
+		} else {
+			fmt.Println("ChainID  : " + c.ChainID)
+			fmt.Println("Entryhash: " + hash)
 		}
 		// ? get reveal ack
 	}
