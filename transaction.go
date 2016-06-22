@@ -97,12 +97,12 @@ var addtxinput = func() *fctCmd {
 			return
 		}
 		var amt uint64
-		if i, err := strconv.Atoi(args[2]); err != nil {
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
 			errorln("AMMOUNT may not be less than 0")
 		} else {
-			amt = uint64(i)
+			amt = uint64(i * 1e8)
 		}
 		if err := factom.AddTransactionInput(args[0], args[1], amt); err != nil {
 			errorln(err)
@@ -128,12 +128,12 @@ var addtxoutput = func() *fctCmd {
 			return
 		}
 		var amt uint64
-		if i, err := strconv.Atoi(args[2]); err != nil {
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
 			errorln("AMMOUNT may not be less than 0")
 		} else {
-			amt = uint64(i)
+			amt = uint64(i * 1e8)
 		}
 		if err := factom.AddTransactionOutput(args[0], args[1], amt); err != nil {
 			errorln(err)
@@ -159,12 +159,12 @@ var addtxecoutput = func() *fctCmd {
 			return
 		}
 		var amt uint64
-		if i, err := strconv.Atoi(args[2]); err != nil {
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
 			errorln("AMMOUNT may not be less than 0")
 		} else {
-			amt = uint64(i)
+			amt = uint64(i * 1e8)
 		}
 		if err := factom.AddTransactionECOutput(args[0], args[1], amt); err != nil {
 			errorln(err)
