@@ -37,6 +37,7 @@ func main() {
 	c.Handle("addentry", addentry)
 	c.Handle("balance", balance)
 	c.Handle("ecrate", ecrate)
+	c.Handle("exportaddresses", exportaddresses)
 	c.Handle("get", get)
 	c.Handle("importaddress", importaddresses)
 	c.Handle("importaddresses", importaddresses)

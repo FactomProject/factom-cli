@@ -82,6 +82,32 @@ var ecrate = func() *fctCmd {
 	return cmd
 }()
 
+// exportaddresses lists the private addresses from the wallet
+var exportaddresses = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli exportaddresses"
+	cmd.description = "List the private addresses stored in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		fs, es, err := factom.FetchAddresses()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, a := range fs {
+			fmt.Println(a.SecString())
+		}
+		for _, a := range es {
+			fmt.Println(a.SecString())
+		}
+	}
+	help.Add("exportaddresses", cmd)
+	return cmd
+}()
+
 // importaddresses imports addresses from 1 or more secret keys into the wallet
 var importaddresses = func() *fctCmd {
 	cmd := new(fctCmd)
