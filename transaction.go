@@ -268,3 +268,26 @@ var composetx = func() *fctCmd {
 	help.Add("composetx", cmd)
 	return cmd
 }()
+
+// sendtx composes and sends the signed transaction to factomd
+var sendtx = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli sendtx TXNAME"
+	cmd.description = "Send a Transaction to Factom"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		if err := factom.SendTransaction(args[0]); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("sendtx", cmd)
+	return cmd
+}()

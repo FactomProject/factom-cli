@@ -57,6 +57,7 @@ func main() {
 	c.Handle("subtxfee", subtxfee)
 	c.Handle("signtx", signtx)
 	c.Handle("composetx", composetx)
+	c.Handle("sendtx", sendtx)
 
 	c.HandleDefault(help)
 	c.Execute(args)
