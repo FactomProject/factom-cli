@@ -45,7 +45,7 @@ var balance = func() *fctCmd {
 			fmt.Println(c)
 			return
 		}
-		
+
 		// if -r flag is present, resolve dns address then get the fct and ec
 		// blance
 		if *res {
@@ -54,7 +54,7 @@ var balance = func() *fctCmd {
 				fmt.Println(err)
 				return
 			}
-			fmt.Println(addr, "fct",  float64(f) / 1e8)
+			fmt.Println(addr, "fct", float64(f)/1e8)
 			fmt.Println(addr, "ec", e)
 		} else {
 			fmt.Println("Undefined or invalid address")
@@ -76,7 +76,7 @@ var ecrate = func() *fctCmd {
 			return
 		}
 		fmt.Println(float64(rate) / 1e8)
-		
+
 	}
 	help.Add("ecrate", cmd)
 	return cmd
@@ -201,7 +201,7 @@ var listaddresses = func() *fctCmd {
 			if err != nil {
 				errorln(err)
 			}
-			fmt.Println(a, float64(b) / 1e8)
+			fmt.Println(a, float64(b)/1e8)
 		}
 		for _, a := range es {
 			c, err := factom.GetECBalance(a.String())
@@ -214,4 +214,3 @@ var listaddresses = func() *fctCmd {
 	help.Add("listaddresses", cmd)
 	return cmd
 }()
-
