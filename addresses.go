@@ -98,10 +98,10 @@ var exportaddresses = func() *fctCmd {
 			return
 		}
 		for _, a := range fs {
-			fmt.Println(a.SecString())
+			fmt.Println(a.SecString(), a.String())
 		}
 		for _, a := range es {
-			fmt.Println(a.SecString())
+			fmt.Println(a.SecString(), a.String())
 		}
 	}
 	help.Add("exportaddresses", cmd)
