@@ -58,6 +58,8 @@ func main() {
 	c.Handle("signtx", signtx)
 	c.Handle("composetx", composetx)
 	c.Handle("sendtx", sendtx)
+	c.Handle("sendfct", sendfct)
+	c.Handle("buyec", buyec)
 
 	c.HandleDefault(help)
 	c.Execute(args)

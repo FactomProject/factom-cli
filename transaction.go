@@ -291,3 +291,71 @@ var sendtx = func() *fctCmd {
 	help.Add("sendtx", cmd)
 	return cmd
 }()
+
+// sendfct sends factoids between 2 addresses
+var sendfct = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli sendfct FROMADDRESS TOADDRESS AMMOUNT"
+	cmd.description = "Send Factoids between 2 addresses"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		var amt uint64
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
+			errorln(err)
+		} else if i < 0 {
+			errorln("AMMOUNT may not be less than 0")
+		} else {
+			amt = uint64(i * 1e8)
+		}
+		if err := factom.SendFactoid(args[0], args[1], amt); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("sendfct", cmd)
+	return cmd
+}()
+
+// buyec sends factoids between 2 addresses
+var buyec = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli buyec FCTADDRESS ECADDRESS ECAMMOUNT"
+	cmd.description = "Buy entry credits"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		var amt uint64
+		if i, err := strconv.Atoi(args[2]); err != nil {
+			errorln(err)
+			return
+		} else if i < 0 {
+			errorln("AMMOUNT may not be less than 0")
+			return
+		} else {
+			rate, err := factom.GetRate()
+			if err != nil {
+				errorln(err)
+			}
+			amt = uint64(i) * rate
+		}
+		if err := factom.BuyEC(args[0], args[1], amt); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("buyec", cmd)
+	return cmd
+}()
