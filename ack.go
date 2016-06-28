@@ -5,6 +5,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -35,7 +36,17 @@ var ack = func() *fctCmd {
 		if len(tx) == 64 {
 			txID = tx
 		} else {
-			fullTx = tx
+			_, err := hex.DecodeString(tx)
+			if len(tx) < 64 || err != nil {
+				h, err := factom.TransactionHash(tx)
+				if err != nil {
+					errorln(err)
+					return
+				}
+				txID = h
+			} else {
+				fullTx = tx
+			}
 		}
 
 		if ackType == "fct" {
