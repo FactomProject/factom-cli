@@ -283,10 +283,12 @@ var sendtx = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if err := factom.SendTransaction(args[0]); err != nil {
+		t, err := factom.SendTransaction(args[0])
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(string(t))
 	}
 	help.Add("sendtx", cmd)
 	return cmd
@@ -314,10 +316,12 @@ var sendfct = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		if err := factom.SendFactoid(args[0], args[1], amt); err != nil {
+		t, err := factom.SendFactoid(args[0], args[1], amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(string(t))
 	}
 	help.Add("sendfct", cmd)
 	return cmd
@@ -351,10 +355,12 @@ var buyec = func() *fctCmd {
 			}
 			amt = uint64(i) * rate
 		}
-		if err := factom.BuyEC(args[0], args[1], amt); err != nil {
+		t, err := factom.BuyEC(args[0], args[1], amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(string(t))
 	}
 	help.Add("buyec", cmd)
 	return cmd
