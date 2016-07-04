@@ -75,7 +75,13 @@ var listtxs = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(tx)
+			fmt.Println("{")
+			fmt.Println("	Name:", tx.Name)
+			fmt.Println("	TxID:", tx.TxID)
+			fmt.Println("	TotalInputs:", tx.TotalInputs)
+			fmt.Println("	TotalOutputs:", tx.TotalOutputs)
+			fmt.Println("	TotalECOutputs:", tx.TotalECOutputs)
+			fmt.Println("}")
 		}
 	}
 	help.Add("listtxs", cmd)
