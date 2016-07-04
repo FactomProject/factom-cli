@@ -283,6 +283,13 @@ var sendtx = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
+		
+		if id, err := factom.TransactionHash(args[0]); err != nil {
+			errorln(err)
+			return
+		} else {
+			fmt.Println("TxID:", id)
+		}
 		if err := factom.SendTransaction(args[0]); err != nil {
 			errorln(err)
 			return
