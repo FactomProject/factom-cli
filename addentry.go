@@ -15,7 +15,7 @@ import (
 
 var addentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addentry -c CHAINID [-e EXTID1 -e EXTID2 ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addentry -c CHAINID [-e EXTID1 -e EXTID2 -E BEEF1D ...] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Entry. Read data for the Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		os.Args = args

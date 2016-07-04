@@ -202,7 +202,7 @@ var addtxfee = func() *fctCmd {
 var subtxfee = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli subtxfee TXNAME ADDRESS"
-	cmd.description = "Subtract the transaction fee to an input of a transaction in the wallet"
+	cmd.description = "Subtract the transaction fee from an output of a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -283,17 +283,12 @@ var sendtx = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		
-		if id, err := factom.TransactionHash(args[0]); err != nil {
-			errorln(err)
-			return
-		} else {
-			fmt.Println("TxID:", id)
-		}
-		if err := factom.SendTransaction(args[0]); err != nil {
+		t, err := factom.SendTransaction(args[0])
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println("TxID:", t)
 	}
 	help.Add("sendtx", cmd)
 	return cmd
@@ -321,10 +316,12 @@ var sendfct = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		if err := factom.SendFactoid(args[0], args[1], amt); err != nil {
+		t, err := factom.SendFactoid(args[0], args[1], amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println("TxID:", t)
 	}
 	help.Add("sendfct", cmd)
 	return cmd
@@ -358,10 +355,12 @@ var buyec = func() *fctCmd {
 			}
 			amt = uint64(i) * rate
 		}
-		if err := factom.BuyEC(args[0], args[1], amt); err != nil {
+		t, err := factom.BuyEC(args[0], args[1], amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println("TxID:", t)
 	}
 	help.Add("buyec", cmd)
 	return cmd

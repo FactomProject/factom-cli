@@ -68,7 +68,7 @@ var balance = func() *fctCmd {
 var ecrate = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli ecrate"
-	cmd.description = "Show the current Entry Credit conversion rate in the Factom Network"
+	cmd.description = "It takes this many Factoids to buy an Entry Credit.  Displays the larger between current and future rates. Also used to set Factoid fees."
 	cmd.execFunc = func(args []string) {
 		rate, err := factom.GetRate()
 		if err != nil {
@@ -111,7 +111,7 @@ var exportaddresses = func() *fctCmd {
 // importaddresses imports addresses from 1 or more secret keys into the wallet
 var importaddresses = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli importaddresses ADDRESS [ADDRESS...]"
+	cmd.helpMsg = "factom-cli importaddress ADDRESS [ADDRESS...]"
 	cmd.description = "Import one or more secret keys into the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -134,7 +134,6 @@ var importaddresses = func() *fctCmd {
 			fmt.Println(a)
 		}
 	}
-	help.Add("importaddresses", cmd)
 	help.Add("importaddress", cmd)
 	return cmd
 }()
