@@ -78,9 +78,12 @@ var listtxs = func() *fctCmd {
 			fmt.Println("{")
 			fmt.Println("	Name:", tx.Name)
 			fmt.Println("	TxID:", tx.TxID)
-			fmt.Println("	TotalInputs:", tx.TotalInputs)
-			fmt.Println("	TotalOutputs:", tx.TotalOutputs)
-			fmt.Println("	TotalECOutputs:", tx.TotalECOutputs)
+			fmt.Println("	TotalInputs:", float64(tx.TotalInputs)/100000000)
+			fmt.Println("	TotalOutputs:", float64(tx.TotalOutputs)/100000000)
+			fmt.Println("	TotalECOutputs:", float64(tx.TotalECOutputs)/100000000)
+			feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
+			fmt.Println("	FeesPaid:", float64(feesPaid)/100000000)
+			fmt.Println("	RawTransaction:", tx.RawTransaction)
 			fmt.Println("}")
 		}
 	}
