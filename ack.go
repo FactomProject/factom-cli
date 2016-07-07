@@ -33,10 +33,10 @@ var ack = func() *fctCmd {
 		txID := ""
 		fullTx := ""
 
-		if len(tx) == 64 {
+		_, err := hex.DecodeString(tx)
+		if len(tx) == 64 && err == nil {
 			txID = tx
 		} else {
-			_, err := hex.DecodeString(tx)
 			if len(tx) < 64 || err != nil {
 				h, err := factom.TransactionHash(tx)
 				if err != nil {
