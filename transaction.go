@@ -129,6 +129,7 @@ var addtxoutput = func() *fctCmd {
 	cmd.description = "Add a Factoid output to a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
 		flag.Parse()
 		args = flag.Args()
 
@@ -144,7 +145,19 @@ var addtxoutput = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		if err := factom.AddTransactionOutput(args[0], args[1], amt); err != nil {
+		
+		out := args[1]
+		if *res {
+			if f, _, err := factom.ResolveDnsName(args[1]); err != nil {
+				errorln(err)
+				return
+			} else if f == "" {
+				errorln("could not resolve factoid address")
+			} else {
+				out = f
+			}
+		}
+		if err := factom.AddTransactionOutput(args[0], out, amt); err != nil {
 			errorln(err)
 			return
 		}
@@ -160,6 +173,7 @@ var addtxecoutput = func() *fctCmd {
 	cmd.description = "Add an Entry Credit output to a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
 		flag.Parse()
 		args = flag.Args()
 
@@ -175,7 +189,19 @@ var addtxecoutput = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		if err := factom.AddTransactionECOutput(args[0], args[1], amt); err != nil {
+
+		out := args[1]
+		if *res {
+			if _, e, err := factom.ResolveDnsName(args[1]); err != nil {
+				errorln(err)
+				return
+			} else if e == "" {
+				errorln("could not resolve entry credit address")
+			} else {
+				out = e
+			}
+		}
+		if err := factom.AddTransactionECOutput(args[0], out, amt); err != nil {
 			errorln(err)
 			return
 		}
