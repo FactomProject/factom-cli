@@ -239,3 +239,26 @@ var getHeight = func() *fctCmd {
 	help.Add("get height", cmd)
 	return cmd
 }()
+
+var properties = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli properties"
+	cmd.description = "Get information about facotmd and the factom wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		f, a, w, err := factom.GetProperties()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		
+		fmt.Println("Factomd Version:", f)
+		fmt.Println("API Version:", a)
+		fmt.Println("Wallet Version:", w)
+	}
+	help.Add("properties", cmd)
+	return cmd
+}()
