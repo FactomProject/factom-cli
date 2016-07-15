@@ -50,14 +50,14 @@ func (e *extidsHex) Set(s string) error {
 
 var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addchain [-e EXTID1 -e EXTID2 -E BEEF1D ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addchain [-e EXTID1 -e EXTID2 -E BINEXTID3 ...] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Chain. Read data for the First Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
-		os.Args = args
 		var (
 			eAcii extidsAscii
 			eHex  extidsHex
 		)
+		os.Args = args
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "E", "external id for the entry in hex")
@@ -72,9 +72,6 @@ var addchain = func() *fctCmd {
 
 		e := new(factom.Entry)
 
-		//for _, id := range eAcii {
-		//	e.ExtIDs = append(e.ExtIDs, []byte(id))
-		//}
 		e.ExtIDs = exidCollector
 
 		// Entry.Content is read from stdin

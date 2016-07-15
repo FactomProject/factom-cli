@@ -44,18 +44,32 @@ var get = func() *fctCmd {
 
 var getAllEntries = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries CHAINID"
+	cmd.helpMsg = "factom-cli get allentries [-n NAME1 -N HEXNAME2 ...] CHAINID"
 	cmd.description = "Get all of the Entries in a Chain"
 	cmd.execFunc = func(args []string) {
+		var (
+			nAcii namesAscii
+			nHex namesHex
+		)
 		os.Args = args
+		nameCollector = make([][]byte, 0)
+		flag.Var(&nAcii, "n", "ascii name component")
+		flag.Var(&nHex, "N", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
-		if len(args) < 1 {
+
+		var chainid string
+		
+		if len(args) < 1 && len(nameCollector) == 0 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
+		if len(nameCollector) != 0 {
+			chainid = nametoid(nameCollector)
+		} else {
+			chainid = args[0]
+		}
 
-		chainid := args[0]
 		es, err := factom.GetAllChainEntries(chainid)
 		if err != nil {
 			errorln(err)
@@ -72,18 +86,32 @@ var getAllEntries = func() *fctCmd {
 
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chainhead CHAINID"
+	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -N HEXNAME2 ...] CHAINID"
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
+		var (
+			nAcii namesAscii
+			nHex namesHex
+		)
 		os.Args = args
+		nameCollector = make([][]byte, 0)
+		flag.Var(&nAcii, "n", "ascii name component")
+		flag.Var(&nHex, "N", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
-		if len(args) < 1 {
+		
+		var chainid string
+		
+		if len(args) < 1 && len(nameCollector) == 0 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
+		if len(nameCollector) != 0 {
+			chainid = nametoid(nameCollector)
+		} else {
+			chainid = args[0]
+		}
 
-		chainid := args[0]
 		head, err := factom.GetChainHead(chainid)
 		if err != nil {
 			errorln(err)
@@ -179,18 +207,32 @@ var getEntry = func() *fctCmd {
 
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get firstentry CHAINID"
+	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -N HEXNAME2 ...] CHAINID"
 	cmd.description = "Get the first entry from a chain"
 	cmd.execFunc = func(args []string) {
+		var (
+			nAcii namesAscii
+			nHex namesHex
+		)
 		os.Args = args
+		nameCollector = make([][]byte, 0)
+		flag.Var(&nAcii, "n", "ascii name component")
+		flag.Var(&nHex, "N", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
-		if len(args) < 1 {
+
+		var chainid string
+		
+		if len(args) < 1 && len(nameCollector) == 0 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
+		if len(nameCollector) != 0 {
+			chainid = nametoid(nameCollector)
+		} else {
+			chainid = args[0]
+		}
 
-		chainid := args[0]
 		entry, err := factom.GetFirstEntry(chainid)
 		if err != nil {
 			errorln(err)
