@@ -258,6 +258,7 @@ var properties = func() *fctCmd {
 		fmt.Println("Factomd Version:", f)
 		fmt.Println("API Version:", a)
 		fmt.Println("Wallet Version:", w)
+		fmt.Println("CLI Version:", Version)
 	}
 	help.Add("properties", cmd)
 	return cmd
