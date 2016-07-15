@@ -125,7 +125,7 @@ var addtxinput = func() *fctCmd {
 // addtxoutput adds a factoid output to a transaction in the wallet.
 var addtxoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addtxoutput TXNAME ADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addtxoutput [-r] TXNAME ADDRESS AMOUNT"
 	cmd.description = "Add a Factoid output to a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -169,7 +169,7 @@ var addtxoutput = func() *fctCmd {
 // addtxecoutput adds an entry credit output to a transaction in the wallet.
 var addtxecoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addtxecoutput TXNAME ADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addtxecoutput [-r] TXNAME ADDRESS AMOUNT"
 	cmd.description = "Add an Entry Credit output to a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
