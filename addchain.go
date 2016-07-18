@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -13,40 +12,6 @@ import (
 
 	"github.com/FactomProject/factom"
 )
-
-var exidCollector [][]byte
-
-// extids will be a flag receiver for adding chains and entries
-// In ASCII
-type extidsAscii []string
-
-func (e *extidsAscii) String() string {
-	return fmt.Sprint(*e)
-}
-
-func (e *extidsAscii) Set(s string) error {
-	*e = append(*e, s)
-	exidCollector = append(exidCollector[:], []byte(s))
-	return nil
-}
-
-// extids will be a flag receiver for adding chains and entries
-// In HEX
-type extidsHex []string
-
-func (e *extidsHex) String() string {
-	return fmt.Sprint(*e)
-}
-
-func (e *extidsHex) Set(s string) error {
-	*e = append(*e, s)
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return err
-	}
-	exidCollector = append(exidCollector[:], b)
-	return nil
-}
 
 var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
