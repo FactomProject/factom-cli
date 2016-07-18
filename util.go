@@ -80,6 +80,7 @@ func (n *namesHex) Set(s string) error {
 	return nil
 }
 
+// nametoid computes a chainid from the chain name components
 func nametoid(name [][]byte) string {
 	hs := sha256.New()
 	for _, v := range name {
