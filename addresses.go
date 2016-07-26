@@ -138,6 +138,31 @@ var importaddresses = func() *fctCmd {
 	return cmd
 }()
 
+var importwords = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli importwords '12WORDS'"
+	cmd.description = "Import 12 words from Koinify sale into the Wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		f, err := factom.ImportMnemonic(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(f)
+	}
+	help.Add("importwords", cmd)
+	return cmd
+}()
+
+
 // newecaddress generates a new ec address in the wallet
 var newecaddress = func() *fctCmd {
 	cmd := new(fctCmd)
