@@ -336,6 +336,7 @@ var sendfct = func() *fctCmd {
 	cmd.description = "Send Factoids between 2 addresses"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
 		flag.Parse()
 		args = flag.Args()
 
@@ -343,6 +344,19 @@ var sendfct = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
+		
+		tofc := args[1]
+
+		// if -r flag is present resolve the ec address from the dns name.
+		if *res {
+			f, _, err := factom.ResolveDnsName(tofc)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			tofc = f
+		}
+		
 		var amt uint64
 		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
@@ -351,7 +365,8 @@ var sendfct = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		t, err := factom.SendFactoid(args[0], args[1], amt)
+		
+		t, err := factom.SendFactoid(args[0], tofc, amt)
 		if err != nil {
 			errorln(err)
 			return
@@ -369,6 +384,7 @@ var buyec = func() *fctCmd {
 	cmd.description = "Buy entry credits"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
 		flag.Parse()
 		args = flag.Args()
 
@@ -376,6 +392,19 @@ var buyec = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
+
+		toec := args[1]
+
+		// if -r flag is present resolve the ec address from the dns name.
+		if *res {
+			_, e, err := factom.ResolveDnsName(toec)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			toec = e
+		}
+		
 		var amt uint64
 		if i, err := strconv.Atoi(args[2]); err != nil {
 			errorln(err)
@@ -390,7 +419,8 @@ var buyec = func() *fctCmd {
 			}
 			amt = uint64(i) * rate
 		}
-		t, err := factom.BuyEC(args[0], args[1], amt)
+		
+		t, err := factom.BuyEC(args[0], toec, amt)
 		if err != nil {
 			errorln(err)
 			return
