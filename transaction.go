@@ -109,7 +109,7 @@ var addtxinput = func() *fctCmd {
 		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
-			errorln("AMMOUNT may not be less than 0")
+			errorln("AMOUNT may not be less than 0")
 		} else {
 			amt = uint64(i * 1e8)
 		}
@@ -141,7 +141,7 @@ var addtxoutput = func() *fctCmd {
 		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
-			errorln("AMMOUNT may not be less than 0")
+			errorln("AMOUNT may not be less than 0")
 		} else {
 			amt = uint64(i * 1e8)
 		}
@@ -185,7 +185,7 @@ var addtxecoutput = func() *fctCmd {
 		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
-			errorln("AMMOUNT may not be less than 0")
+			errorln("AMOUNT may not be less than 0")
 		} else {
 			amt = uint64(i * 1e8)
 		}
@@ -332,7 +332,7 @@ var sendtx = func() *fctCmd {
 // sendfct sends factoids between 2 addresses
 var sendfct = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sendfct FROMADDRESS TOADDRESS AMMOUNT"
+	cmd.helpMsg = "factom-cli sendfct FROMADDRESS TOADDRESS AMOUNT"
 	cmd.description = "Send Factoids between 2 addresses"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -361,7 +361,7 @@ var sendfct = func() *fctCmd {
 		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
 		} else if i < 0 {
-			errorln("AMMOUNT may not be less than 0")
+			errorln("AMOUNT may not be less than 0")
 		} else {
 			amt = uint64(i * 1e8)
 		}
@@ -380,7 +380,7 @@ var sendfct = func() *fctCmd {
 // buyec sends factoids between 2 addresses
 var buyec = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli buyec FCTADDRESS ECADDRESS ECAMMOUNT"
+	cmd.helpMsg = "factom-cli buyec FCTADDRESS ECADDRESS ECAMOUNT"
 	cmd.description = "Buy entry credits"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -410,7 +410,7 @@ var buyec = func() *fctCmd {
 			errorln(err)
 			return
 		} else if i < 0 {
-			errorln("AMMOUNT may not be less than 0")
+			errorln("AMOUNT may not be less than 0")
 			return
 		} else {
 			rate, err := factom.GetRate()
