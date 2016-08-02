@@ -147,7 +147,7 @@ var importwords = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		if len(args) < 1 {
+		if len(args) < 1 || len(args) > 1{
 			fmt.Println(cmd.helpMsg)
 			return
 		}
