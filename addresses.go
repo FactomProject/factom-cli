@@ -148,7 +148,7 @@ var importwords = func() *fctCmd {
 		args = flag.Args()
 
 		if len(args) < 1 || len(args) > 1{
-			fmt.Println(cmd.helpMsg)
+			fmt.Println(cmd.helpMsg, "  Note, 12 words must be in quotes")
 			return
 		}
 		f, err := factom.ImportMnemonic(args[0])
