@@ -5,8 +5,6 @@
 package main
 
 import (
-	//	"crypto/sha256"
-	//	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
@@ -26,6 +24,7 @@ var get = func() *fctCmd {
 
 		c := cli.New()
 		c.Handle("allentries", getAllEntries)
+		c.Handle("alltxs", getAllTransactions)
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
