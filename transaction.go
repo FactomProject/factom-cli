@@ -59,6 +59,19 @@ var rmtx = func() *fctCmd {
 	return cmd
 }()
 
+func FixPointPrt(value uint64) string {
+	whole := value/100000000
+	part  := value - whole*100000000
+	ret := []byte(fmt.Sprintf("%d.%d",whole,part))
+	for string(ret[len(ret)-1])=="0" {
+		ret = ret[:len(ret)-1]
+	}
+	if string(ret[len(ret)-1])=="." {
+		ret = ret[:len(ret)-1]
+	}
+		return string(ret)
+}
+
 // listtxs lists the working transactions in the wallet.
 var listtxs = func() *fctCmd {
 	cmd := new(fctCmd)
@@ -78,11 +91,11 @@ var listtxs = func() *fctCmd {
 			fmt.Println("{")
 			fmt.Println("	Name:", tx.Name)
 			fmt.Println("	TxID:", tx.TxID)
-			fmt.Println("	TotalInputs:", float64(tx.TotalInputs)/100000000)
-			fmt.Println("	TotalOutputs:", float64(tx.TotalOutputs)/100000000)
-			fmt.Println("	TotalECOutputs:", float64(tx.TotalECOutputs)/100000000)
+			fmt.Println("	TotalInputs:", FixPointPrt(tx.TotalInputs))
+			fmt.Println("	TotalOutputs:", FixPointPrt(tx.TotalOutputs))
+			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
 			feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
-			fmt.Println("	FeesPaid:", float64(feesPaid)/100000000)
+			fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
 			fmt.Println("	RawTransaction:", tx.RawTransaction)
 			fmt.Println("}")
 		}
