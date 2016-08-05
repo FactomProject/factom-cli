@@ -61,8 +61,8 @@ var rmtx = func() *fctCmd {
 
 func FixPointPrt(value uint64) string {
 	whole := value/100000000
-	part  := value - whole*100000000
-	ret := []byte(fmt.Sprintf("%d.%d",whole,part))
+	part  := value - (whole*100000000)
+	ret := []byte(fmt.Sprintf("%d.%08d",whole,part))
 	for string(ret[len(ret)-1])=="0" {
 		ret = ret[:len(ret)-1]
 	}
