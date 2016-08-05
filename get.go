@@ -5,8 +5,6 @@
 package main
 
 import (
-	//	"crypto/sha256"
-	//	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
@@ -17,7 +15,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|height"
+	cmd.helpMsg = "factom-cli get allentries|alltxs|chainhead|dblock|eblock|entry|firstentry|head|height"
 	cmd.description = "get Block or Entry data from factomd"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -26,6 +24,7 @@ var get = func() *fctCmd {
 
 		c := cli.New()
 		c.Handle("allentries", getAllEntries)
+		c.Handle("alltxs", getAllTransactions)
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
