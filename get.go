@@ -16,7 +16,7 @@ import (
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get allentries|alltxs|chainhead|dblock|eblock|entry|firstentry|head|height"
-	cmd.description = "get Block or Entry data from factomd"
+	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -284,7 +284,7 @@ var getHeight = func() *fctCmd {
 var properties = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli properties"
-	cmd.description = "Get information about facotmd and the factom wallet"
+	cmd.description = "Get version information about facotmd and the factom wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
