@@ -64,6 +64,15 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		}
+		balance, err := factom.GetECAddress(ecpub)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		if balance == 0 {
+			errorln("Entry Credits balance is zero")
+			return
+		}
 		// commit the chain
 		if txID, err := factom.CommitChain(c, ec); err != nil {
 			errorln(err)
