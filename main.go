@@ -35,6 +35,7 @@ func main() {
 	c.Handle("ack", ack)
 	c.Handle("addchain", addchain)
 	c.Handle("addentry", addentry)
+	c.Handle("backupwallet", backupwallet)
 	c.Handle("balance", balance)
 	c.Handle("ecrate", ecrate)
 	c.Handle("exportaddresses", exportaddresses)
