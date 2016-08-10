@@ -47,6 +47,7 @@ func main() {
 	c.Handle("newfctaddress", newfctaddress)
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
+	c.Handle("backupwallet", backupwallet)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
