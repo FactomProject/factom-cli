@@ -71,7 +71,7 @@ var addentry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		// check ec address balance
 		balance, err := factom.GetECBalance(ecpub)
 		if err != nil {

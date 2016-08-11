@@ -29,7 +29,7 @@ var getAllTransactions = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		var fblockmr string
 		for _, eblock := range dblock.EntryBlockList {
 			if eblock.ChainID == fblockID {
@@ -40,7 +40,7 @@ var getAllTransactions = func() *fctCmd {
 			errorln("no fblock in current dblock")
 			return
 		}
-		
+
 		// get the most recent block
 		p, err := factom.GetRaw(fblockmr)
 		if err != nil {
@@ -52,7 +52,7 @@ var getAllTransactions = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		for fblock.GetPrevKeyMR().String() != zHash {
 			txs := fblock.GetTransactions()
 			for _, tx := range txs {
@@ -69,7 +69,7 @@ var getAllTransactions = func() *fctCmd {
 				return
 			}
 		}
-		
+
 		// print the first fblock
 		txs := fblock.GetTransactions()
 		for _, tx := range txs {

@@ -147,7 +147,7 @@ var importwords = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		if len(args) < 1 || len(args) > 1{
+		if len(args) < 1 || len(args) > 1 {
 			fmt.Println(cmd.helpMsg, "  Note, 12 words must be in quotes")
 			return
 		}
@@ -161,7 +161,6 @@ var importwords = func() *fctCmd {
 	help.Add("importwords", cmd)
 	return cmd
 }()
-
 
 // newecaddress generates a new ec address in the wallet
 var newecaddress = func() *fctCmd {

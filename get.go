@@ -48,7 +48,7 @@ var getAllEntries = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesAscii
-			nHex namesHex
+			nHex  namesHex
 		)
 		os.Args = args
 		nameCollector = make([][]byte, 0)
@@ -58,7 +58,7 @@ var getAllEntries = func() *fctCmd {
 		args = flag.Args()
 
 		var chainid string
-		
+
 		if len(args) < 1 && len(nameCollector) == 0 {
 			fmt.Println(cmd.helpMsg)
 			return
@@ -90,7 +90,7 @@ var getChainHead = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesAscii
-			nHex namesHex
+			nHex  namesHex
 		)
 		os.Args = args
 		nameCollector = make([][]byte, 0)
@@ -98,9 +98,9 @@ var getChainHead = func() *fctCmd {
 		flag.Var(&nHex, "N", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
-		
+
 		var chainid string
-		
+
 		if len(args) < 1 && len(nameCollector) == 0 {
 			fmt.Println(cmd.helpMsg)
 			return
@@ -211,7 +211,7 @@ var getFirstEntry = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesAscii
-			nHex namesHex
+			nHex  namesHex
 		)
 		os.Args = args
 		nameCollector = make([][]byte, 0)
@@ -221,7 +221,7 @@ var getFirstEntry = func() *fctCmd {
 		args = flag.Args()
 
 		var chainid string
-		
+
 		if len(args) < 1 && len(nameCollector) == 0 {
 			fmt.Println(cmd.helpMsg)
 			return
@@ -295,7 +295,7 @@ var properties = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		fmt.Println("Factomd Version:", f)
 		fmt.Println("API Version:", a)
 		fmt.Println("Wallet Version:", w)
