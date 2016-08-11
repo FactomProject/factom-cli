@@ -71,6 +71,17 @@ var addentry = func() *fctCmd {
 			errorln(err)
 			return
 		}
+		
+		// check ec address balance
+		balance, err := factom.GetECBalance(ecpub)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		if balance == 0 {
+			errorln("Entry Credit balance is zero")
+			return
+		}
 
 		// commit the chain
 		if txID, err := factom.CommitEntry(e, ec); err != nil {
