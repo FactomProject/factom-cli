@@ -96,10 +96,10 @@ var listtxs = func() *fctCmd {
 			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
 			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
 				fmt.Println("	FeesPaid:", 0)
-				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired)
+				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired))
 			} else {
 				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
-				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid)
+				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
 			}
 			fmt.Println("	RawTransaction:", tx.RawTransaction)
 			fmt.Println("}")
