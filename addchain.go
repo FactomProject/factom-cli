@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-
+	"strings"
 	"github.com/FactomProject/factom"
 )
 
@@ -61,7 +61,11 @@ var addchain = func() *fctCmd {
 		// get the ec address from the wallet
 		ec, err := factom.FetchECAddress(ecpub)
 		if err != nil {
-			errorln(err)
+			if strings.Contains(err.Error(), "not found") {
+				errorln("Unrecognized address", ecpub)
+			} else {
+				errorln(err)
+			}
 			return
 		}
 		balance, err := factom.GetECBalance(ecpub)
