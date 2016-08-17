@@ -24,7 +24,6 @@ var get = func() *fctCmd {
 
 		c := cli.New()
 		c.Handle("allentries", getAllEntries)
-		c.Handle("alltxs", getAllTransactions)
 		c.Handle("head", getHead)
 		c.Handle("height", getHeight)
 		c.Handle("dblock", getDBlock)
@@ -71,6 +70,9 @@ var getAllEntries = func() *fctCmd {
 
 		es, err := factom.GetAllChainEntries(chainid)
 		if err != nil {
+			for i, e := range es {
+				fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+			}
 			errorln(err)
 			return
 		}
