@@ -22,7 +22,7 @@ var backupwallet = func() *fctCmd {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		
+
 		s, err := factom.BackupWallet()
 		if err != nil {
 			errorln(err)

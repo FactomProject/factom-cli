@@ -60,16 +60,16 @@ var rmtx = func() *fctCmd {
 }()
 
 func FixPointPrt(value uint64) string {
-	whole := value/100000000
-	part  := value - (whole*100000000)
-	ret := []byte(fmt.Sprintf("%d.%08d",whole,part))
-	for string(ret[len(ret)-1])=="0" {
+	whole := value / 100000000
+	part := value - (whole * 100000000)
+	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
+	for string(ret[len(ret)-1]) == "0" {
 		ret = ret[:len(ret)-1]
 	}
-	if string(ret[len(ret)-1])=="." {
+	if string(ret[len(ret)-1]) == "." {
 		ret = ret[:len(ret)-1]
 	}
-		return string(ret)
+	return string(ret)
 }
 
 // listtxs lists the working transactions in the wallet.
@@ -94,8 +94,13 @@ var listtxs = func() *fctCmd {
 			fmt.Println("	TotalInputs:", FixPointPrt(tx.TotalInputs))
 			fmt.Println("	TotalOutputs:", FixPointPrt(tx.TotalOutputs))
 			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
-			feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
-			fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
+			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
+				fmt.Println("	FeesPaid:", 0)
+				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired))
+			} else {
+				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
+				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
+			}
 			fmt.Println("	RawTransaction:", tx.RawTransaction)
 			fmt.Println("}")
 		}
@@ -158,7 +163,7 @@ var addtxoutput = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		
+
 		out := args[1]
 		if *res {
 			if f, _, err := factom.ResolveDnsName(args[1]); err != nil {
@@ -357,7 +362,7 @@ var sendfct = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		
+
 		tofc := args[1]
 
 		// if -r flag is present resolve the ec address from the dns name.
@@ -369,7 +374,7 @@ var sendfct = func() *fctCmd {
 			}
 			tofc = f
 		}
-		
+
 		var amt uint64
 		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
 			errorln(err)
@@ -378,7 +383,7 @@ var sendfct = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		
+
 		t, err := factom.SendFactoid(args[0], tofc, amt)
 		if err != nil {
 			errorln(err)
@@ -417,7 +422,7 @@ var buyec = func() *fctCmd {
 			}
 			toec = e
 		}
-		
+
 		var amt uint64
 		if i, err := strconv.Atoi(args[2]); err != nil {
 			errorln(err)
@@ -432,7 +437,7 @@ var buyec = func() *fctCmd {
 			}
 			amt = uint64(i) * rate
 		}
-		
+
 		t, err := factom.BuyEC(args[0], toec, amt)
 		if err != nil {
 			errorln(err)
