@@ -10,8 +10,22 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 )
+
+func FixPointPrt(value uint64) string {
+	whole := value / 100000000
+	part := value - (whole * 100000000)
+	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
+	for string(ret[len(ret)-1]) == "0" {
+		ret = ret[:len(ret)-1]
+	}
+	if string(ret[len(ret)-1]) == "." {
+		ret = ret[:len(ret)-1]
+	}
+	return string(ret)
+}
 
 // newtx creates a new transaction in the wallet.
 var newtx = func() *fctCmd {
@@ -56,56 +70,6 @@ var rmtx = func() *fctCmd {
 		}
 	}
 	help.Add("rmtx", cmd)
-	return cmd
-}()
-
-func FixPointPrt(value uint64) string {
-	whole := value / 100000000
-	part := value - (whole * 100000000)
-	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
-	for string(ret[len(ret)-1]) == "0" {
-		ret = ret[:len(ret)-1]
-	}
-	if string(ret[len(ret)-1]) == "." {
-		ret = ret[:len(ret)-1]
-	}
-	return string(ret)
-}
-
-// listtxs lists the working transactions in the wallet.
-var listtxs = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listtxs"
-	cmd.description = "List current working transactions in the wallet"
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-
-		txs, err := factom.ListTransactions()
-		if err != nil {
-			errorln(err)
-			return
-		}
-		for _, tx := range txs {
-			fmt.Println("{")
-			fmt.Println("	Name:", tx.Name)
-			fmt.Println("	TxID:", tx.TxID)
-			fmt.Println("	TotalInputs:", FixPointPrt(tx.TotalInputs))
-			fmt.Println("	TotalOutputs:", FixPointPrt(tx.TotalOutputs))
-			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
-			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
-				fmt.Println("	FeesPaid:", 0)
-				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired))
-			} else {
-				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
-				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
-			}
-			fmt.Println("	RawTransaction:", tx.RawTransaction)
-			fmt.Println("}")
-		}
-	}
-	help.Add("listtxs", cmd)
 	return cmd
 }()
 
@@ -248,6 +212,181 @@ var addtxfee = func() *fctCmd {
 		}
 	}
 	help.Add("addtxfee", cmd)
+	return cmd
+}()
+
+// listtxs lists transactions from the wallet or the Factoid Chain.
+var listtxs = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs [tmp|all|address|id|range]"
+	cmd.description = "List transactions from the wallet or the Factoid Chain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		c := cli.New()
+		c.Handle("all", listtxsall)
+		c.Handle("address", listtxsaddress)
+		c.Handle("id", listtxsid)
+		c.Handle("range", listtxsrange)
+		c.Handle("tmp", listtxstmp)
+		c.HandleDefault(listtxsall)
+		c.Execute(args)
+	}
+	help.Add("listtxs", cmd)
+	return cmd
+}()
+
+// listtxsall lists all transactions from the Factoid Chain
+var listtxsall = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs [all]"
+	cmd.description = "List all transactions from the Factoid Chain"
+	cmd.execFunc = func(args []string) {
+		txs, err := factom.ListTransactionsAll()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs all", cmd)
+	return cmd
+}()
+
+// listtxsaddress lists transactions from the Factoid Chain with matching
+// address
+var listtxsaddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs address ECADDRESS|FCTADDRESS"
+	cmd.description = "List transaction from the Factoid Chain with a specific address"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		txs, err := factom.ListTransactionsAddress(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs address", cmd)
+	return cmd
+}()
+
+// listtxsid lists transactions from the Factoid Chain with matching id
+var listtxsid = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs id TXID"
+	cmd.description = "List transaction from the Factoid Chain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		txs, err := factom.ListTransactionsID(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs id", cmd)
+	return cmd
+}()
+
+// listtxsrange lists the transactions from the Factoid Chain within the specified range
+var listtxsrange = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs range START END"
+	cmd.description = "List the transactions from the Factoid Chain within the specified range"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 2 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		start, err := strconv.Atoi(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		end, err := strconv.Atoi(args[1])
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		txs, err := factom.ListTransactionsRange(start, end)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs range", cmd)
+	return cmd
+}()
+
+// listtxstmp lists the working transactions in the wallet.
+var listtxstmp = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs tmp"
+	cmd.description = "List current working transactions in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		txs, err := factom.ListTransactionsTmp()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println("{")
+			fmt.Println("	Name:", tx.Name)
+			fmt.Println("	TxID:", tx.TxID)
+			fmt.Println("	TotalInputs:", FixPointPrt(tx.TotalInputs))
+			fmt.Println("	TotalOutputs:", FixPointPrt(tx.TotalOutputs))
+			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
+			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
+				fmt.Println("	FeesPaid:", 0)
+				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired))
+			} else {
+				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
+				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
+			}
+			fmt.Println("	RawTransaction:", tx.RawTransaction)
+			fmt.Println("}")
+		}
+	}
+	help.Add("listtxs tmp", cmd)
 	return cmd
 }()
 
