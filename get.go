@@ -15,7 +15,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|alltxs|chainhead|dblock|eblock|entry|firstentry|head|height"
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|height"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
