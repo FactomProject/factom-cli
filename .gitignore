@@ -7,12 +7,14 @@
 *~
 *.kate-swp
 *.orig
+*.iml
 
 # Folders
 _obj
 _test
 bin
 pkg
+.idea
 
 # Architecture specific extensions/prefixes
 *.[568vq]
