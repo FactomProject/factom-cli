@@ -5,631 +5,585 @@
 package main
 
 import (
-	"bytes"
-	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
-	"regexp"
 	"strconv"
-	"strings"
 
-	"github.com/FactomProject/factoid"
+	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
-	"github.com/FactomProject/fctwallet/Wallet/Utility"
 )
 
-var _ = hex.EncodeToString
-var serverFct = "localhost:8089"
-
-var badChar, _ = regexp.Compile("[^A-Za-z0-9_-]")
-
-type Response struct {
-	Response string
-	Success  bool
+func FixPointPrt(value uint64) string {
+	whole := value / 100000000
+	part := value - (whole * 100000000)
+	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
+	for string(ret[len(ret)-1]) == "0" {
+		ret = ret[:len(ret)-1]
+	}
+	if string(ret[len(ret)-1]) == "." {
+		ret = ret[:len(ret)-1]
+	}
+	return string(ret)
 }
 
-func ValidateKey(key string) (msg string, valid bool) {
-	if len(key) > factoid.ADDRESS_LENGTH {
-		return "Key is too long.  Keys must be less than or equal to 32 characters", false
-	}
-	if badChar.FindStringIndex(key) != nil {
-		str := fmt.Sprintf("The key or name '%s' contains invalid characters.\n"+
-			"Keys and names are restricted to alphanumeric characters,\n"+
-			"minuses (dashes), and underscores", key)
-		return str, false
-	}
-	return "", true
-}
-
-func getCmd(cmd string, cmderror string) {
-	resp, err := http.Get(cmd)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	resp.Body.Close()
-
-	b := new(Response)
-	if err := json.Unmarshal(body, b); err != nil || !b.Success {
-		fmt.Println(cmderror)
-		fmt.Println("Command Failed: ", string(body))
-		os.Exit(1)
-	}
-	fmt.Println(b.Response)
-	return
-}
-
-func postCmd(cmd string) {
-	resp, err := http.PostForm(cmd, nil)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	resp.Body.Close()
-
-	b := new(Response)
-	if err := json.Unmarshal(body, b); err != nil {
-		fmt.Printf("Failed to parse the response from factomd: %s\n", body)
-		os.Exit(1)
-	}
-
-	fmt.Println(b.Response)
-
-	if !b.Success {
-		os.Exit(1)
-	}
-
-	return
-}
-
-var transactions = func() *fctCmd {
+// newtx creates a new transaction in the wallet.
+var newtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli transactions"
-	cmd.description = "Prints information about pending transactions. Returns a list of all the transactions being constructed by the user.  It shows the fee required (at this point) as well as the fee the user will pay.  Some additional error checking is done as well, with messages provided to the user."
+	cmd.helpMsg = "factom-cli newtx TXNAME"
+	cmd.description = "Create a new transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		if len(args) > 0 {
+
+		if len(args) != 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-get-transactions/", serverFct)
-		getCmd(str, "Error Getting Transactions")
+		if err := factom.NewTransaction(args[0]); err != nil {
+			errorln(err)
+			return
+		}
 	}
-	help.Add("transactions", cmd)
+	help.Add("newtx", cmd)
 	return cmd
 }()
 
-var getlist = func() *fctCmd {
+// rmtx removes a transaction in the wallet.
+var rmtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli list TXNAME|ADDRESS|all"
-	cmd.description = "List confirmed transactions' details."
+	cmd.helpMsg = "factom-cli rmtx TXNAME"
+	cmd.description = "Remove a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println("Nothing to List.  Consider 'list all', or 'list [address]'.")
+
+		if len(args) != 1 {
+			fmt.Println(cmd.helpMsg)
 			return
 		}
-		var list string
-		if len(args) == 0 {
-			list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactions/", serverFct)
-		} else if len(args) == 1 && args[0] == "all" {
-			list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactions/?cmd=all", serverFct)
-		} else if len(args) == 1 {
-			list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactions/?address=%s", serverFct, args[0])
+		if err := factom.DeleteTransaction(args[0]); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("rmtx", cmd)
+	return cmd
+}()
+
+// addtxinput adds a factoid input to a transaction in the wallet.
+var addtxinput = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli addtxinput TXNAME ADDRESS AMOUNT"
+	cmd.description = "Add a Factoid input to a transaction in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		var amt uint64
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
+			errorln(err)
+		} else if i < 0 {
+			errorln("AMOUNT may not be less than 0")
 		} else {
-			fmt.Println("Did not understand the arguments.  Proper syntax is either 'list all' or")
-			fmt.Println("'list <address>' where <address> can be a valid Factoid or Entry Credit address")
+			amt = uint64(i * 1e8)
 		}
-		postCmd(list)
-	}
-	help.Add("list", cmd)
-	return cmd
-}()
-
-var getlistj = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listj TXNAME|ADDRESS|all"
-	cmd.description = "List confirmed transactions' details."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println("Nothing to List.  Consider 'list all', or 'list [address]'.")
+		if err := factom.AddTransactionInput(args[0], args[1], amt); err != nil {
+			errorln(err)
 			return
 		}
-		var list string
-		if len(args) == 0 {
-			list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactionsj/", serverFct)
-		} else if len(args) == 1 && args[0] == "all" {
-			list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactionsj/?cmd=all", serverFct)
-		} else if len(args) == 1 {
-			list = fmt.Sprintf("http://%s/v1/factoid-get-processed-transactionsj/?address=%s", serverFct, args[0])
-		} else {
-			fmt.Println("Did not understand the arguments.  Proper syntax is either 'list all' or")
-			fmt.Println("'list <address>' where <address> can be a valid Factoid or Entry Credit address")
-		}
-		postCmd(list)
 	}
-	help.Add("listj", cmd)
+	help.Add("addtxinput", cmd)
 	return cmd
 }()
 
-var fctnewtrans = func() *fctCmd {
+// addtxoutput adds a factoid output to a transaction in the wallet.
+var addtxoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli newtransaction TXNAME"
-	cmd.description = "Create a new transaction. The TXNAME is used to add inputs, outputs, and ecoutputs (to buy entry credits).  Once the transaction is built, call validate, and if all is good, submit"
+	cmd.helpMsg = "factom-cli addtxoutput [-r] TXNAME ADDRESS AMOUNT"
+	cmd.description = "Add a Factoid output to a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println("Missing Name")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-		str := fmt.Sprintf("http://%s/v1/factoid-new-transaction/%s", serverFct, args[0])
-		postCmd(str)
-	}
-	help.Add("newtransaction", cmd)
-	return cmd
-}()
-
-var fctdeletetrans = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli deletetransaction TXNAME"
-	cmd.description = "Delete the specified transaction in flight."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println("Missing Name")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-		str := fmt.Sprintf("http://%s/v1/factoid-delete-transaction/%s", serverFct, args[0])
-		postCmd(str)
-	}
-	help.Add("deletetransaction", cmd)
-	return cmd
-}()
-
-var fctaddfee = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addfee TXNAME FCADDRESS"
-	cmd.description = "Adds the needed fee to the given transaction. The Factoid Address specified must be an input to the transaction, and it must have a balance able to cover the additional fee. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 2 {
-			fmt.Println("Was expecting a transaction name, and an address used as an input to that transaction.")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-add-fee/?key=%s&name=%s",
-			serverFct, args[0], args[1])
-		postCmd(str)
-	}
-	help.Add("addfee", cmd)
-	return cmd
-}()
-
-var fctsubfee = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli subfee TXNAME FCTADDRESS"
-	cmd.description = "Subtracts the needed fee to the given transaction. The Factoid Address specified must be an output to the transaction. Also, the inputs must exactly balance the outputs,  since the logic to understand what to do otherwise is quite complicated, and prone to odd behavior."
-	cmd.execFunc = func(args []string) {
 		var res = flag.Bool("r", false, "resolve dns address")
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		var amt uint64
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
+			errorln(err)
+		} else if i < 0 {
+			errorln("AMOUNT may not be less than 0")
+		} else {
+			amt = uint64(i * 1e8)
+		}
+
+		out := args[1]
+		if *res {
+			if f, _, err := factom.ResolveDnsName(args[1]); err != nil {
+				errorln(err)
+				return
+			} else if f == "" {
+				errorln("could not resolve factoid address")
+			} else {
+				out = f
+			}
+		}
+		if err := factom.AddTransactionOutput(args[0], out, amt); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("addtxoutput", cmd)
+	return cmd
+}()
+
+// addtxecoutput adds an entry credit output to a transaction in the wallet.
+var addtxecoutput = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli addtxecoutput [-r] TXNAME ADDRESS AMOUNT"
+	cmd.description = "Add an Entry Credit output to a transaction in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		var amt uint64
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
+			errorln(err)
+		} else if i < 0 {
+			errorln("AMOUNT may not be less than 0")
+		} else {
+			amt = uint64(i * 1e8)
+		}
+
+		out := args[1]
+		if *res {
+			if _, e, err := factom.ResolveDnsName(args[1]); err != nil {
+				errorln(err)
+				return
+			} else if e == "" {
+				errorln("could not resolve entry credit address")
+			} else {
+				out = e
+			}
+		}
+		if err := factom.AddTransactionECOutput(args[0], out, amt); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("addtxecoutput", cmd)
+	return cmd
+}()
+
+// addtxfee adds an entry credit output to a transaction in the wallet.
+var addtxfee = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli addtxfee TXNAME ADDRESS"
+	cmd.description = "Add the transaction fee to an input of a transaction in the wallet"
+	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		if len(args) < 2 {
-			fmt.Println("Was expecting a transaction name, and an address used as an input to that transaction.")
+
+		if len(args) != 2 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		if err := factom.AddTransactionFee(args[0], args[1]); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("addtxfee", cmd)
+	return cmd
+}()
+
+// listtxs lists transactions from the wallet or the Factoid Chain.
+var listtxs = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs [tmp|all|address|id|range]"
+	cmd.description = "List transactions from the wallet or the Factoid Chain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		c := cli.New()
+		c.Handle("all", listtxsall)
+		c.Handle("address", listtxsaddress)
+		c.Handle("id", listtxsid)
+		c.Handle("range", listtxsrange)
+		c.Handle("tmp", listtxstmp)
+		c.HandleDefault(listtxsall)
+		c.Execute(args)
+	}
+	help.Add("listtxs", cmd)
+	return cmd
+}()
+
+// listtxsall lists all transactions from the Factoid Chain
+var listtxsall = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs [all]"
+	cmd.description = "List all transactions from the Factoid Chain"
+	cmd.execFunc = func(args []string) {
+		txs, err := factom.ListTransactionsAll()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs all", cmd)
+	return cmd
+}()
+
+// listtxsaddress lists transactions from the Factoid Chain with matching
+// address
+var listtxsaddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs address ECADDRESS|FCTADDRESS"
+	cmd.description = "List transaction from the Factoid Chain with a specific address"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
 
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
+		txs, err := factom.ListTransactionsAddress(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs address", cmd)
+	return cmd
+}()
+
+// listtxsid lists transactions from the Factoid Chain with matching id
+var listtxsid = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs id TXID"
+	cmd.description = "List transaction from the Factoid Chain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
 		}
 
-		addr := args[1]
+		txs, err := factom.ListTransactionsID(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs id", cmd)
+	return cmd
+}()
 
+// listtxsrange lists the transactions from the Factoid Chain within the specified range
+var listtxsrange = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs range START END"
+	cmd.description = "List the transactions from the Factoid Chain within the specified range"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 2 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		start, err := strconv.Atoi(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		end, err := strconv.Atoi(args[1])
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		txs, err := factom.ListTransactionsRange(start, end)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println(string(tx))
+		}
+	}
+	help.Add("listtxs range", cmd)
+	return cmd
+}()
+
+// listtxstmp lists the working transactions in the wallet.
+var listtxstmp = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs tmp"
+	cmd.description = "List current working transactions in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		txs, err := factom.ListTransactionsTmp()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			fmt.Println("{")
+			fmt.Println("	Name:", tx.Name)
+			fmt.Println("	TxID:", tx.TxID)
+			fmt.Println("	TotalInputs:", FixPointPrt(tx.TotalInputs))
+			fmt.Println("	TotalOutputs:", FixPointPrt(tx.TotalOutputs))
+			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
+			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
+				fmt.Println("	FeesPaid:", 0)
+				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired))
+			} else {
+				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
+				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
+			}
+			fmt.Println("	RawTransaction:", tx.RawTransaction)
+			fmt.Println("}")
+		}
+	}
+	help.Add("listtxs tmp", cmd)
+	return cmd
+}()
+
+// subtxfee adds an entry credit output to a transaction in the wallet.
+var subtxfee = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli subtxfee TXNAME ADDRESS"
+	cmd.description = "Subtract the transaction fee from an output of a transaction in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 2 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		if err := factom.SubTransactionFee(args[0], args[1]); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("subtxfee", cmd)
+	return cmd
+}()
+
+// signtx signs a transaction in the wallet.
+var signtx = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli signtx TXNAME"
+	cmd.description = "Sign a transaction in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		if err := factom.SignTransaction(args[0]); err != nil {
+			errorln(err)
+			return
+		}
+	}
+	help.Add("signtx", cmd)
+	return cmd
+}()
+
+// composetx composes the signed json rpc object to make a transaction against factomd
+var composetx = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli composetx TXNAME"
+	cmd.description = "Compose a wallet transaction into a json rpc object"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		p, err := factom.ComposeTransaction(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(string(p))
+	}
+	help.Add("composetx", cmd)
+	return cmd
+}()
+
+// sendtx composes and sends the signed transaction to factomd
+var sendtx = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli sendtx TXNAME"
+	cmd.description = "Send a Transaction to Factom"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		t, err := factom.SendTransaction(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println("TxID:", t)
+	}
+	help.Add("sendtx", cmd)
+	return cmd
+}()
+
+// sendfct sends factoids between 2 addresses
+var sendfct = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli sendfct FROMADDRESS TOADDRESS AMOUNT"
+	cmd.description = "Send Factoids between 2 addresses"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		tofc := args[1]
+
+		// if -r flag is present resolve the ec address from the dns name.
 		if *res {
-			f, e, err := factom.ResolveDnsName(addr)
+			f, _, err := factom.ResolveDnsName(tofc)
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			} else if f == "" {
-				if e == "" {
-					fmt.Println("Could not resolve address")
-					os.Exit(1)
-				}
-				addr = e
+				errorln(err)
 				return
 			}
-			addr = f
+			tofc = f
 		}
 
-		str := fmt.Sprintf("http://%s/v1/factoid-sub-fee/?key=%s&name=%s",
-			serverFct, args[0], addr)
-		postCmd(str)
-	}
-	help.Add("subfee", cmd)
-	return cmd
-}()
-
-var fctaddinput = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addinput TXNAME NAME|FCADDRESS AMOUNT"
-	cmd.description = "Add an input to a transaction."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 3 {
-			fmt.Println("Expecting a 1) transaction name, 2) an Address or Address name, and 3) an amount.")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-
-		amt, err := factoid.ConvertFixedPoint(args[2])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		ramt, err := strconv.ParseInt(amt, 10, 64)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		_, err = factoid.ValidateAmounts(uint64(ramt))
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-add-input/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], args[1], amt)
-		postCmd(str)
-	}
-	help.Add("addinput", cmd)
-	return cmd
-}()
-
-var fctaddoutput = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addoutput [-r] TXNAME NAME|FCADDRESS|DNSADDRESS AMOUNT"
-	cmd.description = "Add an output to a transaction."
-	cmd.execFunc = func(args []string) {
-		var res = flag.Bool("r", false, "resolve dns address")
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 3 {
-			fmt.Println("Expecting a 1) transaction name, 2) an Address or Address name, and 3) an amount.")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
-
-		addr := args[1]
-
-		if *res {
-			f, _, err := factom.ResolveDnsName(addr)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			} else if f == "" {
-				fmt.Println("Could not resolve address")
-				os.Exit(1)
-			}
-
-			addr = f
-		}
-
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-
-		amt, err := factoid.ConvertFixedPoint(args[2])
-		if err != nil {
-			fmt.Println("Invalid format for a number: ", args[2])
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-
-		ramt, err := strconv.ParseInt(amt, 10, 64)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		_, err = factoid.ValidateAmounts(uint64(ramt))
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-add-output/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], addr, amt)
-		postCmd(str)
-	}
-	help.Add("addoutput", cmd)
-	return cmd
-}()
-
-var fctaddecoutput = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addecoutput [-r] TXNAME NAME|ECADDRESS|DNSADDRESS AMOUNT"
-	cmd.description = "Add an ecoutput (purchase of entry credits to a transaction. Amount is denominated in factoids"
-	cmd.execFunc = func(args []string) {
-		var res = flag.Bool("r", false, "resolve dns address")
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 3 {
-			fmt.Println("Expecting a 1) transaction name, 2) an Address or Address name, and 3) an amount.")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-		// localhost:8089/v1/factoid-add-input/?key=<key>&name=<name or address>&amount=<amount>
-
-		addr := args[1]
-
-		if *res {
-			_, e, err := factom.ResolveDnsName(addr)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			} else if e == "" {
-				fmt.Println("Could not resolve address")
-				os.Exit(1)
-			}
-
-			addr = e
-		}
-
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-
-		amt, err := factoid.ConvertFixedPoint(args[2])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		ramt, err := strconv.ParseInt(amt, 10, 64)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		_, err = factoid.ValidateAmounts(uint64(ramt))
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-add-ecoutput/?key=%s&name=%s&amount=%s",
-			serverFct, args[0], addr, amt)
-		postCmd(str)
-	}
-	help.Add("addecoutput", cmd)
-	return cmd
-}()
-
-var fctgetfee = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli getfee"
-	cmd.description = "Get the current fee required for this  transaction. If a transaction is specified, then getfee returns the fee due for the  transaction. If no transaction is provided, then the cost of an Entry Credit is returned."
-	cmd.execFunc = func(args []string) {
-		var getfeereq string
-		if len(args) > 1 {
-			getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/?key=%s", serverFct, args[1])
+		var amt uint64
+		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
+			errorln(err)
+		} else if i < 0 {
+			errorln("AMOUNT may not be less than 0")
 		} else {
-			getfeereq = fmt.Sprintf("http://%s/v1/factoid-get-fee/", serverFct)
+			amt = uint64(i * 1e8)
 		}
 
-		resp, err := http.Get(getfeereq)
-
+		t, err := factom.SendFactoid(args[0], tofc, amt)
 		if err != nil {
-			fmt.Println("Command Failed Get")
+			errorln(err)
+			return
+		}
+		fmt.Println("TxID:", t)
+	}
+	help.Add("sendfct", cmd)
+	return cmd
+}()
+
+// buyec sends factoids between 2 addresses
+var buyec = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli buyec FCTADDRESS ECADDRESS ECAMOUNT"
+	cmd.description = "Buy entry credits"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		var res = flag.Bool("r", false, "resolve dns address")
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) != 3 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println("Failed to understand response from fctwallet")
-			os.Exit(1)
-		}
-		resp.Body.Close()
 
-		// We pull the fee.  If the fee isn't positive, or if we fail to marshal, then there is a failure
-		type x struct {
-			Response string
-			Success  bool
+		toec := args[1]
+
+		// if -r flag is present resolve the ec address from the dns name.
+		if *res {
+			_, e, err := factom.ResolveDnsName(toec)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			toec = e
 		}
 
-		b := new(x)
-		if err := json.Unmarshal(body, b); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		} else if !b.Success {
-			fmt.Println(b.Response)
-			os.Exit(1)
-		}
-		if len(args) < 2 {
-			fmt.Printf("Currently, Entry Credits are %s Factoids each\n", b.Response)
+		var amt uint64
+		if i, err := strconv.Atoi(args[2]); err != nil {
+			errorln(err)
+			return
+		} else if i < 0 {
+			errorln("AMOUNT may not be less than 0")
+			return
 		} else {
-			fmt.Printf("The fee due for this transaction is %s Factoids\n", b.Response)
+			rate, err := factom.GetRate()
+			if err != nil {
+				errorln(err)
+			}
+			amt = uint64(i) * rate
 		}
-	}
-	help.Add("getfee", cmd)
-	return cmd
-}()
 
-var fctproperties = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli properties"
-	cmd.description = "Returns information about factomd, fctwallet, the Protocol version, the version of this CLI, and more." // TODO
-	cmd.execFunc = func(args []string) {
-		resp, err := http.Get(fmt.Sprintf("http://%s/v1/properties/", serverFct))
-
+		t, err := factom.BuyEC(args[0], toec, amt)
 		if err != nil {
-			fmt.Println("Get Properties failed")
-			os.Exit(1)
-		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println("Failed to understand response from fctwallet")
-			os.Exit(1)
-		}
-		resp.Body.Close()
-
-		// We pull the fee.  If the fee isn't positive, or if we fail to marshal, then there is a failure
-		type x struct {
-			Response string
-			Success  bool
-		}
-
-		b := new(x)
-		if err := json.Unmarshal(body, b); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		} else if !b.Success {
-			fmt.Println(b.Response)
-			os.Exit(1)
-		}
-
-		ret := b.Response + fmt.Sprintln("factom-cli Version:", Version)
-
-		total, err := Utility.TotalFactoids()
-		if err == nil {
-			ret = ret + fmt.Sprintf("    Total Factoids: %s", strings.TrimSpace(factoid.ConvertDecimal(total)))
-		}
-
-		fmt.Println(ret)
-	}
-	help.Add("properties", cmd)
-	return cmd
-}()
-
-var fctsign = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sign TXNAME"
-	cmd.description = "Sign the transaction specified by the TXNAME."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println("Missing Name")
-			fmt.Println(cmd.helpMsg)
+			errorln(err)
 			return
 		}
-
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-sign-transaction/%s", serverFct, args[0])
-		postCmd(str)
-
+		fmt.Println("TxID:", t)
 	}
-	help.Add("sign", cmd)
-	return cmd
-}()
-
-var fctsubmit = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli submit TXNAME"
-	cmd.description = "Submit the transaction specified by the TXNAME to Factom."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println("Missing Name")
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-
-		msg, valid := ValidateKey(args[0])
-		if !valid {
-			fmt.Println(msg)
-			os.Exit(1)
-		}
-
-		s := struct{ Transaction string }{args[0]}
-
-		jdata, err := json.Marshal(s)
-		if err != nil {
-			fmt.Println("Submit failed")
-			os.Exit(1)
-		}
-
-		str := fmt.Sprintf("http://%s/v1/factoid-submit/%s", serverFct, bytes.NewBuffer(jdata))
-		postCmd(str)
-	}
-	help.Add("submit", cmd)
+	help.Add("buyec", cmd)
 	return cmd
 }()

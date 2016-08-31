@@ -8,10 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
-	"github.com/FactomProject/cli"
-	fct "github.com/FactomProject/factoid"
 	"github.com/FactomProject/factom"
 )
 
@@ -32,23 +29,32 @@ var balance = func() *fctCmd {
 		}
 		addr := args[0]
 
-		if b, err := factom.FctBalance(addr); err == nil {
-			fmt.Println(addr, fct.ConvertDecimal(uint64(b)))
+		switch factom.AddressStringType(addr) {
+		case factom.FactoidPub:
+			b, err := factom.GetFactoidBalance(addr)
+			if err != nil {
+				errorln(err)
+			}
+			fmt.Println(FixPointPrt(uint64(b)))
 			return
-		} else if c, err := factom.ECBalance(addr); err == nil {
-			fmt.Println(addr, c)
+		case factom.ECPub:
+			c, err := factom.GetECBalance(addr)
+			if err != nil {
+				errorln(err)
+			}
+			fmt.Println(c)
 			return
 		}
 
 		// if -r flag is present, resolve dns address then get the fct and ec
 		// blance
 		if *res {
-			f, e, err := factom.DnsBalance(addr)
+			f, e, err := factom.GetDnsBalance(addr)
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
-			fmt.Println(addr, "fct", fct.ConvertDecimal(uint64(f)))
+			fmt.Println(addr, "fct", FixPointPrt(uint64(f)))
 			fmt.Println(addr, "ec", e)
 		} else {
 			fmt.Println("Undefined or invalid address")
@@ -58,122 +64,176 @@ var balance = func() *fctCmd {
 	return cmd
 }()
 
-// Generate a new Address
-var generateaddress = func() *fctCmd {
+// ecrate shows the entry credit conversion rate in factoids
+var ecrate = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli generateaddress fct|ec NAME"
-	cmd.description = "Generate and name a new factoid or ec address"
+	cmd.helpMsg = "factom-cli ecrate"
+	cmd.description = "It takes this many Factoids to buy an Entry Credit.  Displays the larger between current and future rates. Also used to set Factoid fees."
+	cmd.execFunc = func(args []string) {
+		rate, err := factom.GetRate()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(FixPointPrt(rate))
+
+	}
+	help.Add("ecrate", cmd)
+	return cmd
+}()
+
+// exportaddresses lists the private addresses from the wallet
+var exportaddresses = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli exportaddresses"
+	cmd.description = "List the private addresses stored in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 
-		if len(args) == 2 {
-			c := cli.New()
-			c.Handle("ec", ecGenerateAddr)
-			c.Handle("fct", fctGenerateAddr)
-			c.HandleDefaultFunc(func(args []string) {
-				fmt.Println(cmd.helpMsg)
-			})
-			c.Execute(args)
-		} else {
-			fmt.Println(cmd.helpMsg)
+		fs, es, err := factom.FetchAddresses()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, a := range fs {
+			fmt.Println(a.SecString(), a.String())
+		}
+		for _, a := range es {
+			fmt.Println(a.SecString(), a.String())
 		}
 	}
-	help.Add("generateaddress", cmd)
-	help.Add("newaddress", cmd)
+	help.Add("exportaddresses", cmd)
 	return cmd
 }()
 
-// Generate a new Entry Credit Address
-var ecGenerateAddr = func() *fctCmd {
+// importaddresses imports addresses from 1 or more secret keys into the wallet
+var importaddresses = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli generateaddress ec NAME"
-	cmd.description = "Generate and name a new ec address"
-	cmd.execFunc = func(args []string) {
-		if addr, err := factom.GenerateEntryCreditAddress(args[1]); err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(addr)
-		}
-	}
-	help.Add("generateaddress ec", cmd)
-	help.Add("newaddress ec", cmd)
-	return cmd
-
-}()
-
-// Generate a new Factoid Address
-var fctGenerateAddr = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli generateaddress fct NAME"
-	cmd.description = "Generate and name a new factoid address"
-	cmd.execFunc = func(args []string) {
-		if addr, err := factom.GenerateFactoidAddress(args[1]); err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(addr)
-		}
-	}
-	help.Add("generateaddress fct", cmd)
-	help.Add("newaddress fct", cmd)
-	return cmd
-}()
-
-var getaddresses = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli getaddresses|balances"
-	cmd.description = "Returns the list of addresses known to the wallet. Returns the name that can be used tied to each address, as well as the base 58 address (which is the actual address). This command also returns the balances at each address."
+	cmd.helpMsg = "factom-cli importaddress ADDRESS [ADDRESS...]"
+	cmd.description = "Import one or more secret keys into the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		if len(args) > 0 {
-			fmt.Println(cmd.helpMsg)
-		}
 
-		str := fmt.Sprintf("http://%s/v1/factoid-get-addresses/", serverFct)
-		getCmd(str, "Error printing addresses")
-	}
-	help.Add("getaddress", cmd)
-	help.Add("balances", cmd)
-	return cmd
-}()
-
-// importaddr imports a Factoid or Entry Credit private key and adds the
-// address to the wallet database.
-var importaddr = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli importaddress NAME ESKEY|FSKEY|'12WORDS'"
-	cmd.description = "Import an Entry Credit or Factoid Private Key"
-	cmd.execFunc = func(args []string) {
-		if len(args) < 3 {
+		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if strings.HasPrefix(args[2], "Fs") {
-			if addr, err := factom.GenerateFactoidAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
-				fmt.Println(err)
-				fmt.Println(cmd.helpMsg)
-			} else {
-				fmt.Println(args[1], addr)
-			}
-		} else if strings.HasPrefix(args[2], "Es") {
-			if addr, err := factom.GenerateEntryCreditAddressFromHumanReadablePrivateKey(args[1], args[2]); err != nil {
-				fmt.Println(err)
-				fmt.Println(cmd.helpMsg)
-			} else {
-				fmt.Println(args[1], addr)
-			}
-		} else {
-			if addr, err := factom.GenerateFactoidAddressFromMnemonic(args[1], args[2]); err != nil {
-				fmt.Println(err)
-				fmt.Println(cmd.helpMsg)
-			} else {
-				fmt.Println(args[1], addr)
-			}
+		fs, es, err := factom.ImportAddresses(args...)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, a := range fs {
+			fmt.Println(a)
+		}
+		for _, a := range es {
+			fmt.Println(a)
 		}
 	}
 	help.Add("importaddress", cmd)
+	return cmd
+}()
+
+var importwords = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli importwords '12WORDS'"
+	cmd.description = "Import 12 words from Koinify sale into the Wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 || len(args) > 1 {
+			fmt.Println(cmd.helpMsg, "  Note, 12 words must be in quotes")
+			return
+		}
+		f, err := factom.ImportMnemonic(args[0])
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(f)
+	}
+	help.Add("importwords", cmd)
+	return cmd
+}()
+
+// newecaddress generates a new ec address in the wallet
+var newecaddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli newecaddress"
+	cmd.description = "Generate a new Entry Credit Address in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		a, err := factom.GenerateECAddress()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(a)
+	}
+	help.Add("newecaddress", cmd)
+	return cmd
+}()
+
+// newfctaddress generates a new ec address in the wallet
+var newfctaddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli newfctaddress"
+	cmd.description = "Generate a new Factoid Address in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		a, err := factom.GenerateFactoidAddress()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(a)
+	}
+	help.Add("newfctaddress", cmd)
+	return cmd
+}()
+
+// listaddresses lists the addresses in the wallet
+var listaddresses = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listaddresses"
+	cmd.description = "List the addresses stored in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		fs, es, err := factom.FetchAddresses()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, a := range fs {
+			b, err := factom.GetFactoidBalance(a.String())
+			if err != nil {
+				errorln(err)
+			}
+			fmt.Println(a, FixPointPrt(uint64(b)))
+		}
+		for _, a := range es {
+			c, err := factom.GetECBalance(a.String())
+			if err != nil {
+				errorln(err)
+			}
+			fmt.Println(a, c)
+		}
+	}
+	help.Add("listaddresses", cmd)
 	return cmd
 }()

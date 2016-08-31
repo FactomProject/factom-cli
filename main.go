@@ -13,63 +13,57 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-var (
-	server string
-	wallet string
-)
-
-const Version = "0.1.7.0"
+const Version = "0.2.0.0"
 
 func main() {
-	cfg := ReadConfig().Main
-	server = cfg.Server
-	wallet = cfg.Wallet
-
-	// command line flags overwirte conf file
 	var (
 		hflag = flag.Bool("h", false, "help")
-		sflag = flag.String("s", "", "address of api server")
-		wflag = flag.String("w", "", "address of wallet api server")
+		sflag = flag.String("s", "localhost:8088", "address of api server")
+		wflag = flag.String("w", "localhost:8089", "address of wallet api server")
 	)
 	flag.Parse()
 	args := flag.Args()
-	if *sflag != "" {
-		server = *sflag
-	}
-	if *wflag != "" {
-		wallet = *wflag
-	}
+
 	if *hflag {
 		args = []string{"help"}
 	}
-
-	factom.SetServer(server)
+	factom.SetFactomdServer(*sflag)
+	factom.SetWalletServer(*wflag)
 
 	c := cli.New()
 	c.Handle("help", help)
-	c.Handle("get", get)
-	c.Handle("mkchain", mkchain)
-	c.Handle("put", put)
-	c.Handle("importaddress", importaddr)
-	c.Handle("newaddress", generateaddress)
-	c.Handle("generateaddress", generateaddress)
-	c.Handle("balances", getaddresses)
+	c.Handle("ack", ack)
+	c.Handle("addchain", addchain)
+	c.Handle("addentry", addentry)
+	c.Handle("backupwallet", backupwallet)
 	c.Handle("balance", balance)
-	c.Handle("getaddresses", getaddresses)
-	c.Handle("transactions", transactions)
-	c.Handle("newtransaction", fctnewtrans)
-	c.Handle("deletetransaction", fctdeletetrans)
-	c.Handle("addinput", fctaddinput)
-	c.Handle("addoutput", fctaddoutput)
-	c.Handle("addecoutput", fctaddecoutput)
-	c.Handle("sign", fctsign)
-	c.Handle("submit", fctsubmit)
-	c.Handle("getfee", fctgetfee)
-	c.Handle("addfee", fctaddfee)
-	c.Handle("subfee", fctsubfee)
-	c.Handle("properties", fctproperties)
-	c.Handle("list", getlist)
-	c.Handle("listj", getlistj)
+	c.Handle("ecrate", ecrate)
+	c.Handle("exportaddresses", exportaddresses)
+	c.Handle("get", get)
+	c.Handle("importaddress", importaddresses)
+	c.Handle("importwords", importwords)
+	c.Handle("listaddresses", listaddresses)
+	c.Handle("newecaddress", newecaddress)
+	c.Handle("newfctaddress", newfctaddress)
+	c.Handle("properties", properties)
+	c.Handle("receipt", receipt)
+	c.Handle("backupwallet", backupwallet)
+
+	// transaction commands
+	c.Handle("newtx", newtx)
+	c.Handle("rmtx", rmtx)
+	c.Handle("listtxs", listtxs)
+	c.Handle("addtxinput", addtxinput)
+	c.Handle("addtxoutput", addtxoutput)
+	c.Handle("addtxecoutput", addtxecoutput)
+	c.Handle("addtxfee", addtxfee)
+	c.Handle("subtxfee", subtxfee)
+	c.Handle("signtx", signtx)
+	c.Handle("composetx", composetx)
+	c.Handle("sendtx", sendtx)
+	c.Handle("sendfct", sendfct)
+	c.Handle("buyec", buyec)
+
 	c.HandleDefault(help)
 	c.Execute(args)
 }
