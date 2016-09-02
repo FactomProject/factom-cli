@@ -52,8 +52,7 @@ var addchain = func() *fctCmd {
 
 		c := factom.NewChain(e)
 
-		if _, err := factom.GetChainHead(c.ChainID); err == nil {
-			// no error means the client found the chain
+		if factom.ChainExists(c.ChainID) {
 			errorln("Chain", c.ChainID, "already exists")
 			return
 		}

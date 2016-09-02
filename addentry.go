@@ -60,7 +60,7 @@ var addentry = func() *fctCmd {
 			e.Content = p
 		}
 
-		if _, err := factom.GetChainHead(e.ChainID); err != nil {
+		if !factom.ChainExists(e.ChainID) {
 			errorln("Chain", e.ChainID, "was not found")
 			return
 		}
