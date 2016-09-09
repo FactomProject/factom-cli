@@ -7,7 +7,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/FactomProject/cli"
@@ -36,7 +35,7 @@ func main() {
 		*rpcPasswordflag = cfg.RpcPass
 	}
 	if *rpcUserflag == "" || *rpcPasswordflag == "" {
-		log.Fatal("Rpc user and password did not set, using -rpcuser and -rpcpassword or config file")
+		fmt.Println("Rpc user and password were not set. use both -rpcuser and -rpcpassword or config file")
 	}
 	
 	args := flag.Args()
