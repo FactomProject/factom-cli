@@ -7,10 +7,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
+	"github.com/FactomProject/factomd/util"
 )
 
 const Version = "0.2.0.0"
@@ -20,8 +22,23 @@ func main() {
 		hflag = flag.Bool("h", false, "help")
 		sflag = flag.String("s", "localhost:8088", "address of api server")
 		wflag = flag.String("w", "localhost:8089", "address of wallet api server")
+		rpcUserflag     = flag.String("rpcuser", "", "Username for JSON-RPC connections")
+		rpcPasswordflag = flag.String("rpcpassword", "", "Password for JSON-RPC connections")		
 	)
 	flag.Parse()
+
+	filename := util.ConfigFilename()
+	cfg := util.ReadConfig(filename).Rpc
+	if *rpcUserflag == "" {
+		*rpcUserflag = cfg.RpcUser
+	}
+	if *rpcPasswordflag == "" {
+		*rpcPasswordflag = cfg.RpcPass
+	}
+	if *rpcUserflag == "" || *rpcPasswordflag == "" {
+		log.Fatal("Rpc user and password did not set, using -rpcuser and -rpcpassword or config file")
+	}
+	
 	args := flag.Args()
 
 	if *hflag {
@@ -29,7 +46,7 @@ func main() {
 	}
 	factom.SetFactomdServer(*sflag)
 	factom.SetWalletServer(*wflag)
-
+	factom.SetRpcConfig(*rpcUserflag, *rpcPasswordflag)
 	c := cli.New()
 	c.Handle("help", help)
 	c.Handle("ack", ack)
