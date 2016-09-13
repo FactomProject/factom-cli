@@ -18,11 +18,11 @@ const Version = "0.2.0.0"
 
 func main() {
 	var (
-		hflag = flag.Bool("h", false, "help")
-		sflag = flag.String("s", "localhost:8088", "address of api server")
-		wflag = flag.String("w", "localhost:8089", "address of wallet api server")
+		hflag           = flag.Bool("h", false, "help")
+		sflag           = flag.String("s", "localhost:8088", "address of api server")
+		wflag           = flag.String("w", "localhost:8089", "address of wallet api server")
 		rpcUserflag     = flag.String("rpcuser", "", "Username for JSON-RPC connections")
-		rpcPasswordflag = flag.String("rpcpassword", "", "Password for JSON-RPC connections")		
+		rpcPasswordflag = flag.String("rpcpassword", "", "Password for JSON-RPC connections")
 	)
 	flag.Parse()
 
@@ -37,7 +37,7 @@ func main() {
 	if *rpcUserflag == "" || *rpcPasswordflag == "" {
 		fmt.Println("Rpc user and password were not set. use both -rpcuser and -rpcpassword or config file")
 	}
-	
+
 	args := flag.Args()
 
 	if *hflag {
