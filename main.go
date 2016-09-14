@@ -18,24 +18,35 @@ const Version = "0.2.0.0"
 
 func main() {
 	var (
-		hflag           = flag.Bool("h", false, "help")
-		sflag           = flag.String("s", "localhost:8088", "address of api server")
-		wflag           = flag.String("w", "localhost:8089", "address of wallet api server")
-		rpcUserflag     = flag.String("rpcuser", "", "Username for JSON-RPC connections")
-		rpcPasswordflag = flag.String("rpcpassword", "", "Password for JSON-RPC connections")
+		hflag              = flag.Bool("h", false, "help")
+		sflag              = flag.String("s", "localhost:8088", "address and port of factomd api")
+		wflag              = flag.String("w", "localhost:8089", "address and port of factom-walletd api")
+		walletRpcUser      = flag.String("walletuser", "", "Username for API connections to factom-walletd")
+		walletRpcPassword  = flag.String("walletpassword", "", "Password for API connections to factom-walletd")
+		factomdRpcUser     = flag.String("factomduser", "", "Username for API connections to factomd")
+		factomdRpcPassword = flag.String("factomdpassword", "", "Password for API connections to factomd")
 	)
 	flag.Parse()
 
-	filename := util.ConfigFilename()
+	//see if the config file has values which should be used instead of null strings
+	filename := util.ConfigFilename() //file name and path to factomd.conf file
 	cfg := util.ReadConfig(filename).Rpc
-	if *rpcUserflag == "" {
-		*rpcUserflag = cfg.RpcUser
+	cfgw := util.ReadConfig(filename).Walletd
+
+	if *walletRpcUser == "" {
+		if cfgw.WalletRpcUser != "" {
+			fmt.Printf("using factom-walletd API user and password specified in \"%s\" at WalletRpcUser & WalletRpcPass\n", filename)
+			*walletRpcUser = cfgw.WalletRpcUser
+			*walletRpcPassword = cfgw.WalletRpcPass
+		}
 	}
-	if *rpcPasswordflag == "" {
-		*rpcPasswordflag = cfg.RpcPass
-	}
-	if *rpcUserflag == "" || *rpcPasswordflag == "" {
-		fmt.Println("Rpc user and password were not set. use both -rpcuser and -rpcpassword or config file")
+
+	if *factomdRpcUser == "" {
+		if cfg.FactomdRpcUser != "" {
+			fmt.Printf("using factomd API user and password specified in \"%s\" at FactomdRpcUser & FactomdRpcPass\n", filename)
+			*factomdRpcUser = cfg.FactomdRpcUser
+			*factomdRpcPassword = cfg.FactomdRpcPass
+		}
 	}
 
 	args := flag.Args()
@@ -45,7 +56,8 @@ func main() {
 	}
 	factom.SetFactomdServer(*sflag)
 	factom.SetWalletServer(*wflag)
-	factom.SetRpcConfig(*rpcUserflag, *rpcPasswordflag)
+	factom.SetFactomdRpcConfig(*factomdRpcUser, *factomdRpcPassword)
+	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
 	c := cli.New()
 	c.Handle("help", help)
 	c.Handle("ack", ack)
