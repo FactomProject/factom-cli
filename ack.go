@@ -48,31 +48,41 @@ var ack = func() *fctCmd {
 			}
 		}
 
-		resp1, err1 := factom.FactoidACK(txID, fullTx)
-		resp2, err2 := factom.EntryACK(txID, fullTx)
+		resp1, err := factom.FactoidACK(txID, fullTx)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		resp2, err := factom.EntryACK(txID, fullTx)
+		if err != nil {
+			errorln(err)
+			return
+		}
 
-		if err1 != nil && err2 != nil {
-			errorln(err1)
-			return
-		}
-		if err1 != nil {
-			str, err := json.MarshalIndent(resp2, "", "\t")
-			if err != nil {
-				errorln(err)
+		if resp1 != nil {
+			if resp1.Status != "Unknown" {
+				str, err := json.MarshalIndent(resp1, "", "\t")
+				if err != nil {
+					errorln(err)
+					return
+				}
+				fmt.Printf("%s\n", str)
 				return
 			}
-			fmt.Printf("%s\n", str)
-			return
 		}
-		if err2 != nil {
-			str, err := json.MarshalIndent(resp1, "", "\t")
-			if err != nil {
-				errorln(err)
+		if resp2 != nil {
+			if resp2.CommitTxID == "" && resp2.EntryHash == "" {
+			} else {
+				str, err := json.MarshalIndent(resp2, "", "\t")
+				if err != nil {
+					errorln(err)
+					return
+				}
+				fmt.Printf("%s\n", str)
 				return
 			}
-			fmt.Printf("%s\n", str)
-			return
 		}
+		fmt.Printf("Entry / transaction not found.\n")
 	}
 	help.Add("ack", cmd)
 	return cmd
