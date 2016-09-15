@@ -38,17 +38,17 @@ func main() {
 
 		if *walletRpcUser == "" {
 			if cfg.Walletd.WalletRpcUser != "" {
-				fmt.Printf("using factom-walletd API user and password specified in \"%s\" at WalletRpcUser & WalletRpcPass\n", filename)
+				//fmt.Printf("using factom-walletd API user and password specified in \"%s\" at WalletRpcUser & WalletRpcPass\n", filename)
 				*walletRpcUser = cfg.Walletd.WalletRpcUser
 				*walletRpcPassword = cfg.Walletd.WalletRpcPass
 			}
 		}
 
 		if *factomdRpcUser == "" {
-			if cfg.Rpc.FactomdRpcUser != "" {
-				fmt.Printf("using factomd API user and password specified in \"%s\" at FactomdRpcUser & FactomdRpcPass\n", filename)
-				*factomdRpcUser = cfg.Rpc.FactomdRpcUser
-				*factomdRpcPassword = cfg.Rpc.FactomdRpcPass
+			if cfg.App.FactomdRpcUser != "" {
+				//fmt.Printf("using factomd API user and password specified in \"%s\" at FactomdRpcUser & FactomdRpcPass\n", filename)
+				*factomdRpcUser = cfg.App.FactomdRpcUser
+				*factomdRpcPassword = cfg.App.FactomdRpcPass
 			}
 		}
 	}

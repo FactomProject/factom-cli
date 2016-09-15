@@ -34,15 +34,17 @@ var balance = func() *fctCmd {
 			b, err := factom.GetFactoidBalance(addr)
 			if err != nil {
 				errorln(err)
+			} else {
+				fmt.Println(FixPointPrt(uint64(b)))
 			}
-			fmt.Println(FixPointPrt(uint64(b)))
 			return
 		case factom.ECPub:
 			c, err := factom.GetECBalance(addr)
 			if err != nil {
 				errorln(err)
+			} else {
+				fmt.Println(c)
 			}
-			fmt.Println(c)
 			return
 		}
 
@@ -223,15 +225,20 @@ var listaddresses = func() *fctCmd {
 			b, err := factom.GetFactoidBalance(a.String())
 			if err != nil {
 				errorln(err)
+				fmt.Println(a)
+			} else {
+				fmt.Println(a, FixPointPrt(uint64(b)))
 			}
-			fmt.Println(a, FixPointPrt(uint64(b)))
+
 		}
 		for _, a := range es {
 			c, err := factom.GetECBalance(a.String())
 			if err != nil {
 				errorln(err)
+				fmt.Println(a)
+			} else {
+				fmt.Println(a, c)
 			}
-			fmt.Println(a, c)
 		}
 	}
 	help.Add("listaddresses", cmd)
