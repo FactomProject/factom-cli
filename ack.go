@@ -16,19 +16,18 @@ import (
 
 var ack = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli ack fct|e TxID|FullTx"
+	cmd.helpMsg = "factom-cli ack TxID|FullTx"
 	cmd.description = "Returns information about a factoid transaction, or an entry / entry credit transaction"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 
-		if len(args) < 2 {
+		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		ackType := args[0]
-		tx := args[1]
+		tx := args[0]
 
 		txID := ""
 		fullTx := ""
@@ -49,31 +48,30 @@ var ack = func() *fctCmd {
 			}
 		}
 
-		if ackType == "fct" {
-			resp, err := factom.FactoidACK(txID, fullTx)
-			if err != nil {
-				errorln(err)
-				return
-			}
-			str, err := json.MarshalIndent(resp, "", "\t")
-			if err != nil {
-				errorln(err)
-				return
-			}
-			fmt.Printf("%s\n", str)
+		resp1, err1 := factom.FactoidACK(txID, fullTx)
+		resp2, err2 := factom.EntryACK(txID, fullTx)
+
+		if err1 != nil && err2 != nil {
+			errorln(err1)
+			return
 		}
-		if ackType == "e" {
-			resp, err := factom.EntryACK(txID, fullTx)
-			if err != nil {
-				errorln(err)
-				return
-			}
-			str, err := json.MarshalIndent(resp, "", "\t")
+		if err1 != nil {
+			str, err := json.MarshalIndent(resp2, "", "\t")
 			if err != nil {
 				errorln(err)
 				return
 			}
 			fmt.Printf("%s\n", str)
+			return
+		}
+		if err2 != nil {
+			str, err := json.MarshalIndent(resp1, "", "\t")
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Printf("%s\n", str)
+			return
 		}
 	}
 	help.Add("ack", cmd)
