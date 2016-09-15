@@ -30,22 +30,26 @@ func main() {
 
 	//see if the config file has values which should be used instead of null strings
 	filename := util.ConfigFilename() //file name and path to factomd.conf file
-	cfg := util.ReadConfig(filename).Rpc
-	cfgw := util.ReadConfig(filename).Walletd
+	//if the config file doesn't exist, it gives lots of warnings when util.ReadConfig is called.
+	//instead of giving warnings, check that the file exists before attempting to read it.
+	//if it doesn't exist, silently ignore the file
+	if _, err := os.Stat(filename); err == nil {
+		cfg := util.ReadConfig(filename)
 
-	if *walletRpcUser == "" {
-		if cfgw.WalletRpcUser != "" {
-			fmt.Printf("using factom-walletd API user and password specified in \"%s\" at WalletRpcUser & WalletRpcPass\n", filename)
-			*walletRpcUser = cfgw.WalletRpcUser
-			*walletRpcPassword = cfgw.WalletRpcPass
+		if *walletRpcUser == "" {
+			if cfg.Walletd.WalletRpcUser != "" {
+				fmt.Printf("using factom-walletd API user and password specified in \"%s\" at WalletRpcUser & WalletRpcPass\n", filename)
+				*walletRpcUser = cfg.Walletd.WalletRpcUser
+				*walletRpcPassword = cfg.Walletd.WalletRpcPass
+			}
 		}
-	}
 
-	if *factomdRpcUser == "" {
-		if cfg.FactomdRpcUser != "" {
-			fmt.Printf("using factomd API user and password specified in \"%s\" at FactomdRpcUser & FactomdRpcPass\n", filename)
-			*factomdRpcUser = cfg.FactomdRpcUser
-			*factomdRpcPassword = cfg.FactomdRpcPass
+		if *factomdRpcUser == "" {
+			if cfg.Rpc.FactomdRpcUser != "" {
+				fmt.Printf("using factomd API user and password specified in \"%s\" at FactomdRpcUser & FactomdRpcPass\n", filename)
+				*factomdRpcUser = cfg.Rpc.FactomdRpcUser
+				*factomdRpcPassword = cfg.Rpc.FactomdRpcPass
+			}
 		}
 	}
 
