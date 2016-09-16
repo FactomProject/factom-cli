@@ -5,6 +5,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"sort"
 	"strings"
@@ -25,6 +26,9 @@ func (h *helper) Add(s string, c *fctCmd) {
 }
 
 func (h *helper) All() {
+	flag.Usage()
+	
+	fmt.Println()
 	keys := make([]string, 0)
 	for k := range h.topics {
 		keys = append(keys, k)
