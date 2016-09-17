@@ -292,16 +292,32 @@ var properties = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		f, a, w, err := factom.GetProperties()
-		if err != nil {
-			errorln(err)
-			return
+		fdv, fdverr, fdapiv, fdapiverr, fwv, fwverr, fwapiv, fwapiverr := factom.GetProperties()
+
+		fmt.Println("CLI Version:", Version)
+		if fdverr == "" {
+			fmt.Println("Factomd Version:", fdv)
+		} else {
+			fmt.Println("Factomd Version Unavailable:", fdverr)
 		}
 
-		fmt.Println("Factomd Version:", f)
-		fmt.Println("API Version:", a)
-		fmt.Println("Wallet Version:", w)
-		fmt.Println("CLI Version:", Version)
+		if fdapiverr == "" {
+			fmt.Println("Factomd API Version:", fdapiv)
+		} else {
+			fmt.Println("Factomd API Version Unavailable:", fdapiverr)
+		}
+
+		if fwverr == "" {
+			fmt.Println("Wallet Version:", fwv)
+		} else {
+			fmt.Println("Wallet Version Unavailable:", fwverr)
+		}
+		if fwapiverr == "" {
+			fmt.Println("Wallet API Version:", fwapiv)
+		} else {
+			fmt.Println("Wallet API Version Unavailable:", fwapiverr)
+		}
+
 	}
 	help.Add("properties", cmd)
 	return cmd
