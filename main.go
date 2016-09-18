@@ -19,12 +19,13 @@ const Version = "0.2.0.0"
 func main() {
 	var (
 		hflag              = flag.Bool("h", false, "help")
-		sflag              = flag.String("s", "localhost:8088", "address and port of factomd api")
-		wflag              = flag.String("w", "localhost:8089", "address and port of factom-walletd api")
 		walletRpcUser      = flag.String("walletuser", "", "Username for API connections to factom-walletd")
 		walletRpcPassword  = flag.String("walletpassword", "", "Password for API connections to factom-walletd")
 		factomdRpcUser     = flag.String("factomduser", "", "Username for API connections to factomd")
 		factomdRpcPassword = flag.String("factomdpassword", "", "Password for API connections to factomd")
+
+		factomdLocation = flag.String("s", "", "IPAddr:port# of factomd API to use to access blockchain (default localhost:8088)")
+		walletdLocation = flag.String("w", "", "IPAddr:port# of factom-walletd API to use to create transactions (default localhost:8089)")
 	)
 	flag.Parse()
 
@@ -51,6 +52,25 @@ func main() {
 				*factomdRpcPassword = cfg.App.FactomdRpcPass
 			}
 		}
+
+		if *factomdLocation == "" {
+			if cfg.Walletd.FactomdLocation != "localhost:8088" {
+				//fmt.Printf("using factomd location specified in \"%s\" as FactomdLocation = \"%s\"\n", filename, cfg.Walletd.FactomdLocation)
+				*factomdLocation = cfg.Walletd.FactomdLocation
+			} else {
+				*factomdLocation = "localhost:8088"
+			}
+		}
+
+		if *walletdLocation == "" {
+			if cfg.Walletd.WalletdLocation != "localhost:8089" {
+				//fmt.Printf("using factom-walletd location specified in \"%s\" as WalletdLocation = \"%s\"\n", filename, cfg.Walletd.WalletdLocation)
+				*walletdLocation = cfg.Walletd.WalletdLocation
+			} else {
+				*walletdLocation = "localhost:8089"
+			}
+		}
+
 	}
 
 	args := flag.Args()
@@ -58,8 +78,8 @@ func main() {
 	if *hflag {
 		args = []string{"help"}
 	}
-	factom.SetFactomdServer(*sflag)
-	factom.SetWalletServer(*wflag)
+	factom.SetFactomdServer(*factomdLocation)
+	factom.SetWalletServer(*walletdLocation)
 	factom.SetFactomdRpcConfig(*factomdRpcUser, *factomdRpcPassword)
 	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
 	c := cli.New()
