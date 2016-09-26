@@ -26,6 +26,9 @@ func main() {
 
 		factomdLocation = flag.String("s", "", "IPAddr:port# of factomd API to use to access blockchain (default localhost:8088)")
 		walletdLocation = flag.String("w", "", "IPAddr:port# of factom-walletd API to use to create transactions (default localhost:8089)")
+
+		walletTLSflag = flag.Bool("wallettls", false, "Set to true when the wallet API is encrypted")
+		walletTLSCert = flag.String("walletcert", "", "This file is the TLS certificate provided by the factom-walletd API. (default ~/.factom/walletAPIpub.cert)")
 	)
 	flag.Parse()
 
@@ -71,6 +74,21 @@ func main() {
 			}
 		}
 
+		if cfg.Walletd.WalletTlsEnabled == true { //if a config file is found, and the wallet will start with TLS, factom-cli should use TLS too
+			*walletTLSflag = true
+		}
+
+		if *walletTLSCert == "" { //if specified on the command line, don't use the config file
+			if cfg.Walletd.WalletTlsPublicCert != "/full/path/to/walletAPIpub.cert" { //otherwise check if the the config file has something new
+				//fmt.Printf("using wallet TLS certificate file specified in \"%s\" at WalletTlsPublicCert = \"%s\"\n", filename, cfg.Walletd.WalletTlsPublicCert)
+				*walletTLSCert = cfg.Walletd.WalletTlsPublicCert
+			}
+		}
+	}
+
+	if *walletTLSCert == "" { //if all defaults were specified on the command line and config file
+		*walletTLSCert = fmt.Sprint(util.GetHomeDir(), "/.factom/walletAPIpub.cert")
+		//fmt.Printf("using default wallet TLS certificate file \"%s\"\n", *walletTLSCert)
 	}
 
 	args := flag.Args()
@@ -82,6 +100,7 @@ func main() {
 	factom.SetWalletServer(*walletdLocation)
 	factom.SetFactomdRpcConfig(*factomdRpcUser, *factomdRpcPassword)
 	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
+	factom.SetWalletEncryption(*walletTLSflag, *walletTLSCert)
 	c := cli.New()
 	c.Handle("help", help)
 	c.Handle("ack", ack)
