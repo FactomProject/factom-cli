@@ -19,7 +19,7 @@ var addchain = func() *fctCmd {
 	cmd.description = "Create a new Factom Chain. Read data for the First Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		var (
-			eAcii extidsAscii
+			eAcii extidsASCII
 			eHex  extidsHex
 		)
 		os.Args = args
@@ -73,23 +73,24 @@ var addchain = func() *fctCmd {
 			return
 		}
 		// commit the chain
-		if txID, err := factom.CommitChain(c, ec); err != nil {
+		txID, err := factom.CommitChain(c, ec)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println("Commiting Chain Transaction ID:", txID)
 		}
+		fmt.Println("Commiting Chain Transaction ID:", txID)
 
 		// TODO - get commit acknowledgement
 
 		// reveal chain
-		if hash, err := factom.RevealChain(c); err != nil {
+		hash, err := factom.RevealChain(c)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println("ChainID:", c.ChainID)
-			fmt.Println("Entryhash:", hash)
 		}
+		fmt.Println("ChainID:", c.ChainID)
+		fmt.Println("Entryhash:", hash)
+
 		// ? get reveal ack
 	}
 	help.Add("addchain", cmd)
@@ -102,7 +103,7 @@ var composechain = func() *fctCmd {
 	cmd.description = "Create API calls to create a new Factom Chain. Read data for the First Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		var (
-			eAcii extidsAscii
+			eAcii extidsASCII
 			eHex  extidsHex
 		)
 		os.Args = args
@@ -156,19 +157,19 @@ var composechain = func() *fctCmd {
 			//return
 		}
 
-		if j, err := factom.ComposeChainCommit(c, ec); err != nil {
+		j, err := factom.ComposeChainCommit(c, ec)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println(j)
 		}
+		fmt.Println(j)
 
-		if j, err := factom.ComposeChainReveal(c); err != nil {
+		j, err = factom.ComposeChainReveal(c)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println(j)
 		}
+		fmt.Println(j)
 	}
 	help.Add("composechain", cmd)
 	return cmd

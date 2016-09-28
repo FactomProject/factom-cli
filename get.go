@@ -46,7 +46,7 @@ var getAllEntries = func() *fctCmd {
 	cmd.description = "Get all of the Entries in a Chain"
 	cmd.execFunc = func(args []string) {
 		var (
-			nAcii namesAscii
+			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
@@ -91,7 +91,7 @@ var getChainHead = func() *fctCmd {
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
 		var (
-			nAcii namesAscii
+			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
@@ -212,7 +212,7 @@ var getFirstEntry = func() *fctCmd {
 	cmd.description = "Get the first entry from a chain"
 	cmd.execFunc = func(args []string) {
 		var (
-			nAcii namesAscii
+			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args

@@ -17,13 +17,13 @@ var exidCollector [][]byte
 
 // extids will be a flag receiver for adding chains and entries
 // In ASCII
-type extidsAscii []string
+type extidsASCII []string
 
-func (e *extidsAscii) String() string {
+func (e *extidsASCII) String() string {
 	return fmt.Sprint(*e)
 }
 
-func (e *extidsAscii) Set(s string) error {
+func (e *extidsASCII) Set(s string) error {
 	*e = append(*e, s)
 	exidCollector = append(exidCollector[:], []byte(s))
 	return nil
@@ -51,14 +51,14 @@ func (e *extidsHex) Set(s string) error {
 // line -n and -N flags
 var nameCollector [][]byte
 
-// namesAscii will be a flag receiver for ASCII chain names.
-type namesAscii []string
+// namesASCII will be a flag receiver for ASCII chain names.
+type namesASCII []string
 
-func (n *namesAscii) String() string {
+func (n *namesASCII) String() string {
 	return fmt.Sprint(*n)
 }
 
-func (n *namesAscii) Set(s string) error {
+func (n *namesASCII) Set(s string) error {
 	*n = append(*n, s)
 	nameCollector = append(nameCollector[:], []byte(s))
 	return nil

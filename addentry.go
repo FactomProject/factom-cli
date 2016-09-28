@@ -21,7 +21,7 @@ var addentry = func() *fctCmd {
 		os.Args = args
 		var (
 			cid   = flag.String("c", "", "hex encoded chainid for the entry")
-			eAcii extidsAscii
+			eAcii extidsASCII
 			eHex  extidsHex
 		)
 		exidCollector = make([][]byte, 0)
@@ -116,7 +116,7 @@ var composeentry = func() *fctCmd {
 		os.Args = args
 		var (
 			cid   = flag.String("c", "", "hex encoded chainid for the entry")
-			eAcii extidsAscii
+			eAcii extidsASCII
 			eHex  extidsHex
 		)
 		exidCollector = make([][]byte, 0)
