@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 )
 
 // exidCollector accumulates the external ids from the command line -e and -E
@@ -81,7 +82,10 @@ func (n *namesHex) Set(s string) error {
 }
 
 func factoshiToFactoid(v interface{}) string {
-	value := v.(int64)
+	value, err := strconv.Atoi(fmt.Sprint(v))
+	if err != nil {
+		return ""
+	}
 	whole := value / 100000000
 	part := value - (whole * 100000000)
 
