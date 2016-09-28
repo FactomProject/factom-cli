@@ -84,23 +84,24 @@ var addentry = func() *fctCmd {
 		}
 
 		// commit the chain
-		if txID, err := factom.CommitEntry(e, ec); err != nil {
+		txID, err := factom.CommitEntry(e, ec)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println("Commiting Entry Transaction ID:", txID)
 		}
+		fmt.Println("Commiting Entry Transaction ID:", txID)
 
 		// TODO - get commit acknowledgement
 
 		// reveal chain
-		if hash, err := factom.RevealEntry(e); err != nil {
+		hash, err := factom.RevealEntry(e)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println("ChainID:", *cid)
-			fmt.Println("Entryhash:", hash)
 		}
+		fmt.Println("ChainID:", *cid)
+		fmt.Println("Entryhash:", hash)
+
 		// ? get reveal ack
 	}
 	help.Add("addentry", cmd)
@@ -177,19 +178,19 @@ var composeentry = func() *fctCmd {
 			return
 		}
 
-		if j, err := factom.ComposeEntryCommit(e, ec); err != nil {
+		j, err := factom.ComposeEntryCommit(e, ec)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println(j)
 		}
+		fmt.Println(j)
 
-		if j, err := factom.ComposeEntryReveal(e); err != nil {
+		j, err = factom.ComposeEntryReveal(e)
+		if err != nil {
 			errorln(err)
 			return
-		} else {
-			fmt.Println(j)
 		}
+		fmt.Println(j)
 	}
 	help.Add("composeentry", cmd)
 	return cmd

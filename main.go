@@ -13,6 +13,7 @@ import (
 	"github.com/FactomProject/factom"
 )
 
+// Version of factom-cli
 const Version = "0.2.0.0"
 
 func main() {

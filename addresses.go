@@ -35,7 +35,7 @@ var balance = func() *fctCmd {
 			if err != nil {
 				errorln(err)
 			}
-			fmt.Println(FixPointPrt(uint64(b)))
+			fmt.Println(factoshiToFactoid(b))
 			return
 		case factom.ECPub:
 			c, err := factom.GetECBalance(addr)
@@ -54,7 +54,7 @@ var balance = func() *fctCmd {
 				fmt.Println(err)
 				return
 			}
-			fmt.Println(addr, "fct", FixPointPrt(uint64(f)))
+			fmt.Println(addr, "fct", factoshiToFactoid(f))
 			fmt.Println(addr, "ec", e)
 		} else {
 			fmt.Println("Undefined or invalid address")
@@ -75,7 +75,7 @@ var ecrate = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println(FixPointPrt(rate))
+		fmt.Println(factoshiToFactoid(rate))
 
 	}
 	help.Add("ecrate", cmd)
@@ -224,7 +224,7 @@ var listaddresses = func() *fctCmd {
 			if err != nil {
 				errorln(err)
 			}
-			fmt.Println(a, FixPointPrt(uint64(b)))
+			fmt.Println(a, factoshiToFactoid(b))
 		}
 		for _, a := range es {
 			c, err := factom.GetECBalance(a.String())

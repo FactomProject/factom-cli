@@ -14,19 +14,6 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-func FixPointPrt(value uint64) string {
-	whole := value / 100000000
-	part := value - (whole * 100000000)
-	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
-	for string(ret[len(ret)-1]) == "0" {
-		ret = ret[:len(ret)-1]
-	}
-	if string(ret[len(ret)-1]) == "." {
-		ret = ret[:len(ret)-1]
-	}
-	return string(ret)
-}
-
 // newtx creates a new transaction in the wallet.
 var newtx = func() *fctCmd {
 	cmd := new(fctCmd)
@@ -372,15 +359,15 @@ var listtxstmp = func() *fctCmd {
 			fmt.Println("{")
 			fmt.Println("	Name:", tx.Name)
 			fmt.Println("	TxID:", tx.TxID)
-			fmt.Println("	TotalInputs:", FixPointPrt(tx.TotalInputs))
-			fmt.Println("	TotalOutputs:", FixPointPrt(tx.TotalOutputs))
-			fmt.Println("	TotalECOutputs:", FixPointPrt(tx.TotalECOutputs))
+			fmt.Println("	TotalInputs:", factoshiToFactoid(tx.TotalInputs))
+			fmt.Println("	TotalOutputs:", factoshiToFactoid(tx.TotalOutputs))
+			fmt.Println("	TotalECOutputs:", factoshiToFactoid(tx.TotalECOutputs))
 			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
 				fmt.Println("	FeesPaid:", 0)
-				fmt.Println("	FeesRequired:", FixPointPrt(tx.FeesRequired))
+				fmt.Println("	FeesRequired:", factoshiToFactoid(tx.FeesRequired))
 			} else {
 				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
-				fmt.Println("	FeesPaid:", FixPointPrt(feesPaid))
+				fmt.Println("	FeesPaid:", factoshiToFactoid(feesPaid))
 			}
 			fmt.Println("	RawTransaction:", tx.RawTransaction)
 			fmt.Println("}")

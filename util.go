@@ -80,6 +80,22 @@ func (n *namesHex) Set(s string) error {
 	return nil
 }
 
+func factoshiToFactoid(v interface{}) string {
+	value := v.(int64)
+	whole := value / 100000000
+	part := value - (whole * 100000000)
+
+	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
+	for string(ret[len(ret)-1]) == "0" {
+		ret = ret[:len(ret)-1]
+	}
+	if string(ret[len(ret)-1]) == "." {
+		ret = ret[:len(ret)-1]
+	}
+
+	return string(ret)
+}
+
 // nametoid computes a chainid from the chain name components
 func nametoid(name [][]byte) string {
 	hs := sha256.New()
