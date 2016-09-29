@@ -86,21 +86,8 @@ func factoshiToFactoid(v interface{}) string {
 	if err != nil {
 		return ""
 	}
-	whole := value / 100000000
-	part := value - (whole * 100000000)
-	if part < 0 {
-		part *= -1
-	}
-
-	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
-	for string(ret[len(ret)-1]) == "0" {
-		ret = ret[:len(ret)-1]
-	}
-	if string(ret[len(ret)-1]) == "." {
-		ret = ret[:len(ret)-1]
-	}
-
-	return string(ret)
+	f := float64(value) / 1e8
+	return strconv.FormatFloat(f, 'f', -1, 64)
 }
 
 // nametoid computes a chainid from the chain name components
