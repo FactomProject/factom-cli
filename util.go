@@ -88,6 +88,9 @@ func factoshiToFactoid(v interface{}) string {
 	}
 	whole := value / 100000000
 	part := value - (whole * 100000000)
+	if part < 0 {
+		part *= -1
+	}
 
 	ret := []byte(fmt.Sprintf("%d.%08d", whole, part))
 	for string(ret[len(ret)-1]) == "0" {
