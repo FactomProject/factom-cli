@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"strconv"
 )
 
 // exidCollector accumulates the external ids from the command line -e and -E
@@ -16,13 +17,13 @@ var exidCollector [][]byte
 
 // extids will be a flag receiver for adding chains and entries
 // In ASCII
-type extidsAscii []string
+type extidsASCII []string
 
-func (e *extidsAscii) String() string {
+func (e *extidsASCII) String() string {
 	return fmt.Sprint(*e)
 }
 
-func (e *extidsAscii) Set(s string) error {
+func (e *extidsASCII) Set(s string) error {
 	*e = append(*e, s)
 	exidCollector = append(exidCollector[:], []byte(s))
 	return nil
@@ -50,14 +51,14 @@ func (e *extidsHex) Set(s string) error {
 // line -n and -N flags
 var nameCollector [][]byte
 
-// namesAscii will be a flag receiver for ASCII chain names.
-type namesAscii []string
+// namesASCII will be a flag receiver for ASCII chain names.
+type namesASCII []string
 
-func (n *namesAscii) String() string {
+func (n *namesASCII) String() string {
 	return fmt.Sprint(*n)
 }
 
-func (n *namesAscii) Set(s string) error {
+func (n *namesASCII) Set(s string) error {
 	*n = append(*n, s)
 	nameCollector = append(nameCollector[:], []byte(s))
 	return nil
@@ -78,6 +79,15 @@ func (n *namesHex) Set(s string) error {
 	}
 	nameCollector = append(nameCollector[:], b)
 	return nil
+}
+
+func factoshiToFactoid(v interface{}) string {
+	value, err := strconv.Atoi(fmt.Sprint(v))
+	if err != nil {
+		return ""
+	}
+	f := float64(value) / 1e8
+	return strconv.FormatFloat(f, 'f', -1, 64)
 }
 
 // nametoid computes a chainid from the chain name components

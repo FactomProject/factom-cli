@@ -14,6 +14,7 @@ import (
 	"github.com/FactomProject/factomd/util"
 )
 
+// Version of factom-cli
 const Version = "0.2.0.0"
 
 func main() {
@@ -127,6 +128,8 @@ func main() {
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
 	c.Handle("balance", balance)
+	c.Handle("composechain", composechain)
+	c.Handle("composeentry", composeentry)
 	c.Handle("ecrate", ecrate)
 	c.Handle("exportaddresses", exportaddresses)
 	c.Handle("get", get)

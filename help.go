@@ -5,6 +5,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"sort"
 	"strings"
@@ -14,7 +15,9 @@ type helper struct {
 	topics map[string]*fctCmd
 }
 
-func NewHelper() *helper {
+// NewHelper creates a new helper object containing the help messages for a set
+// of commands.
+func newHelper() *helper {
 	h := new(helper)
 	h.topics = make(map[string]*fctCmd)
 	return h
@@ -25,6 +28,9 @@ func (h *helper) Add(s string, c *fctCmd) {
 }
 
 func (h *helper) All() {
+	flag.Usage()
+
+	fmt.Println()
 	keys := make([]string, 0)
 	for k := range h.topics {
 		keys = append(keys, k)
@@ -59,4 +65,4 @@ func (h *helper) Execute(args []string) {
 	fmt.Printf("%s\n\t%s\n", c.helpMsg, c.description)
 }
 
-var help = NewHelper()
+var help = newHelper()
