@@ -64,8 +64,6 @@ func main() {
 			if cfg.Walletd.FactomdLocation != "localhost:8088" {
 				//fmt.Printf("using factomd location specified in \"%s\" as FactomdLocation = \"%s\"\n", filename, cfg.Walletd.FactomdLocation)
 				*factomdLocation = cfg.Walletd.FactomdLocation
-			} else {
-				*factomdLocation = "localhost:8088"
 			}
 		}
 
@@ -73,8 +71,6 @@ func main() {
 			if cfg.Walletd.WalletdLocation != "localhost:8089" {
 				//fmt.Printf("using factom-walletd location specified in \"%s\" as WalletdLocation = \"%s\"\n", filename, cfg.Walletd.WalletdLocation)
 				*walletdLocation = cfg.Walletd.WalletdLocation
-			} else {
-				*walletdLocation = "localhost:8089"
 			}
 		}
 
@@ -109,6 +105,14 @@ func main() {
 		*factomdTLSCert = fmt.Sprint(util.GetHomeDir(), "/.factom/m2/factomdAPIpub.cert")
 		//fmt.Printf("using default factomd TLS certificate file \"%s\"\n", *factomdTLSCert)
 	}
+	
+	if *factomdLocation == "" { //set the default if a config file doesn't exist
+		*factomdLocation = "localhost:8088"
+	}
+	if *walletdLocation == "" { //set the default if a config file doesn't exist
+		*walletdLocation = "localhost:8089"
+	}
+	
 
 	args := flag.Args()
 
