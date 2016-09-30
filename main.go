@@ -29,6 +29,9 @@ func main() {
 
 		walletTLSflag = flag.Bool("wallettls", false, "Set to true when the wallet API is encrypted")
 		walletTLSCert = flag.String("walletcert", "", "This file is the TLS certificate provided by the factom-walletd API. (default ~/.factom/walletAPIpub.cert)")
+
+		factomdTLSflag = flag.Bool("factomdtls", false, "Set to true when the factomd API is encrypted")
+		factomdTLSCert = flag.String("factomdcert", "", "This file is the TLS certificate provided by the factomd API. (default ~/.factom/m2/factomdAPIpub.cert)")
 	)
 	flag.Parse()
 
@@ -84,11 +87,26 @@ func main() {
 				*walletTLSCert = cfg.Walletd.WalletTlsPublicCert
 			}
 		}
+
+		if cfg.App.FactomdTlsEnabled == true { //if a config file is found, and the factomd will start with TLS, factom-cli should use TLS too
+			*factomdTLSflag = true
+		}
+
+		if *factomdTLSCert == "" { //if specified on the command line, don't use the config file
+			if cfg.App.FactomdTlsPublicCert != "/full/path/to/factomdAPIpub.cert" { //otherwise check if the the config file has something new
+				//fmt.Printf("using wallet TLS certificate file specified in \"%s\" at FactomdTlsPublicCert = \"%s\"\n", filename, cfg.App.FactomdTlsPublicCert)
+				*factomdTLSCert = cfg.App.FactomdTlsPublicCert
+			}
+		}
 	}
 
-	if *walletTLSCert == "" { //if all defaults were specified on the command line and config file
+	if *walletTLSCert == "" { //if all defaults were specified on both the command line and config file
 		*walletTLSCert = fmt.Sprint(util.GetHomeDir(), "/.factom/walletAPIpub.cert")
 		//fmt.Printf("using default wallet TLS certificate file \"%s\"\n", *walletTLSCert)
+	}
+	if *factomdTLSCert == "" { //if all defaults were specified on both the command line and config file
+		*factomdTLSCert = fmt.Sprint(util.GetHomeDir(), "/.factom/m2/factomdAPIpub.cert")
+		//fmt.Printf("using default factomd TLS certificate file \"%s\"\n", *factomdTLSCert)
 	}
 
 	args := flag.Args()
@@ -101,6 +119,7 @@ func main() {
 	factom.SetFactomdRpcConfig(*factomdRpcUser, *factomdRpcPassword)
 	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
 	factom.SetWalletEncryption(*walletTLSflag, *walletTLSCert)
+	factom.SetFactomdEncryption(*factomdTLSflag, *factomdTLSCert)
 	c := cli.New()
 	c.Handle("help", help)
 	c.Handle("ack", ack)
