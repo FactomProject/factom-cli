@@ -105,14 +105,13 @@ func main() {
 		*factomdTLSCert = fmt.Sprint(util.GetHomeDir(), "/.factom/m2/factomdAPIpub.cert")
 		//fmt.Printf("using default factomd TLS certificate file \"%s\"\n", *factomdTLSCert)
 	}
-	
+
 	if *factomdLocation == "" { //set the default if a config file doesn't exist
 		*factomdLocation = "localhost:8088"
 	}
 	if *walletdLocation == "" { //set the default if a config file doesn't exist
 		*walletdLocation = "localhost:8089"
 	}
-	
 
 	args := flag.Args()
 
