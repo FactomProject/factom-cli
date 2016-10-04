@@ -48,14 +48,10 @@ var ack = func() *fctCmd {
 			}
 		}
 
-		resp1, err := factom.FactoidACK(txID, fullTx)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		resp2, err := factom.EntryACK(txID, fullTx)
-		if err != nil {
-			errorln(err)
+		resp1, err1 := factom.FactoidACK(txID, fullTx)
+		resp2, err2 := factom.EntryACK(txID, fullTx)
+		if err1 != nil && err2 != nil {
+			errorln(err1)
 			return
 		}
 
