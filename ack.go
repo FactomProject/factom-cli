@@ -10,6 +10,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/FactomProject/factom"
 )
@@ -32,7 +33,7 @@ var ack = func() *fctCmd {
 		txID := ""
 		fullTx := ""
 
-		_, err := hex.DecodeString(tx)
+		_, err := hex.DecodeString(strings.Replace(tx, "\"", "", -1))
 		if len(tx) == 64 && err == nil {
 			txID = tx
 		} else {
@@ -44,7 +45,7 @@ var ack = func() *fctCmd {
 				}
 				txID = h
 			} else {
-				fullTx = tx
+				fullTx = strings.Replace(tx, "\"", "", -1)
 			}
 		}
 
