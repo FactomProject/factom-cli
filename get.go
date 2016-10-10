@@ -25,7 +25,7 @@ var get = func() *fctCmd {
 		c := cli.New()
 		c.Handle("allentries", getAllEntries)
 		c.Handle("head", getHead)
-		c.Handle("height", getHeight)
+		c.Handle("heights", getHeights)
 		c.Handle("dblock", getDBlock)
 		c.Handle("chainhead", getChainHead)
 		c.Handle("eblock", getEBlock)
@@ -267,28 +267,12 @@ var getHead = func() *fctCmd {
 	return cmd
 }()
 
-var getDBHeight = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dbheight"
-	cmd.description = "Get the current directory block height"
-	cmd.execFunc = func(args []string) {
-		height, err := factom.GetDBlockHeight()
-		if err != nil {
-			errorln(err)
-			return
-		}
-		fmt.Println(height)
-	}
-	help.Add("get dbheight", cmd)
-	return cmd
-}()
-
-var getHeight = func() *fctCmd {
+var getHeights = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get height"
 	cmd.description = "Get the current heights of various blocks in factomd"
 	cmd.execFunc = func(args []string) {
-		height, err := factom.GetHeight()
+		height, err := factom.GetHeights()
 		if err != nil {
 			errorln(err)
 			return
