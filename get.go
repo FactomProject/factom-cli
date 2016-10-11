@@ -15,7 +15,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|height"
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -269,7 +269,7 @@ var getHead = func() *fctCmd {
 
 var getHeights = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get height"
+	cmd.helpMsg = "factom-cli get heights"
 	cmd.description = "Get the current heights of various blocks in factomd"
 	cmd.execFunc = func(args []string) {
 		height, err := factom.GetHeights()
