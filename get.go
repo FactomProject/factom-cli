@@ -279,7 +279,7 @@ var getHeights = func() *fctCmd {
 		}
 		fmt.Println(height.String())
 	}
-	help.Add("get height", cmd)
+	help.Add("get heights", cmd)
 	return cmd
 }()
 
