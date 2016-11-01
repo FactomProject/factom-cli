@@ -247,21 +247,37 @@ var getFirstEntry = func() *fctCmd {
 
 var getHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get head"
+	cmd.helpMsg = "factom-cli get head [-K]"
 	cmd.description = "Get the latest completed directory block"
 	cmd.execFunc = func(args []string) {
+		os.Args = args
+		kdisp := flag.Bool(
+			"K",
+			false, 
+			"display only the KeyMR of the directory block",
+		)
+		flag.Parse()
+		args = flag.Args()
+		
 		head, err := factom.GetDBlockHead()
 		if err != nil {
 			errorln(err)
 			return
 		}
+		
 		dblock, err := factom.GetDBlock(head)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println("DBlock:", head)
-		fmt.Println(dblock)
+		
+		switch {
+		case *kdisp:
+			fmt.Println(head)
+		default:
+			fmt.Println("DBlock:", head)
+			fmt.Println(dblock)
+		}
 	}
 	help.Add("get head", cmd)
 	return cmd
