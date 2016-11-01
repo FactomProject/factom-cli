@@ -28,10 +28,12 @@ var newtx = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if err := factom.NewTransaction(args[0]); err != nil {
+		tx, err := factom.NewTransaction(args[0])
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("newtx", cmd)
 	return cmd
@@ -82,10 +84,12 @@ var addtxinput = func() *fctCmd {
 		} else {
 			amt = uint64(i * 1e8)
 		}
-		if err := factom.AddTransactionInput(args[0], args[1], amt); err != nil {
+		tx, err := factom.AddTransactionInput(args[0], args[1], amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("addtxinput", cmd)
 	return cmd
@@ -126,10 +130,12 @@ var addtxoutput = func() *fctCmd {
 				out = f
 			}
 		}
-		if err := factom.AddTransactionOutput(args[0], out, amt); err != nil {
+		tx, err := factom.AddTransactionOutput(args[0], out, amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("addtxoutput", cmd)
 	return cmd
@@ -170,10 +176,12 @@ var addtxecoutput = func() *fctCmd {
 				out = e
 			}
 		}
-		if err := factom.AddTransactionECOutput(args[0], out, amt); err != nil {
+		tx, err := factom.AddTransactionECOutput(args[0], out, amt)
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("addtxecoutput", cmd)
 	return cmd
@@ -193,10 +201,12 @@ var addtxfee = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if err := factom.AddTransactionFee(args[0], args[1]); err != nil {
+		tx, err := factom.AddTransactionFee(args[0], args[1])
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("addtxfee", cmd)
 	return cmd
@@ -237,7 +247,7 @@ var listtxsall = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(string(tx))
+			fmt.Println(tx)
 		}
 	}
 	help.Add("listtxs all", cmd)
@@ -266,7 +276,7 @@ var listtxsaddress = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(string(tx))
+			fmt.Println(tx)
 		}
 	}
 	help.Add("listtxs address", cmd)
@@ -294,7 +304,7 @@ var listtxsid = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(string(tx))
+			fmt.Println(tx)
 		}
 	}
 	help.Add("listtxs id", cmd)
@@ -333,7 +343,7 @@ var listtxsrange = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(string(tx))
+			fmt.Println(tx)
 		}
 	}
 	help.Add("listtxs range", cmd)
@@ -356,21 +366,7 @@ var listtxstmp = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println("{")
-			fmt.Println("	Name:", tx.Name)
-			fmt.Println("	TxID:", tx.TxID)
-			fmt.Println("	TotalInputs:", factoshiToFactoid(tx.TotalInputs))
-			fmt.Println("	TotalOutputs:", factoshiToFactoid(tx.TotalOutputs))
-			fmt.Println("	TotalECOutputs:", factoshiToFactoid(tx.TotalECOutputs))
-			if tx.TotalInputs <= (tx.TotalOutputs + tx.TotalECOutputs) {
-				fmt.Println("	FeesPaid:", 0)
-				fmt.Println("	FeesRequired:", factoshiToFactoid(tx.FeesRequired))
-			} else {
-				feesPaid := tx.TotalInputs - (tx.TotalOutputs + tx.TotalECOutputs)
-				fmt.Println("	FeesPaid:", factoshiToFactoid(feesPaid))
-			}
-			fmt.Println("	RawTransaction:", tx.RawTransaction)
-			fmt.Println("}")
+			fmt.Println(tx)
 		}
 	}
 	help.Add("listtxs tmp", cmd)
@@ -391,10 +387,12 @@ var subtxfee = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if err := factom.SubTransactionFee(args[0], args[1]); err != nil {
+		tx, err := factom.SubTransactionFee(args[0], args[1])
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("subtxfee", cmd)
 	return cmd
@@ -414,10 +412,13 @@ var signtx = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		if err := factom.SignTransaction(args[0]); err != nil {
+
+		tx, err := factom.SignTransaction(args[0])
+		if err != nil {
 			errorln(err)
 			return
 		}
+		fmt.Println(tx)
 	}
 	help.Add("signtx", cmd)
 	return cmd
