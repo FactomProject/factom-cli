@@ -288,13 +288,23 @@ var listtxsall = func() *fctCmd {
 	cmd.helpMsg = "factom-cli listtxs [all]"
 	cmd.description = "List all transactions from the Factoid Chain"
 	cmd.execFunc = func(args []string) {
+		os.Args = args
+		tdisp := flag.Bool("T", false, "display only the TxID")
+		flag.Parse()
+		args = flag.Args()
+
 		txs, err := factom.ListTransactionsAll()
 		if err != nil {
 			errorln(err)
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(tx)
+			switch {
+			case *tdisp:
+				fmt.Println(tx.TxID)
+			default:
+				fmt.Println(tx)
+			}
 		}
 	}
 	help.Add("listtxs all", cmd)

@@ -140,9 +140,9 @@ var importaddresses = func() *fctCmd {
 	return cmd
 }()
 
-var importwords = func() *fctCmd {
+var importkoinify = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli importwords '12WORDS'"
+	cmd.helpMsg = "factom-cli importkoinify '12WORDS'"
 	cmd.description = "Import 12 words from Koinify sale into the Wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -153,14 +153,14 @@ var importwords = func() *fctCmd {
 			fmt.Println(cmd.helpMsg, "  Note, 12 words must be in quotes")
 			return
 		}
-		f, err := factom.ImportMnemonic(args[0])
+		f, err := factom.ImportKoinify(args[0])
 		if err != nil {
 			errorln(err)
 			return
 		}
 		fmt.Println(f)
 	}
-	help.Add("importwords", cmd)
+	help.Add("importkoinify", cmd)
 	return cmd
 }()
 
