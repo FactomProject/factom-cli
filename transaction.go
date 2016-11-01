@@ -285,7 +285,7 @@ var listtxs = func() *fctCmd {
 // listtxsall lists all transactions from the Factoid Chain
 var listtxsall = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listtxs [all]"
+	cmd.helpMsg = "factom-cli listtxs [all] [-T]"
 	cmd.description = "List all transactions from the Factoid Chain"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -315,11 +315,12 @@ var listtxsall = func() *fctCmd {
 // address
 var listtxsaddress = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listtxs address ECADDRESS|FCTADDRESS"
+	cmd.helpMsg = "factom-cli listtxs address [-T] ECADDRESS|FCTADDRESS"
 	cmd.description = "List transaction from the Factoid Chain with a" +
 		" specific address"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
 
@@ -334,7 +335,12 @@ var listtxsaddress = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(tx)
+			switch {
+			case *tdisp:
+				fmt.Println(tx.TxID)
+			default:
+				fmt.Println(tx)
+			}
 		}
 	}
 	help.Add("listtxs address", cmd)
@@ -348,9 +354,9 @@ var listtxsid = func() *fctCmd {
 	cmd.description = "List transaction from the Factoid Chain"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
-
 		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
@@ -362,7 +368,12 @@ var listtxsid = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(tx)
+			switch {
+			case *tdisp:
+				fmt.Println(tx.TxID)
+			default:
+				fmt.Println(tx)
+			}
 		}
 	}
 	help.Add("listtxs id", cmd)
@@ -373,14 +384,14 @@ var listtxsid = func() *fctCmd {
 // specified block height range
 var listtxsrange = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listtxs range START END"
+	cmd.helpMsg = "factom-cli listtxs range [-T] START END"
 	cmd.description = "List the transactions from the Factoid Chain within" +
 		" the specified range"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
-
 		if len(args) < 2 {
 			fmt.Println(cmd.helpMsg)
 			return
@@ -403,7 +414,12 @@ var listtxsrange = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(tx)
+			switch {
+			case *tdisp:
+				fmt.Println(tx.TxID)
+			default:
+				fmt.Println(tx)
+			}
 		}
 	}
 	help.Add("listtxs range", cmd)
@@ -470,11 +486,12 @@ var subtxfee = func() *fctCmd {
 // signtx signs a transaction in the wallet
 var signtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli signtx [-q] TXNAME"
+	cmd.helpMsg = "factom-cli signtx [-qT] TXNAME"
 	cmd.description = "Sign a transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		qflag := flag.Bool("q", false, "quiet mode; no output")
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) != 1 {
@@ -492,6 +509,8 @@ var signtx = func() *fctCmd {
 		switch {
 		// quiet mode; don't print anything
 		case *qflag:
+		case *tdisp:
+			fmt.Println(tx.TxID)
 		default:
 			fmt.Println(tx)
 		}
@@ -554,11 +573,12 @@ var sendtx = func() *fctCmd {
 // sendfct sends factoids between 2 addresses
 var sendfct = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sendfct FROMADDRESS TOADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli sendfct [-T] FROMADDRESS TOADDRESS AMOUNT"
 	cmd.description = "Send Factoids between 2 addresses"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		var res = flag.Bool("r", false, "resolve dns address")
+		res := flag.Bool("r", false, "resolve dns address")
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) != 3 {
@@ -592,7 +612,13 @@ var sendfct = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("TxID:", t)
+		
+		switch {
+		case *tdisp:
+			fmt.Println(t)
+		default:
+			fmt.Println("TxID:", t)
+		}
 	}
 	help.Add("sendfct", cmd)
 	return cmd
@@ -601,11 +627,12 @@ var sendfct = func() *fctCmd {
 // buyec sends factoids between 2 addresses
 var buyec = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli buyec FCTADDRESS ECADDRESS ECAMOUNT"
+	cmd.helpMsg = "factom-cli buyec [-T] FCTADDRESS ECADDRESS ECAMOUNT"
 	cmd.description = "Buy entry credits"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		var res = flag.Bool("r", false, "resolve dns address")
+		res := flag.Bool("r", false, "resolve dns address")
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) != 3 {
@@ -645,7 +672,12 @@ var buyec = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("TxID:", t)
+		switch {
+		case *tdisp:
+			fmt.Println(t)
+		default:
+			fmt.Println("TxID:", t)
+		}
 	}
 	help.Add("buyec", cmd)
 	return cmd
