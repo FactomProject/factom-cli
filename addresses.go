@@ -213,6 +213,11 @@ var listaddresses = func() *fctCmd {
 	cmd.description = "List the addresses stored in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		adisp := flag.Bool(
+			"A", 
+			false, 
+			"display only the address without looking up the balance",
+		)
 		flag.Parse()
 		args = flag.Args()
 
@@ -221,22 +226,32 @@ var listaddresses = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		for _, a := range fs {
-			b, err := factom.GetFactoidBalance(a.String())
-			if err != nil {
-				errorln(err)
+		
+		if *adisp {
+			for _, a := range fs {
 				fmt.Println(a)
-			} else {
-				fmt.Println(a, factoshiToFactoid(b))
 			}
-		}
-		for _, a := range es {
-			c, err := factom.GetECBalance(a.String())
-			if err != nil {
-				errorln(err)
+			for _, a := range es {
 				fmt.Println(a)
-			} else {
-				fmt.Println(a, c)
+			}
+		} else {
+			for _, a := range fs {
+				b, err := factom.GetFactoidBalance(a.String())
+				if err != nil {
+					errorln(err)
+					fmt.Println(a)
+				} else {
+					fmt.Println(a, factoshiToFactoid(b))
+				}
+			}
+			for _, a := range es {
+				c, err := factom.GetECBalance(a.String())
+				if err != nil {
+					errorln(err)
+					fmt.Println(a)
+				} else {
+					fmt.Println(a, c)
+				}
 			}
 		}
 	}
