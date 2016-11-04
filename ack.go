@@ -21,6 +21,14 @@ var status = func() *fctCmd {
 		" entry / entry credit transaction"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		tdisp := flag.Bool("T", false, "display the transaction id only")
+		sdisp := flag.Bool("S", false, "display the transaction status only")
+		udisp := flag.Bool(
+			"U",
+			false,
+			"display the unix time of the transaction",
+		)
+		ddisp := flag.Bool("D", false, "display the time of the transaction")
 		flag.Parse()
 		args = flag.Args()
 
@@ -58,13 +66,37 @@ var status = func() *fctCmd {
 
 		if fcack != nil {
 			if fcack.Status != "Unknown" {
-				fmt.Println(fcack)
+				switch {
+				case *tdisp:
+					fmt.Println(fcack.TxID)
+				case *sdisp:
+					fmt.Println(fcack.Status)
+				case *udisp:
+					fmt.Println(fcack.TransactionDate)
+				case *ddisp:
+					fmt.Println(fcack.TransactionDateString)
+				default:
+					fmt.Println(fcack)
+				}
 				return
 			}
 		}
 
 		if ecack != nil {
 			if ecack.CommitTxID != "" || ecack.EntryHash != "" {
+				switch {
+				case *tdisp:
+					fmt.Println(ecack.CommitTxID)
+				case *sdisp:
+					fmt.Println(ecack.CommitData.Status)
+				case *udisp:
+					fmt.Println(ecack.CommitData.TransactionDate)
+				case *ddisp:
+					fmt.Println(ecack.CommitData.TransactionDateString)
+				default:
+					fmt.Println(ecack)
+				}
+
 				fmt.Println(ecack)
 				return
 			}
