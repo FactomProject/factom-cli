@@ -6,7 +6,6 @@ package main
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -50,36 +49,27 @@ var status = func() *fctCmd {
 			}
 		}
 
-		resp1, err1 := factom.FactoidACK(txID, fullTx)
-		resp2, err2 := factom.EntryACK(txID, fullTx)
+		fcack, err1 := factom.FactoidACK(txID, fullTx)
+		ecack, err2 := factom.EntryACK(txID, fullTx)
 		if err1 != nil && err2 != nil {
 			errorln(err1)
 			return
 		}
 
-		if resp1 != nil {
-			if resp1.Status != "Unknown" {
-				str, err := json.MarshalIndent(resp1, "", "\t")
-				if err != nil {
-					errorln(err)
-					return
-				}
-				fmt.Printf("%s\n", str)
+		if fcack != nil {
+			if fcack.Status != "Unknown" {
+				fmt.Println(fcack)
 				return
 			}
 		}
-		if resp2 != nil {
-			if resp2.CommitTxID == "" && resp2.EntryHash == "" {
-			} else {
-				str, err := json.MarshalIndent(resp2, "", "\t")
-				if err != nil {
-					errorln(err)
-					return
-				}
-				fmt.Printf("%s\n", str)
+
+		if ecack != nil {
+			if ecack.CommitTxID != "" || ecack.EntryHash != "" {
+				fmt.Println(ecack)
 				return
 			}
 		}
+
 		fmt.Printf("Entry / transaction not found.\n")
 	}
 	help.Add("status", cmd)
