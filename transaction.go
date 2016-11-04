@@ -433,6 +433,7 @@ var listtxstmp = func() *fctCmd {
 	cmd.description = "List current working transactions in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		ndisp := flag.Bool("N", false, "display transaction names only")
 		flag.Parse()
 		args = flag.Args()
 
@@ -442,7 +443,11 @@ var listtxstmp = func() *fctCmd {
 			return
 		}
 		for _, tx := range txs {
-			fmt.Println(tx)
+			if *ndisp {
+				fmt.Println(tx.Name)
+			} else {
+				fmt.Println(tx)
+			}
 		}
 	}
 	help.Add("listtxs tmp", cmd)
@@ -612,7 +617,7 @@ var sendfct = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		switch {
 		case *tdisp:
 			fmt.Println(t)
