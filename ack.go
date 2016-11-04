@@ -15,10 +15,11 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-var ack = func() *fctCmd {
+var status = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli ack TxID|FullTx"
-	cmd.description = "Returns information about a factoid transaction, or an entry / entry credit transaction"
+	cmd.helpMsg = "factom-cli status TxID|FullTx"
+	cmd.description = "Returns information about a factoid transaction, or an" +
+		" entry / entry credit transaction"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -81,6 +82,6 @@ var ack = func() *fctCmd {
 		}
 		fmt.Printf("Entry / transaction not found.\n")
 	}
-	help.Add("ack", cmd)
+	help.Add("status", cmd)
 	return cmd
 }()

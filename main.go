@@ -126,7 +126,7 @@ func main() {
 	factom.SetFactomdEncryption(*factomdTLSflag, *factomdTLSCert)
 	c := cli.New()
 	c.Handle("help", help)
-	c.Handle("ack", ack)
+	c.Handle("status", status)
 	c.Handle("addchain", addchain)
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
