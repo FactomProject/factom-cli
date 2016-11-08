@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
@@ -557,19 +558,59 @@ var sendtx = func() *fctCmd {
 	cmd.description = "Send a Transaction to Factom"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the transaction to be sent without acknowledgement or"+
+				" balance checks",
+		)
 		flag.Parse()
 		args = flag.Args()
-
 		if len(args) != 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		t, err := factom.SendTransaction(args[0])
+
+		tx, err := factom.SendTransaction(args[0])
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println("TxID:", t)
+		fmt.Println("TxID:", tx.TxID)
+
+		// wait for the transaction to be acknowledged by the server
+		if !*fflag {
+			stat := make(chan string, 1)
+			errchan := make(chan error, 1)
+
+			// poll for the acknowledgement
+			go func() {
+				for {
+					s, err := factom.FactoidACK(tx.TxID, "")
+					if err != nil {
+						errchan <- err
+						break
+					}
+					if s.Status != "Unknown" {
+						stat <- s.Status
+						break
+					}
+					time.Sleep(time.Second / 2)
+				}
+			}()
+
+			// wait for the acknowledgement or timeout after 10 sec
+			select {
+			case err := <-errchan:
+				errorln(err)
+			case s := <-stat:
+				fmt.Println("Status:", s)
+			case <-time.After(10 * time.Second):
+				errorln("Timeout: No acknoledgement recieved")
+			}
+
+			return
+		}
 	}
 	help.Add("sendtx", cmd)
 	return cmd

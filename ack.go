@@ -46,12 +46,12 @@ var status = func() *fctCmd {
 			txID = tx
 		} else {
 			if len(tx) < 64 || err != nil {
-				h, err := factom.TransactionHash(tx)
+				t, err := factom.GetTmpTransaction(tx)
 				if err != nil {
 					errorln(err)
 					return
 				}
-				txID = h
+				txID = t.TxID
 			} else {
 				fullTx = strings.Replace(tx, "\"", "", -1)
 			}
