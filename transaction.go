@@ -580,36 +580,12 @@ var sendtx = func() *fctCmd {
 
 		// wait for the transaction to be acknowledged by the server
 		if !*fflag {
-			stat := make(chan string, 1)
-			errchan := make(chan error, 1)
-
-			// poll for the acknowledgement
-			go func() {
-				for {
-					s, err := factom.FactoidACK(tx.TxID, "")
-					if err != nil {
-						errchan <- err
-						break
-					}
-					if s.Status != "Unknown" {
-						stat <- s.Status
-						break
-					}
-					time.Sleep(time.Second / 2)
-				}
-			}()
-
-			// wait for the acknowledgement or timeout after 10 sec
-			select {
-			case err := <-errchan:
+			s, err := waitOnAck(tx.TxID)
+			if err != nil {
 				errorln(err)
-			case s := <-stat:
-				fmt.Println("Status:", s)
-			case <-time.After(10 * time.Second):
-				errorln("Timeout: No acknoledgement recieved")
+				return
 			}
-
-			return
+			fmt.Println("Status:", s)
 		}
 	}
 	help.Add("sendtx", cmd)
@@ -624,6 +600,12 @@ var sendfct = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the transaction to be sent without acknowledgement or"+
+				" balance checks",
+		)
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
@@ -653,7 +635,7 @@ var sendfct = func() *fctCmd {
 			amt = uint64(i * 1e8)
 		}
 
-		t, err := factom.SendFactoid(args[0], tofc, amt)
+		tx, err := factom.SendFactoid(args[0], tofc, amt)
 		if err != nil {
 			errorln(err)
 			return
@@ -661,9 +643,19 @@ var sendfct = func() *fctCmd {
 
 		switch {
 		case *tdisp:
-			fmt.Println(t)
+			fmt.Println(tx.TxID)
 		default:
-			fmt.Println("TxID:", t)
+			fmt.Println("TxID:", tx.TxID)
+		}
+
+		// wait for the transaction to be acknowledged by the server
+		if !*fflag {
+			s, err := waitOnAck(tx.TxID)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Println("Status:", s)
 		}
 	}
 	help.Add("sendfct", cmd)
@@ -678,6 +670,12 @@ var buyec = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the transaction to be sent without acknowledgement or"+
+				" balance checks",
+		)
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
@@ -713,18 +711,64 @@ var buyec = func() *fctCmd {
 			amt = uint64(i) * rate
 		}
 
-		t, err := factom.BuyEC(args[0], toec, amt)
+		tx, err := factom.BuyEC(args[0], toec, amt)
 		if err != nil {
 			errorln(err)
 			return
 		}
 		switch {
 		case *tdisp:
-			fmt.Println(t)
+			fmt.Println(tx.TxID)
 		default:
-			fmt.Println("TxID:", t)
+			fmt.Println("TxID:", tx.TxID)
+		}
+
+		// wait for the transaction to be acknowledged by the server
+		if !*fflag {
+			s, err := waitOnAck(tx.TxID)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Println("Status:", s)
 		}
 	}
 	help.Add("buyec", cmd)
 	return cmd
 }()
+
+// waitOnAck blocks while waiting for a factom ack message and returns the ack
+// status or times out after 10 seconds.
+func waitOnAck(txid string) (string, error) {
+	stat := make(chan string, 1)
+	errchan := make(chan error, 1)
+
+	// poll for the acknowledgement
+	go func() {
+		for {
+			s, err := factom.FactoidACK(txid, "")
+			if err != nil {
+				errchan <- err
+				break
+			}
+			if s.Status != "Unknown" {
+				stat <- s.Status
+				break
+			}
+			time.Sleep(time.Second / 2)
+		}
+	}()
+
+	// wait for the acknowledgement or timeout after 10 sec
+	select {
+	case err := <-errchan:
+		return "", err
+	case s := <-stat:
+		return s, nil
+	case <-time.After(10 * time.Second):
+		return "", fmt.Errorf("timeout: no acknowledgement found")
+	}
+
+	// code should not reach this point
+	return "", fmt.Errorf("unknown error")
+}
