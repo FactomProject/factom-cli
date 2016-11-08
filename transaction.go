@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
@@ -580,7 +579,7 @@ var sendtx = func() *fctCmd {
 
 		// wait for the transaction to be acknowledged by the server
 		if !*fflag {
-			s, err := waitOnAck(tx.TxID)
+			s, err := waitOnFctAck(tx.TxID)
 			if err != nil {
 				errorln(err)
 				return
@@ -650,7 +649,7 @@ var sendfct = func() *fctCmd {
 
 		// wait for the transaction to be acknowledged by the server
 		if !*fflag {
-			s, err := waitOnAck(tx.TxID)
+			s, err := waitOnFctAck(tx.TxID)
 			if err != nil {
 				errorln(err)
 				return
@@ -725,7 +724,7 @@ var buyec = func() *fctCmd {
 
 		// wait for the transaction to be acknowledged by the server
 		if !*fflag {
-			s, err := waitOnAck(tx.TxID)
+			s, err := waitOnFctAck(tx.TxID)
 			if err != nil {
 				errorln(err)
 				return
@@ -736,39 +735,3 @@ var buyec = func() *fctCmd {
 	help.Add("buyec", cmd)
 	return cmd
 }()
-
-// waitOnAck blocks while waiting for a factom ack message and returns the ack
-// status or times out after 10 seconds.
-func waitOnAck(txid string) (string, error) {
-	stat := make(chan string, 1)
-	errchan := make(chan error, 1)
-
-	// poll for the acknowledgement
-	go func() {
-		for {
-			s, err := factom.FactoidACK(txid, "")
-			if err != nil {
-				errchan <- err
-				break
-			}
-			if s.Status != "Unknown" {
-				stat <- s.Status
-				break
-			}
-			time.Sleep(time.Second / 2)
-		}
-	}()
-
-	// wait for the acknowledgement or timeout after 10 sec
-	select {
-	case err := <-errchan:
-		return "", err
-	case s := <-stat:
-		return s, nil
-	case <-time.After(10 * time.Second):
-		return "", fmt.Errorf("timeout: no acknowledgement found")
-	}
-
-	// code should not reach this point
-	return "", fmt.Errorf("unknown error")
-}

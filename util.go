@@ -9,6 +9,9 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/FactomProject/factom"
 )
 
 // exidCollector accumulates the external ids from the command line -e and -E
@@ -98,4 +101,40 @@ func nametoid(name [][]byte) string {
 		hs.Write(h[:])
 	}
 	return hex.EncodeToString(hs.Sum(nil))
+}
+
+// waitOnFctAck blocks while waiting for a factom ack message and returns the
+// ack status or times out after 10 seconds.
+func waitOnFctAck(txid string) (string, error) {
+	stat := make(chan string, 1)
+	errchan := make(chan error, 1)
+
+	// poll for the acknowledgement
+	go func() {
+		for {
+			s, err := factom.FactoidACK(txid, "")
+			if err != nil {
+				errchan <- err
+				break
+			}
+			if s.Status != "Unknown" {
+				stat <- s.Status
+				break
+			}
+			time.Sleep(time.Second / 2)
+		}
+	}()
+
+	// wait for the acknowledgement or timeout after 10 sec
+	select {
+	case err := <-errchan:
+		return "", err
+	case s := <-stat:
+		return s, nil
+	case <-time.After(10 * time.Second):
+		return "", fmt.Errorf("timeout: no acknowledgement found")
+	}
+
+	// code should not reach this point
+	return "", fmt.Errorf("unknown error")
 }
