@@ -15,8 +15,10 @@ import (
 
 var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addchain [-e EXTID1 -e EXTID2 -E BINEXTID3 ...] ECADDRESS <STDIN>"
-	cmd.description = "Create a new Factom Chain. Read data for the First Entry from stdin. Use the Entry Credits from the specified address."
+	cmd.helpMsg = "factom-cli addchain [-f -e EXTID1 -e EXTID2 -E BINEXTID3" +
+		" ...] ECADDRESS <STDIN>"
+	cmd.description = "Create a new Factom Chain. Read data for the First" +
+		" Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		var (
 			eAcii extidsASCII
@@ -26,6 +28,12 @@ var addchain = func() *fctCmd {
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "E", "external id for the entry in hex")
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the chain to commit and reveal without waiting on any"+
+				" acknowledgement checks",
+		)
 		flag.Parse()
 		args = flag.Args()
 
@@ -44,17 +52,10 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		} else if size := len(p); size > 10240 {
-			errorln("Entry of %d bytes is too large", size)
+			errorln(fmt.Sprintf("Entry of %d bytes is too large", size))
 			return
 		} else {
 			e.Content = p
-		}
-
-		c := factom.NewChain(e)
-
-		if factom.ChainExists(c.ChainID) {
-			errorln("Chain", c.ChainID, "already exists")
-			return
 		}
 
 		// get the ec address from the wallet
@@ -63,24 +64,44 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		balance, err := factom.GetECBalance(ecpub)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		if balance == 0 {
-			errorln("Entry Credit balance is zero")
-			return
-		}
-		// commit the chain
-		txID, err := factom.CommitChain(c, ec)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		fmt.Println("Commiting Chain Transaction ID:", txID)
 
-		// TODO - get commit acknowledgement
+		c := factom.NewChain(e)
+
+		if !*fflag {
+			if factom.ChainExists(c.ChainID) {
+				errorln("Chain", c.ChainID, "already exists")
+				return
+			}
+
+			// check ec address balance
+			balance, err := factom.GetECBalance(ecpub)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			if cost, err := factom.EntryCost(c.FirstEntry); err != nil {
+				errorln(err)
+				return
+			} else if balance < int64(cost)+10 {
+				errorln("Not enough Entry Credits")
+				return
+			}
+		}
+
+		// commit the chain
+		txid, err := factom.CommitChain(c, ec)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println("CommitTxID:", txid)
+
+		if !*fflag {
+			if _, err := waitOnCommitAck(txid); err != nil {
+				errorln(err)
+				return
+			}
+		}
 
 		// reveal chain
 		hash, err := factom.RevealChain(c)
@@ -91,7 +112,12 @@ var addchain = func() *fctCmd {
 		fmt.Println("ChainID:", c.ChainID)
 		fmt.Println("Entryhash:", hash)
 
-		// ? get reveal ack
+		if !*fflag {
+			if _, err := waitOnRevealAck(txid); err != nil {
+				errorln(err)
+				return
+			}
+		}
 	}
 	help.Add("addchain", cmd)
 	return cmd
@@ -99,8 +125,11 @@ var addchain = func() *fctCmd {
 
 var composechain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composechain [-e EXTID1 -e EXTID2 -E BINEXTID3 ...] ECADDRESS <STDIN>"
-	cmd.description = "Create API calls to create a new Factom Chain. Read data for the First Entry from stdin. Use the Entry Credits from the specified address."
+	cmd.helpMsg = "factom-cli composechain [-f -e EXTID1 -e EXTID2 -E" +
+		" BINEXTID3 ...] ECADDRESS <STDIN>"
+	cmd.description = "Create API calls to create a new Factom Chain. Read" +
+		" data for the First Entry from stdin. Use the Entry Credits from the" +
+		" specified address."
 	cmd.execFunc = func(args []string) {
 		var (
 			eAcii extidsASCII
@@ -110,6 +139,12 @@ var composechain = func() *fctCmd {
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "E", "external id for the entry in hex")
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the chain to commit and reveal without waiting on any"+
+				" acknowledgement checks",
+		)
 		flag.Parse()
 		args = flag.Args()
 
@@ -128,17 +163,10 @@ var composechain = func() *fctCmd {
 			errorln(err)
 			return
 		} else if size := len(p); size > 10240 {
-			errorln("Entry of %d bytes is too large", size)
+			errorln(fmt.Sprintf("Entry of %d bytes is too large", size))
 			return
 		} else {
 			e.Content = p
-		}
-
-		c := factom.NewChain(e)
-
-		if factom.ChainExists(c.ChainID) {
-			errorln("Chain", c.ChainID, "already exists")
-			//return
 		}
 
 		// get the ec address from the wallet
@@ -147,14 +175,28 @@ var composechain = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		balance, err := factom.GetECBalance(ecpub)
-		if err != nil {
-			errorln(err)
-			//return
-		}
-		if balance == 0 {
-			errorln("Entry Credit balance is zero")
-			//return
+
+		c := factom.NewChain(e)
+
+		if !*fflag {
+			if factom.ChainExists(c.ChainID) {
+				errorln("Chain", c.ChainID, "already exists")
+				return
+			}
+
+			// check ec address balance
+			balance, err := factom.GetECBalance(ecpub)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			if cost, err := factom.EntryCost(c.FirstEntry); err != nil {
+				errorln(err)
+				return
+			} else if balance < int64(cost)+10 {
+				errorln("Not enough Entry Credits")
+				return
+			}
 		}
 
 		j, err := factom.ComposeChainCommit(c, ec)
