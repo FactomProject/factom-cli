@@ -553,7 +553,7 @@ var composetx = func() *fctCmd {
 // sendtx composes and sends the signed transaction to factomd
 var sendtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sendtx TXNAME"
+	cmd.helpMsg = "factom-cli sendtx [-f] TXNAME"
 	cmd.description = "Send a Transaction to Factom"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -594,7 +594,7 @@ var sendtx = func() *fctCmd {
 // sendfct sends factoids between 2 addresses
 var sendfct = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sendfct [-T] FROMADDRESS TOADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli sendfct [-fT] FROMADDRESS TOADDRESS AMOUNT"
 	cmd.description = "Send Factoids between 2 addresses"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -664,7 +664,7 @@ var sendfct = func() *fctCmd {
 // buyec sends factoids between 2 addresses
 var buyec = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli buyec [-T] FCTADDRESS ECADDRESS ECAMOUNT"
+	cmd.helpMsg = "factom-cli buyec [-fT] FCTADDRESS ECADDRESS ECAMOUNT"
 	cmd.description = "Buy entry credits"
 	cmd.execFunc = func(args []string) {
 		os.Args = args

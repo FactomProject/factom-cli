@@ -138,3 +138,75 @@ func waitOnFctAck(txid string) (string, error) {
 	// code should not reach this point
 	return "", fmt.Errorf("unknown error")
 }
+
+// waitOnCommitAck blocks while waiting for an ack message for an Entry Commit
+// and returns the ack status or times out after 10 seconds.
+func waitOnCommitAck(txid string) (string, error) {
+	stat := make(chan string, 1)
+	errchan := make(chan error, 1)
+
+	// poll for the acknowledgement
+	go func() {
+		for {
+			s, err := factom.EntryACK(txid, "")
+			if err != nil {
+				errchan <- err
+				break
+			}
+			if s.CommitData.Status != "Unknown" {
+				stat <- s.CommitData.Status
+				break
+			}
+			time.Sleep(time.Second / 2)
+		}
+	}()
+
+	// wait for the acknowledgement or timeout after 10 sec
+	select {
+	case err := <-errchan:
+		return "", err
+	case s := <-stat:
+		return s, nil
+	case <-time.After(10 * time.Second):
+		return "", fmt.Errorf("timeout: no acknowledgement found")
+	}
+
+	// code should not reach this point
+	return "", fmt.Errorf("unknown error")
+}
+
+// waitOnRevealAck blocks while waiting for an ack message for an Entry Reveal
+// and returns the ack status or times out after 10 seconds.
+func waitOnRevealAck(txid string) (string, error) {
+	stat := make(chan string, 1)
+	errchan := make(chan error, 1)
+
+	// poll for the acknowledgement
+	go func() {
+		for {
+			s, err := factom.EntryACK(txid, "")
+			if err != nil {
+				errchan <- err
+				break
+			}
+			if s.CommitData.Status != "Unknown" {
+				stat <- s.EntryData.Status
+				break
+			}
+			time.Sleep(time.Second / 2)
+		}
+	}()
+
+	// wait for the acknowledgement or timeout after 10 sec
+	select {
+	case err := <-errchan:
+		return "", err
+	case s := <-stat:
+		return s, nil
+	case <-time.After(10 * time.Second):
+		return "", fmt.Errorf("timeout: no acknowledgement found")
+	}
+
+	// code should not reach this point
+	return "", fmt.Errorf("unknown error")
+}

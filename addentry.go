@@ -15,8 +15,10 @@ import (
 
 var addentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addentry -c CHAINID [-e EXTID1 -e EXTID2 -E BEEF1D ...] ECADDRESS <STDIN>"
-	cmd.description = "Create a new Factom Entry. Read data for the Entry from stdin. Use the Entry Credits from the specified address."
+	cmd.helpMsg = "factom-cli addentry -c CHAINID [-f -e EXTID1 -e EXTID2 -E" +
+		" BEEF1D ...] ECADDRESS <STDIN>"
+	cmd.description = "Create a new Factom Entry. Read data for the Entry" +
+		" from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -27,6 +29,12 @@ var addentry = func() *fctCmd {
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "E", "external id for the entry in hex")
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the entry to commit and reveal without waiting on any"+
+				" acknowledgement checks",
+		)
 		flag.Parse()
 		args = flag.Args()
 
@@ -60,11 +68,6 @@ var addentry = func() *fctCmd {
 			e.Content = p
 		}
 
-		if !factom.ChainExists(e.ChainID) {
-			errorln("Chain", e.ChainID, "was not found")
-			return
-		}
-
 		// get the ec address from the wallet
 		ec, err := factom.FetchECAddress(ecpub)
 		if err != nil {
@@ -72,26 +75,41 @@ var addentry = func() *fctCmd {
 			return
 		}
 
-		// check ec address balance
-		balance, err := factom.GetECBalance(ecpub)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		if balance == 0 {
-			errorln("Entry Credit balance is zero")
-			return
+		if !*fflag {
+			if !factom.ChainExists(e.ChainID) {
+				errorln("Chain", e.ChainID, "was not found")
+				return
+			}
+
+			// check ec address balance
+			balance, err := factom.GetECBalance(ecpub)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			if cost, err := factom.EntryCost(e); err != nil {
+				errorln(err)
+				return
+			} else if balance < int64(cost) {
+				errorln("Not enough Entry Credits")
+				return
+			}
 		}
 
 		// commit the chain
-		txID, err := factom.CommitEntry(e, ec)
+		txid, err := factom.CommitEntry(e, ec)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println("Commiting Entry Transaction ID:", txID)
+		fmt.Println("CommitTxID:", txid)
 
-		// TODO - get commit acknowledgement
+		if !*fflag {
+			if _, err := waitOnCommitAck(txid); err != nil {
+				errorln(err)
+				return
+			}
+		}
 
 		// reveal chain
 		hash, err := factom.RevealEntry(e)
@@ -102,7 +120,12 @@ var addentry = func() *fctCmd {
 		fmt.Println("ChainID:", *cid)
 		fmt.Println("Entryhash:", hash)
 
-		// ? get reveal ack
+		if !*fflag {
+			if _, err := waitOnRevealAck(txid); err != nil {
+				errorln(err)
+				return
+			}
+		}
 	}
 	help.Add("addentry", cmd)
 	return cmd
@@ -110,8 +133,11 @@ var addentry = func() *fctCmd {
 
 var composeentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composeentry -c CHAINID [-e EXTID1 -e EXTID2 -E BEEF1D ...] ECADDRESS <STDIN>"
-	cmd.description = "Create API calls to create a new Factom Entry. Read data for the Entry from stdin. Use the Entry Credits from the specified address."
+	cmd.helpMsg = "factom-cli composeentry -c CHAINID [-f -e EXTID1 -e EXTID2" +
+		" -E BEEF1D ...] ECADDRESS <STDIN>"
+	cmd.description = "Create API calls to create a new Factom Entry. Read" +
+		" data for the Entry from stdin. Use the Entry Credits from the" +
+		" specified address."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -122,6 +148,12 @@ var composeentry = func() *fctCmd {
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "E", "external id for the entry in hex")
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the entry to commit and reveal without waiting on any"+
+				" acknowledgement checks",
+		)
 		flag.Parse()
 		args = flag.Args()
 
@@ -139,9 +171,6 @@ var composeentry = func() *fctCmd {
 		}
 		e.ChainID = *cid
 
-		//for _, id := range eids {
-		//	e.ExtIDs = append(e.ExtIDs, []byte(id))
-		//}
 		e.ExtIDs = exidCollector
 
 		// Entry.Content is read from stdin
@@ -155,11 +184,6 @@ var composeentry = func() *fctCmd {
 			e.Content = p
 		}
 
-		if !factom.ChainExists(e.ChainID) {
-			errorln("Chain", e.ChainID, "was not found")
-			return
-		}
-
 		// get the ec address from the wallet
 		ec, err := factom.FetchECAddress(ecpub)
 		if err != nil {
@@ -167,15 +191,25 @@ var composeentry = func() *fctCmd {
 			return
 		}
 
-		// check ec address balance
-		balance, err := factom.GetECBalance(ecpub)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		if balance == 0 {
-			errorln("Entry Credit balance is zero")
-			return
+		if !*fflag {
+			if !factom.ChainExists(e.ChainID) {
+				errorln("Chain", e.ChainID, "was not found")
+				return
+			}
+
+			// check ec address balance
+			balance, err := factom.GetECBalance(ecpub)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			if cost, err := factom.EntryCost(e); err != nil {
+				errorln(err)
+				return
+			} else if balance < int64(cost) {
+				errorln("Not enough Entry Credits")
+				return
+			}
 		}
 
 		j, err := factom.ComposeEntryCommit(e, ec)
