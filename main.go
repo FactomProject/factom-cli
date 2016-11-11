@@ -137,7 +137,7 @@ func main() {
 	c.Handle("exportaddresses", exportaddresses)
 	c.Handle("get", get)
 	c.Handle("importaddress", importaddresses)
-	c.Handle("importwords", importkoinify)
+	c.Handle("importkoinify", importkoinify)
 	c.Handle("listaddresses", listaddresses)
 	c.Handle("newecaddress", newecaddress)
 	c.Handle("newfctaddress", newfctaddress)
