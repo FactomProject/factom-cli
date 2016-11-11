@@ -62,7 +62,7 @@ var addentry = func() *fctCmd {
 			errorln(err)
 			return
 		} else if size := len(p); size > 10240 {
-			errorln("Entry of %d bytes is too large", size)
+			errorln(fmt.Sprintf("Entry of %d bytes is too large", size))
 			return
 		} else {
 			e.Content = p
@@ -178,7 +178,7 @@ var composeentry = func() *fctCmd {
 			errorln(err)
 			return
 		} else if size := len(p); size > 10240 {
-			errorln("Entry of %d bytes is too large", size)
+			errorln(fmt.Sprintf("Entry of %d bytes is too large", size))
 			return
 		} else {
 			e.Content = p
