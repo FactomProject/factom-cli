@@ -266,8 +266,6 @@ var listtxs = func() *fctCmd {
 	cmd.description = "List transactions from the wallet or the Factoid Chain"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		flag.Parse()
-		args = flag.Args()
 
 		c := cli.New()
 		c.Handle("all", listtxsall)
