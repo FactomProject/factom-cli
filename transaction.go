@@ -266,6 +266,8 @@ var listtxs = func() *fctCmd {
 	cmd.description = "List transactions from the wallet or the Factoid Chain"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		flag.Parse()
+		args = flag.Args()
 
 		c := cli.New()
 		c.Handle("all", listtxsall)
@@ -273,6 +275,7 @@ var listtxs = func() *fctCmd {
 		c.Handle("id", listtxsid)
 		c.Handle("range", listtxsrange)
 		c.Handle("tmp", listtxstmp)
+		c.Handle("name", listtxsname)
 		c.HandleDefault(listtxsall)
 		c.Execute(args)
 	}
@@ -375,6 +378,42 @@ var listtxsid = func() *fctCmd {
 		}
 	}
 	help.Add("listtxs id", cmd)
+	return cmd
+}()
+
+// listtxsname get a working transaction from the wallet.
+var listtxsname = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs name"
+	cmd.description = "Show a current working transaction in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		tdisp := flag.Bool("T", false, "display transaction txid only")
+		flag.Parse()
+		args = flag.Args()
+		
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		name := args[0]			
+
+		txs, err := factom.ListTransactionsTmp()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			if tx.Name == name {
+				if *tdisp {
+					fmt.Println(tx.TxID)
+				} else {
+					fmt.Println(tx)
+				}
+			}
+		}
+	}
+	help.Add("listtxs tmp", cmd)
 	return cmd
 }()
 
