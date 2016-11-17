@@ -265,10 +265,10 @@ var listtxs = func() *fctCmd {
 	cmd.helpMsg = "factom-cli listtxs [address|all|id|name|tmp|range]"
 	cmd.description = "List transactions from the wallet or the Factoid Chain"
 	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-
+		if len(args) > 1 {
+			args = args[1:]
+		}
+				
 		c := cli.New()
 		c.Handle("all", listtxsall)
 		c.Handle("address", listtxsaddress)
@@ -277,7 +277,9 @@ var listtxs = func() *fctCmd {
 		c.Handle("tmp", listtxstmp)
 		c.Handle("name", listtxsname)
 		c.HandleDefaultFunc(func(args []string) {
-			listtxsall.execFunc([]string{"all"})
+			tmp := []string{"all"}
+			args = append(tmp, args...)
+			listtxsall.execFunc(args)
 		})
 		c.Execute(args)
 	}
