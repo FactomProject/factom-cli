@@ -388,7 +388,7 @@ var listtxsid = func() *fctCmd {
 // listtxsname get a working transaction from the wallet.
 var listtxsname = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listtxs name"
+	cmd.helpMsg = "factom-cli listtxs name TXNAME"
 	cmd.description = "Show a current working transaction in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
