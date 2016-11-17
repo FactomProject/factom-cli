@@ -268,7 +268,7 @@ var listtxs = func() *fctCmd {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
-		
+
 		c := cli.New()
 		c.Handle("all", listtxsall)
 		c.Handle("address", listtxsaddress)
@@ -277,8 +277,7 @@ var listtxs = func() *fctCmd {
 		c.Handle("tmp", listtxstmp)
 		c.Handle("name", listtxsname)
 		c.HandleDefaultFunc(func(args []string) {
-			args = append(args, "all")
-			listtxsall.execFunc(args)
+			listtxsall.execFunc([]string{"all"})
 		})
 		c.Execute(args)
 	}
@@ -394,12 +393,12 @@ var listtxsname = func() *fctCmd {
 		tdisp := flag.Bool("T", false, "display transaction txid only")
 		flag.Parse()
 		args = flag.Args()
-		
+
 		if len(args) < 1 {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		name := args[0]			
+		name := args[0]
 
 		txs, err := factom.ListTransactionsTmp()
 		if err != nil {
