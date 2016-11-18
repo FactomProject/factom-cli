@@ -297,6 +297,10 @@ var listtxsall = func() *fctCmd {
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
+		if len(args) > 0 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
 
 		txs, err := factom.ListTransactionsAll()
 		if err != nil {
