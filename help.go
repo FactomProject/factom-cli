@@ -44,20 +44,25 @@ func (h *helper) All() {
 }
 
 func (h *helper) Execute(args []string) {
+	fmt.Println("DEBUG: args:", args)
 	if len(args) < 1 {
 		fmt.Println("factom-cli help [subcommand]")
 		return
 	}
-	if len(args) < 2 {
-		h.All()
-		return
+	
+	if args[0] == "help" {
+		if len(args) == 1 {
+			help.All()
+			return
+		}
+		args = args[1:]
 	}
 
-	topic := strings.Join(args[1:], " ")
+	topic := strings.Join(args[:], " ")
 
 	c, ok := h.topics[topic]
 	if !ok {
-		if c, ok = h.topics[args[1]]; !ok {
+		if c, ok = h.topics[args[0]]; !ok {
 			fmt.Println("No help for:", topic)
 			return
 		}

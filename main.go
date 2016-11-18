@@ -160,7 +160,10 @@ func main() {
 	c.Handle("sendfct", sendfct)
 	c.Handle("buyec", buyec)
 
-	c.HandleDefault(help)
+	c.HandleDefaultFunc(func(args []string) {
+		args = append([]string{"help"}, args...)
+		help.Execute([]string(args))
+	})
 	c.Execute(args)
 }
 
