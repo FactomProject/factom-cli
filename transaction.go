@@ -262,20 +262,25 @@ var addtxfee = func() *fctCmd {
 // listtxs lists transactions from the wallet or the Factoid Chain.
 var listtxs = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli listtxs [tmp|all|address|id|range]"
+	cmd.helpMsg = "factom-cli listtxs [address|all|id|name|tmp|range]"
 	cmd.description = "List transactions from the wallet or the Factoid Chain"
 	cmd.execFunc = func(args []string) {
-		os.Args = args
-		flag.Parse()
-		args = flag.Args()
-
+		if len(args) > 1 {
+			args = args[1:]
+		}
+				
 		c := cli.New()
 		c.Handle("all", listtxsall)
 		c.Handle("address", listtxsaddress)
 		c.Handle("id", listtxsid)
 		c.Handle("range", listtxsrange)
 		c.Handle("tmp", listtxstmp)
-		c.HandleDefault(listtxsall)
+		c.Handle("name", listtxsname)
+		c.HandleDefaultFunc(func(args []string) {
+			tmp := []string{"all"}
+			args = append(tmp, args...)
+			listtxsall.execFunc(args)
+		})
 		c.Execute(args)
 	}
 	help.Add("listtxs", cmd)
@@ -292,6 +297,10 @@ var listtxsall = func() *fctCmd {
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
+		if len(args) > 0 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
 
 		txs, err := factom.ListTransactionsAll()
 		if err != nil {
@@ -377,6 +386,42 @@ var listtxsid = func() *fctCmd {
 		}
 	}
 	help.Add("listtxs id", cmd)
+	return cmd
+}()
+
+// listtxsname get a working transaction from the wallet.
+var listtxsname = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli listtxs name TXNAME"
+	cmd.description = "Show a current working transaction in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		tdisp := flag.Bool("T", false, "display transaction txid only")
+		flag.Parse()
+		args = flag.Args()
+
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		name := args[0]
+
+		txs, err := factom.ListTransactionsTmp()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tx := range txs {
+			if tx.Name == name {
+				if *tdisp {
+					fmt.Println(tx.TxID)
+				} else {
+					fmt.Println(tx)
+				}
+			}
+		}
+	}
+	help.Add("listtxs name", cmd)
 	return cmd
 }()
 
