@@ -268,7 +268,7 @@ var listtxs = func() *fctCmd {
 		if len(args) > 1 {
 			args = args[1:]
 		}
-				
+
 		c := cli.New()
 		c.Handle("all", listtxsall)
 		c.Handle("address", listtxsaddress)

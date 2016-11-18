@@ -253,24 +253,24 @@ var getHead = func() *fctCmd {
 		os.Args = args
 		kdisp := flag.Bool(
 			"K",
-			false, 
+			false,
 			"display only the KeyMR of the directory block",
 		)
 		flag.Parse()
 		args = flag.Args()
-		
+
 		head, err := factom.GetDBlockHead()
 		if err != nil {
 			errorln(err)
 			return
 		}
-		
+
 		dblock, err := factom.GetDBlock(head)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		
+
 		switch {
 		case *kdisp:
 			fmt.Println(head)

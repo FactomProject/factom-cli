@@ -214,8 +214,8 @@ var listaddresses = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		adisp := flag.Bool(
-			"A", 
-			false, 
+			"A",
+			false,
 			"display only the address without looking up the balance",
 		)
 		flag.Parse()
@@ -226,7 +226,7 @@ var listaddresses = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		
+
 		if *adisp {
 			for _, a := range fs {
 				fmt.Println(a)
