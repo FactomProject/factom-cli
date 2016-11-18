@@ -44,12 +44,11 @@ func (h *helper) All() {
 }
 
 func (h *helper) Execute(args []string) {
-	fmt.Println("DEBUG: args:", args)
 	if len(args) < 1 {
 		fmt.Println("factom-cli help [subcommand]")
 		return
 	}
-	
+
 	if args[0] == "help" {
 		if len(args) == 1 {
 			help.All()

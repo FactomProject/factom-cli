@@ -421,7 +421,7 @@ var listtxsname = func() *fctCmd {
 			}
 		}
 	}
-	help.Add("listtxs tmp", cmd)
+	help.Add("listtxs name", cmd)
 	return cmd
 }()
 
