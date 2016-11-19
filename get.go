@@ -5,6 +5,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -15,7 +16,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights"
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights|pendingentries|pendingtransactions"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -31,6 +32,8 @@ var get = func() *fctCmd {
 		c.Handle("eblock", getEBlock)
 		c.Handle("entry", getEntry)
 		c.Handle("firstentry", getFirstEntry)
+		c.Handle("pendingentries", getPendingEntries)
+		c.Handle("pendingtransactions", getPendingTransactions)
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
 		})
@@ -336,5 +339,87 @@ var properties = func() *fctCmd {
 
 	}
 	help.Add("properties", cmd)
+	return cmd
+}()
+
+var getPendingEntries = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get pendingentries"
+	cmd.description = "Get all entries present in process list, but not yet written to blockchain"
+	cmd.execFunc = func(args []string) {
+		entries, err := factom.GetPendingEntries()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(entries)
+	}
+	help.Add("get pendingentries", cmd)
+	return cmd
+}()
+
+var getPendingTransactions = func() *fctCmd {
+
+	type LineItem struct {
+		Amount      float64
+		Address     string
+		UserAddress string
+	}
+
+	type pendingTransaction struct {
+		TransactionID string
+		Inputs        []LineItem
+		Outputs       []LineItem
+		ECOutputs     []LineItem
+	}
+
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get pendingtransactions"
+	cmd.description = "Get all transactions present in process list, but not yet written to blockchain"
+	cmd.execFunc = func(args []string) {
+		trans, err := factom.GetPendingTransactions()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		var transList []pendingTransaction
+		err = json.Unmarshal([]byte(trans), &transList)
+		if err != nil {
+			return
+		}
+		for _, tran := range transList {
+			if len(tran.Inputs) != 0 {
+				fmt.Println("Transaction ID:		", tran.TransactionID)
+				fmt.Println("Inputs:				")
+				for _, in := range tran.Inputs {
+					fmt.Println("	Amount:				", in.Amount)
+					fmt.Println("	Address:			", in.Address)
+					fmt.Println("	Formatted Address:			", in.UserAddress)
+				}
+
+				if len(tran.Outputs) != 0 {
+					fmt.Println("Outputs:				")
+					for _, out := range tran.Outputs {
+						fmt.Println("	Amount:				", out.Amount)
+						fmt.Println("	Address:			", out.Address)
+						fmt.Println("	Formatted Address:		", out.UserAddress)
+					}
+				}
+
+				if len(tran.ECOutputs) != 0 {
+					fmt.Println("Outputs:				")
+					for _, ecout := range tran.ECOutputs {
+						fmt.Println("	Amount:				", ecout.Amount)
+						fmt.Println("	Address:			", ecout.Address)
+						fmt.Println("	Formatted Address:			", ecout.UserAddress)
+					}
+				}
+			}
+			fmt.Println("")
+		}
+
+	}
+	help.Add("get pendingtransactions", cmd)
 	return cmd
 }()
