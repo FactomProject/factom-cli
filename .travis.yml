@@ -1,0 +1,12 @@
+language: go
+go:
+        - 1.7.1
+install:
+        - go get -v github.com/Masterminds/glide
+        - cd $GOPATH/src/github.com/Masterminds/glide && git checkout tags/v0.12.3 && go install && cd -
+        - glide install
+script:
+        - go build -v
+notifications:
+        slack:
+                secure: VdF5K4w0epgt78crM3Axc3Z/SolVL2HANAwhT/sY3W5Np3oRPoB1MOsTln+2/+3b4rZkycnqrZBdhnqzVHWJj+ViDGwUeQkjy7fl5j7rYYpeYy50uXsleLiW+BTP57KMsL8XAUh682OuVyLSz2jlMRGMqGDEItuiwFrAVqBflr8=
