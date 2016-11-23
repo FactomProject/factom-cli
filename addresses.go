@@ -258,3 +258,26 @@ var listaddresses = func() *fctCmd {
 	help.Add("listaddresses", cmd)
 	return cmd
 }()
+
+// Removes an address
+var removeAddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli remove-address ADDRESS"
+	cmd.description = "Removes an address from the database."
+	cmd.execFunc = func(args []string) {
+		if len(args) < 2 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		addr := args[1]
+
+		err := factom.RemoveAddress(addr)
+		if err != nil {
+			fmt.Printf("%v\n", err)
+		} else {
+			fmt.Printf("Success!\n")
+		}
+	}
+	help.Add("remove-address", cmd)
+	return cmd
+}()

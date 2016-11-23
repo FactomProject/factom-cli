@@ -144,6 +144,7 @@ func main() {
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
 	c.Handle("backupwallet", backupwallet)
+	c.Handle("remove-address", removeAddress)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
