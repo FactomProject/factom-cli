@@ -45,7 +45,7 @@ var get = func() *fctCmd {
 
 var getAllEntries = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries [-n NAME1 -N HEXNAME2 ...] CHAINID"
+	cmd.helpMsg = "factom-cli get allentries [-n NAME1 -h HEXNAME2 ...] or [CHAINID] [-E]"
 	cmd.description = "Get all of the Entries in a Chain"
 	cmd.execFunc = func(args []string) {
 		var (
@@ -53,9 +53,14 @@ var getAllEntries = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
+		edisp := flag.Bool(
+			"E",
+			false,
+			"display only the EntryHashes",
+		)
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "N", "hex binary name component")
+		flag.Var(&nHex, "h", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
 
@@ -74,14 +79,24 @@ var getAllEntries = func() *fctCmd {
 		es, err := factom.GetAllChainEntries(chainid)
 		if err != nil {
 			for i, e := range es {
-				fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+				switch {
+				case *edisp:
+					fmt.Printf("%x\n", e.Hash())
+				default:
+					fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+				}
 			}
 			errorln(err)
 			return
 		}
 
 		for i, e := range es {
-			fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+			switch {
+			case *edisp:
+				fmt.Printf("%x\n", e.Hash())
+			default:
+				fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+			}
 		}
 	}
 	help.Add("get allentries", cmd)
@@ -90,7 +105,7 @@ var getAllEntries = func() *fctCmd {
 
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -N HEXNAME2 ...] CHAINID"
+	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -h HEXNAME2 ...] or [CHAINID] [-K]"
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
 		var (
@@ -98,9 +113,14 @@ var getChainHead = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
+		kdisp := flag.Bool(
+			"K",
+			false,
+			"display only the KeyMR of the entry block",
+		)
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "N", "hex binary name component")
+		flag.Var(&nHex, "h", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
 
@@ -127,8 +147,13 @@ var getChainHead = func() *fctCmd {
 			return
 		}
 
-		fmt.Println("EBlock:", head)
-		fmt.Println(eblock)
+		switch {
+		case *kdisp:
+			fmt.Println(head)
+		default:
+			fmt.Println("EBlock:", head)
+			fmt.Println(eblock)
+		}
 	}
 	help.Add("get chainhead", cmd)
 	return cmd
@@ -211,7 +236,7 @@ var getEntry = func() *fctCmd {
 
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -N HEXNAME2 ...] CHAINID"
+	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...] or [CHAINID] [-E]"
 	cmd.description = "Get the first entry from a chain"
 	cmd.execFunc = func(args []string) {
 		var (
@@ -219,9 +244,14 @@ var getFirstEntry = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
+		edisp := flag.Bool(
+			"E",
+			false,
+			"display only the EntryHash of the first entry",
+		)
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "N", "hex binary name component")
+		flag.Var(&nHex, "h", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
 
@@ -242,7 +272,14 @@ var getFirstEntry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println(entry)
+
+		switch {
+		case *edisp:
+			fmt.Printf("%x\n", entry.Hash())
+		default:
+			fmt.Println(entry)
+		}
+
 	}
 	help.Add("get firstentry", cmd)
 	return cmd
@@ -289,7 +326,7 @@ var getHead = func() *fctCmd {
 var getHeights = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get heights"
-	cmd.description = "Get the current heights of various blocks in factomd"
+	cmd.description = "Get the current heights of various items in factomd"
 	cmd.execFunc = func(args []string) {
 		height, err := factom.GetHeights()
 		if err != nil {
@@ -305,7 +342,7 @@ var getHeights = func() *fctCmd {
 var properties = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli properties"
-	cmd.description = "Get version information about facotmd and the factom wallet"
+	cmd.description = "Get version information about factomd and the factom wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -345,7 +382,7 @@ var properties = func() *fctCmd {
 var getPendingEntries = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingentries"
-	cmd.description = "Get all entries present in process list, but not yet written to blockchain"
+	cmd.description = "Get all pending entries, which may not yet be written to blockchain"
 	cmd.execFunc = func(args []string) {
 		entries, err := factom.GetPendingEntries()
 		if err != nil {
@@ -375,7 +412,7 @@ var getPendingTransactions = func() *fctCmd {
 
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingtransactions"
-	cmd.description = "Get all transactions present in process list, but not yet written to blockchain"
+	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain"
 	cmd.execFunc = func(args []string) {
 		trans, err := factom.GetPendingTransactions()
 		if err != nil {
@@ -390,29 +427,21 @@ var getPendingTransactions = func() *fctCmd {
 		}
 		for _, tran := range transList {
 			if len(tran.Inputs) != 0 {
-				fmt.Println("Transaction ID:		", tran.TransactionID)
-				fmt.Println("Inputs:				")
+				fmt.Println("TxID:", tran.TransactionID)
 				for _, in := range tran.Inputs {
-					fmt.Println("	Amount:				", in.Amount)
-					fmt.Println("	Address:			", in.Address)
-					fmt.Println("	Formatted Address:			", in.UserAddress)
+					fmt.Println("Input:", in.UserAddress, in.Amount)
 				}
 
 				if len(tran.Outputs) != 0 {
-					fmt.Println("Outputs:				")
+
 					for _, out := range tran.Outputs {
-						fmt.Println("	Amount:				", out.Amount)
-						fmt.Println("	Address:			", out.Address)
-						fmt.Println("	Formatted Address:		", out.UserAddress)
+						fmt.Println("Output:", out.UserAddress, out.Amount)
 					}
 				}
 
 				if len(tran.ECOutputs) != 0 {
-					fmt.Println("Outputs:				")
 					for _, ecout := range tran.ECOutputs {
-						fmt.Println("	Amount:				", ecout.Amount)
-						fmt.Println("	Address:			", ecout.Address)
-						fmt.Println("	Formatted Address:			", ecout.UserAddress)
+						fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount)
 					}
 				}
 			}
