@@ -380,12 +380,12 @@ var properties = func() *fctCmd {
 }()
 
 var getPendingEntries = func() *fctCmd {
-	
+
 	type pendingEntry struct {
 		EntryHash string
-		ChainID string
+		ChainID   string
 	}
-	
+
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingentries -[E]"
 	cmd.description = "Get all pending entries, which may not yet be written to blockchain"
@@ -398,7 +398,7 @@ var getPendingEntries = func() *fctCmd {
 		)
 		flag.Parse()
 		args = flag.Args()
-		
+
 		entries, err := factom.GetPendingEntries()
 		if err != nil {
 			errorln(err)
