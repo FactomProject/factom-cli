@@ -277,8 +277,11 @@ var listtxs = func() *fctCmd {
 		c.Handle("tmp", listtxstmp)
 		c.Handle("name", listtxsname)
 		c.HandleDefaultFunc(func(args []string) {
-			tmp := []string{"all"}
-			args = append(tmp, args...)
+			if args[0] == "listtxs" {
+				args[0] = "all"
+			} else {
+				args = append([]string{"all"}, args...)
+			}
 			listtxsall.execFunc(args)
 		})
 		c.Execute(args)

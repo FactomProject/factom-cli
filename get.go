@@ -5,6 +5,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -15,7 +16,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights"
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights|pendingentries|pendingtransactions"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -31,6 +32,8 @@ var get = func() *fctCmd {
 		c.Handle("eblock", getEBlock)
 		c.Handle("entry", getEntry)
 		c.Handle("firstentry", getFirstEntry)
+		c.Handle("pendingentries", getPendingEntries)
+		c.Handle("pendingtransactions", getPendingTransactions)
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
 		})
@@ -42,7 +45,7 @@ var get = func() *fctCmd {
 
 var getAllEntries = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries [-n NAME1 -N HEXNAME2 ...] CHAINID"
+	cmd.helpMsg = "factom-cli get allentries [-n NAME1 -h HEXNAME2 ...] or [CHAINID] [-E]"
 	cmd.description = "Get all of the Entries in a Chain"
 	cmd.execFunc = func(args []string) {
 		var (
@@ -50,9 +53,14 @@ var getAllEntries = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
+		edisp := flag.Bool(
+			"E",
+			false,
+			"display only the EntryHashes",
+		)
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "N", "hex binary name component")
+		flag.Var(&nHex, "h", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
 
@@ -71,14 +79,24 @@ var getAllEntries = func() *fctCmd {
 		es, err := factom.GetAllChainEntries(chainid)
 		if err != nil {
 			for i, e := range es {
-				fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+				switch {
+				case *edisp:
+					fmt.Printf("%x\n", e.Hash())
+				default:
+					fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+				}
 			}
 			errorln(err)
 			return
 		}
 
 		for i, e := range es {
-			fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+			switch {
+			case *edisp:
+				fmt.Printf("%x\n", e.Hash())
+			default:
+				fmt.Printf("Entry [%d] {\n%s}\n", i, e)
+			}
 		}
 	}
 	help.Add("get allentries", cmd)
@@ -87,7 +105,7 @@ var getAllEntries = func() *fctCmd {
 
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -N HEXNAME2 ...] CHAINID"
+	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -h HEXNAME2 ...] or [CHAINID] [-K]"
 	cmd.description = "Get ebhead by chainid"
 	cmd.execFunc = func(args []string) {
 		var (
@@ -95,9 +113,14 @@ var getChainHead = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
+		kdisp := flag.Bool(
+			"K",
+			false,
+			"display only the KeyMR of the entry block",
+		)
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "N", "hex binary name component")
+		flag.Var(&nHex, "h", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
 
@@ -124,8 +147,13 @@ var getChainHead = func() *fctCmd {
 			return
 		}
 
-		fmt.Println("EBlock:", head)
-		fmt.Println(eblock)
+		switch {
+		case *kdisp:
+			fmt.Println(head)
+		default:
+			fmt.Println("EBlock:", head)
+			fmt.Println(eblock)
+		}
 	}
 	help.Add("get chainhead", cmd)
 	return cmd
@@ -208,7 +236,7 @@ var getEntry = func() *fctCmd {
 
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -N HEXNAME2 ...] CHAINID"
+	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...] or [CHAINID] [-E]"
 	cmd.description = "Get the first entry from a chain"
 	cmd.execFunc = func(args []string) {
 		var (
@@ -216,9 +244,14 @@ var getFirstEntry = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
+		edisp := flag.Bool(
+			"E",
+			false,
+			"display only the EntryHash of the first entry",
+		)
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "N", "hex binary name component")
+		flag.Var(&nHex, "h", "hex binary name component")
 		flag.Parse()
 		args = flag.Args()
 
@@ -239,7 +272,14 @@ var getFirstEntry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println(entry)
+
+		switch {
+		case *edisp:
+			fmt.Printf("%x\n", entry.Hash())
+		default:
+			fmt.Println(entry)
+		}
+
 	}
 	help.Add("get firstentry", cmd)
 	return cmd
@@ -286,7 +326,7 @@ var getHead = func() *fctCmd {
 var getHeights = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get heights"
-	cmd.description = "Get the current heights of various blocks in factomd"
+	cmd.description = "Get the current heights of various items in factomd"
 	cmd.execFunc = func(args []string) {
 		height, err := factom.GetHeights()
 		if err != nil {
@@ -302,7 +342,7 @@ var getHeights = func() *fctCmd {
 var properties = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli properties"
-	cmd.description = "Get version information about facotmd and the factom wallet"
+	cmd.description = "Get version information about factomd and the factom wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -336,5 +376,125 @@ var properties = func() *fctCmd {
 
 	}
 	help.Add("properties", cmd)
+	return cmd
+}()
+
+var getPendingEntries = func() *fctCmd {
+	
+	type pendingEntry struct {
+		EntryHash string
+		ChainID string
+	}
+	
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get pendingentries -[E]"
+	cmd.description = "Get all pending entries, which may not yet be written to blockchain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		edisp := flag.Bool(
+			"E",
+			false,
+			"display only the Transaction IDs",
+		)
+		flag.Parse()
+		args = flag.Args()
+		
+		entries, err := factom.GetPendingEntries()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		var entList []pendingEntry
+		err = json.Unmarshal([]byte(entries), &entList)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, ents := range entList {
+			switch {
+			case *edisp:
+				fmt.Println(ents.EntryHash)
+			default:
+				fmt.Println("ChainID:", ents.ChainID)
+				fmt.Println("Entryhash:", ents.EntryHash)
+				fmt.Println("")
+			}
+		}
+	}
+	help.Add("get pendingentries", cmd)
+	return cmd
+}()
+
+var getPendingTransactions = func() *fctCmd {
+
+	type LineItem struct {
+		Amount      float64
+		Address     string
+		UserAddress string
+	}
+
+	type pendingTransaction struct {
+		TransactionID string
+		Inputs        []LineItem
+		Outputs       []LineItem
+		ECOutputs     []LineItem
+	}
+
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get pendingtransactions [-T]"
+	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		tdisp := flag.Bool(
+			"T",
+			false,
+			"display only the Transaction IDs",
+		)
+		flag.Parse()
+		args = flag.Args()
+
+		trans, err := factom.GetPendingTransactions()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		var transList []pendingTransaction
+		err = json.Unmarshal([]byte(trans), &transList)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, tran := range transList {
+			if len(tran.Inputs) != 0 {
+				switch {
+				case *tdisp:
+					fmt.Println(tran.TransactionID)
+				default:
+					fmt.Println("TxID:", tran.TransactionID)
+					for _, in := range tran.Inputs {
+						fmt.Println("Input:", in.UserAddress, in.Amount)
+					}
+
+					if len(tran.Outputs) != 0 {
+
+						for _, out := range tran.Outputs {
+							fmt.Println("Output:", out.UserAddress, out.Amount)
+						}
+					}
+
+					if len(tran.ECOutputs) != 0 {
+						for _, ecout := range tran.ECOutputs {
+							fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount)
+						}
+					}
+					fmt.Println("")
+				}
+			}
+		}
+
+	}
+	help.Add("get pendingtransactions", cmd)
 	return cmd
 }()
