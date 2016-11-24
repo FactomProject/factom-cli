@@ -380,16 +380,47 @@ var properties = func() *fctCmd {
 }()
 
 var getPendingEntries = func() *fctCmd {
+	
+	type pendingEntry struct {
+		EntryHash string
+		ChainID string
+	}
+	
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get pendingentries"
+	cmd.helpMsg = "factom-cli get pendingentries -[E]"
 	cmd.description = "Get all pending entries, which may not yet be written to blockchain"
 	cmd.execFunc = func(args []string) {
+		os.Args = args
+		edisp := flag.Bool(
+			"E",
+			false,
+			"display only the Transaction IDs",
+		)
+		flag.Parse()
+		args = flag.Args()
+		
 		entries, err := factom.GetPendingEntries()
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println(entries)
+
+		var entList []pendingEntry
+		err = json.Unmarshal([]byte(entries), &entList)
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, ents := range entList {
+			switch {
+			case *edisp:
+				fmt.Println(ents.EntryHash)
+			default:
+				fmt.Println("ChainID:", ents.ChainID)
+				fmt.Println("Entryhash:", ents.EntryHash)
+				fmt.Println("")
+			}
+		}
 	}
 	help.Add("get pendingentries", cmd)
 	return cmd
@@ -411,9 +442,18 @@ var getPendingTransactions = func() *fctCmd {
 	}
 
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get pendingtransactions"
+	cmd.helpMsg = "factom-cli get pendingtransactions [-T]"
 	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain"
 	cmd.execFunc = func(args []string) {
+		os.Args = args
+		tdisp := flag.Bool(
+			"T",
+			false,
+			"display only the Transaction IDs",
+		)
+		flag.Parse()
+		args = flag.Args()
+
 		trans, err := factom.GetPendingTransactions()
 		if err != nil {
 			errorln(err)
@@ -423,29 +463,35 @@ var getPendingTransactions = func() *fctCmd {
 		var transList []pendingTransaction
 		err = json.Unmarshal([]byte(trans), &transList)
 		if err != nil {
+			errorln(err)
 			return
 		}
 		for _, tran := range transList {
 			if len(tran.Inputs) != 0 {
-				fmt.Println("TxID:", tran.TransactionID)
-				for _, in := range tran.Inputs {
-					fmt.Println("Input:", in.UserAddress, in.Amount)
-				}
-
-				if len(tran.Outputs) != 0 {
-
-					for _, out := range tran.Outputs {
-						fmt.Println("Output:", out.UserAddress, out.Amount)
+				switch {
+				case *tdisp:
+					fmt.Println(tran.TransactionID)
+				default:
+					fmt.Println("TxID:", tran.TransactionID)
+					for _, in := range tran.Inputs {
+						fmt.Println("Input:", in.UserAddress, in.Amount)
 					}
-				}
 
-				if len(tran.ECOutputs) != 0 {
-					for _, ecout := range tran.ECOutputs {
-						fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount)
+					if len(tran.Outputs) != 0 {
+
+						for _, out := range tran.Outputs {
+							fmt.Println("Output:", out.UserAddress, out.Amount)
+						}
 					}
+
+					if len(tran.ECOutputs) != 0 {
+						for _, ecout := range tran.ECOutputs {
+							fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount)
+						}
+					}
+					fmt.Println("")
 				}
 			}
-			fmt.Println("")
 		}
 
 	}
