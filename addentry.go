@@ -89,7 +89,7 @@ var addentry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("Commiting Entry Transaction ID:", txID)
+		fmt.Println("Committing Entry Transaction ID:", txID)
 
 		// TODO - get commit acknowledgement
 
