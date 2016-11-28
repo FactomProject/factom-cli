@@ -258,3 +258,24 @@ var listaddresses = func() *fctCmd {
 	help.Add("listaddresses", cmd)
 	return cmd
 }()
+
+// Removes an address
+var removeAddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli rmaddress ADDRESS"
+	cmd.description = "Removes the public and private key from the wallet for the address specified."
+	cmd.execFunc = func(args []string) {
+		if len(args) < 2 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		addr := args[1]
+
+		err := factom.RemoveAddress(addr)
+		if err != nil {
+			fmt.Printf("%v\n", err)
+		}
+	}
+	help.Add("rmaddress", cmd)
+	return cmd
+}()

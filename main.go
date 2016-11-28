@@ -144,6 +144,7 @@ func main() {
 	c.Handle("ablock-by-height", ablockByHeight)
 	c.Handle("ecblock-by-height", ecblockByHeight)
 	c.Handle("fblock-by-height", fblockByHeight)
+	c.Handle("rmaddress", removeAddress)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
