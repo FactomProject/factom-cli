@@ -15,7 +15,7 @@ import (
 var getraw = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get raw HASH"
-	cmd.description = "Returns a raw hex representation of a block, transaction or entry"
+	cmd.description = "Returns a raw hex representation of a block, transaction, entry, or commit"
 	cmd.execFunc = func(args []string) {
 		if len(args) < 2 {
 			fmt.Println(cmd.helpMsg)
