@@ -145,8 +145,6 @@ func main() {
 	c.Handle("receipt", receipt)
 	c.Handle("backupwallet", backupwallet)
 
-	c.Handle("getraw", getraw)
-
 	// transaction commands
 	c.Handle("newtx", newtx)
 	c.Handle("rmtx", rmtx)
