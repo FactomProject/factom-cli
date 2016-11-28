@@ -140,6 +140,10 @@ func main() {
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
 	c.Handle("backupwallet", backupwallet)
+	c.Handle("dblock-by-height", dblockByHeight)
+	c.Handle("ablock-by-height", ablockByHeight)
+	c.Handle("ecblock-by-height", ecblockByHeight)
+	c.Handle("fblock-by-height", fblockByHeight)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
