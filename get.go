@@ -16,7 +16,9 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights|walletheight|pendingentries|pendingtransactions|raw"
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|" +
+		"firstentry|head|heights|walletheight|pendingentries|" +
+		"pendingtransactions|raw|dbheight|abheight|fbheight|ecbheight"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -35,6 +37,10 @@ var get = func() *fctCmd {
 		c.Handle("firstentry", getFirstEntry)
 		c.Handle("pendingentries", getPendingEntries)
 		c.Handle("pendingtransactions", getPendingTransactions)
+		c.Handle("dbheight", dbheight)
+		c.Handle("abheight", abheight)
+		c.Handle("ecbheight", ecbheight)
+		c.Handle("fbheight", fbheight)
 		c.Handle("raw", getraw)
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)

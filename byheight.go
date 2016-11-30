@@ -15,9 +15,9 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-var dblockByHeight = func() *fctCmd {
+var dbheight = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli dblock-by-height height"
+	cmd.helpMsg = "factom-cli dbheight HEIGHT"
 	cmd.description = "Returns dblock by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -52,13 +52,13 @@ var dblockByHeight = func() *fctCmd {
 
 		fmt.Printf("%s\n", out.Bytes())
 	}
-	help.Add("dblock-by-height", cmd)
+	help.Add("get dbheight", cmd)
 	return cmd
 }()
 
-var ablockByHeight = func() *fctCmd {
+var abheight = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli ablock-by-height height"
+	cmd.helpMsg = "factom-cli abheight HEIGHT"
 	cmd.description = "Returns ablock by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -93,13 +93,13 @@ var ablockByHeight = func() *fctCmd {
 
 		fmt.Printf("%s\n", out.Bytes())
 	}
-	help.Add("ablock-by-height", cmd)
+	help.Add("get abheight", cmd)
 	return cmd
 }()
 
-var ecblockByHeight = func() *fctCmd {
+var ecbheight = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli ecblock-by-height height"
+	cmd.helpMsg = "factom-cli ecbheight HEIGHT"
 	cmd.description = "Returns ecblock by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -134,13 +134,13 @@ var ecblockByHeight = func() *fctCmd {
 
 		fmt.Printf("%s\n", out.Bytes())
 	}
-	help.Add("ecblock-by-height", cmd)
+	help.Add("get ecbheight", cmd)
 	return cmd
 }()
 
-var fblockByHeight = func() *fctCmd {
+var fbheight = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli fblock-by-height height"
+	cmd.helpMsg = "factom-cli fbheight HEIGHT"
 	cmd.description = "Returns fblock by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -175,6 +175,6 @@ var fblockByHeight = func() *fctCmd {
 
 		fmt.Printf("%s\n", out.Bytes())
 	}
-	help.Add("fblock-by-height", cmd)
+	help.Add("get fbheight", cmd)
 	return cmd
 }()
