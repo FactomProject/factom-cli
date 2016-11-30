@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/FactomProject/factom"
@@ -89,8 +90,15 @@ func factoshiToFactoid(v interface{}) string {
 	if err != nil {
 		return ""
 	}
-	f := float64(value) / 1e8
-	return strconv.FormatFloat(f, 'f', -1, 64)
+	d := value / 1e8
+	r := value % 1e8
+	ds := fmt.Sprintf("%d", d)
+	rs := fmt.Sprintf("%08d", r)
+	rs = strings.TrimRight(rs, "0")
+	if len(rs) > 0 {
+		ds = ds + "."
+	}
+	return fmt.Sprintf("%s%s", ds, rs)
 }
 
 // nametoid computes a chainid from the chain name components

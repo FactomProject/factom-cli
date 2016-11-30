@@ -1,0 +1,44 @@
+package: github.com/FactomProject/factom-cli
+homepage: https://github.com/FactomProject/factom-cli
+license: MIT
+owners:
+- name: Mahesh Paolini-Subramanya
+  email: mahesh@factom.com
+  homepage: https://factom.com
+import:
+- package: github.com/FactomProject/basen
+  version: master
+- package: github.com/FactomProject/btcutil
+  version: develop
+  subpackages:
+  - base58
+  - certs
+- package: github.com/FactomProject/btcutilecc
+  version: master
+- package: github.com/FactomProject/cli
+  version: master
+- package: github.com/FactomProject/ed25519
+  version: master
+- package: github.com/FactomProject/factom
+  version: develop
+  subpackages:
+  - wallet
+  - wallet/wsapi
+- package: github.com/FactomProject/factomd
+  version: develop
+  subpackages:
+  - util
+- package: github.com/FactomProject/go-bip32
+  version: master
+- package: github.com/FactomProject/go-bip39
+  version: develop
+- package: github.com/FactomProject/go-simplejson
+  version: master
+- package: github.com/FactomProject/netki-go-partner-client
+  version: master
+- package: golang.org/x/crypto
+  version: master
+- package: gopkg.in/gcfg.v1
+  version: master
+- package: gopkg.in/warnings.v0
+  version: master

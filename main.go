@@ -19,7 +19,6 @@ const Version = "0.2.0.0"
 
 func main() {
 	var (
-		hflag              = flag.Bool("h", false, "help")
 		walletRpcUser      = flag.String("walletuser", "", "Username for API connections to factom-walletd")
 		walletRpcPassword  = flag.String("walletpassword", "", "Password for API connections to factom-walletd")
 		factomdRpcUser     = flag.String("factomduser", "", "Username for API connections to factomd")
@@ -115,9 +114,6 @@ func main() {
 
 	args := flag.Args()
 
-	if *hflag {
-		args = []string{"help"}
-	}
 	factom.SetFactomdServer(*factomdLocation)
 	factom.SetWalletServer(*walletdLocation)
 	factom.SetFactomdRpcConfig(*factomdRpcUser, *factomdRpcPassword)
@@ -144,6 +140,7 @@ func main() {
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
 	c.Handle("backupwallet", backupwallet)
+	c.Handle("rmaddress", removeAddress)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
