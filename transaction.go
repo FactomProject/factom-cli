@@ -18,7 +18,7 @@ import (
 var newtx = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli newtx [-q] TXNAME"
-	cmd.description = "Create a new transaction in the wallet"
+	cmd.description = "Create a new transaction in the wallet. -q quiet."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		qflag := flag.Bool("q", false, "quiet mode; no output")
@@ -75,7 +75,8 @@ var rmtx = func() *fctCmd {
 var addtxinput = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli addtxinput [-q] TXNAME ADDRESS AMOUNT"
-	cmd.description = "Add a Factoid input to a transaction in the wallet"
+	cmd.description = "Add a Factoid input to a transaction in the wallet. -q" +
+		" quiet."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		qflag := flag.Bool("q", false, "quiet mode; no output")
@@ -117,10 +118,11 @@ var addtxinput = func() *fctCmd {
 var addtxoutput = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli addtxoutput [-rq] TXNAME ADDRESS AMOUNT"
-	cmd.description = "Add a Factoid output to a transaction in the wallet"
+	cmd.description = "Add a Factoid output to a transaction in the wallet." +
+		" -r Netki DNS resolve. -q quiet."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		res := flag.Bool("r", false, "resolve dns address")
+		res := flag.Bool("r", false, "resolve DNS address from Netki")
 		qflag := flag.Bool("q", false, "quiet mode; no output")
 		flag.Parse()
 		args = flag.Args()
@@ -173,10 +175,10 @@ var addtxecoutput = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli addtxecoutput [-r] TXNAME ADDRESS AMOUNT"
 	cmd.description = "Add an Entry Credit output to a transaction in the" +
-		" wallet"
+		" wallet. -r Netki DNS resolve. -q quiet."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		res := flag.Bool("r", false, "resolve dns address")
+		res := flag.Bool("r", false, "resolve DNS address from Netki")
 		qflag := flag.Bool("q", false, "quiet mode; no output")
 		flag.Parse()
 		args = flag.Args()
@@ -229,7 +231,7 @@ var addtxfee = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli addtxfee [-q] TXNAME ADDRESS"
 	cmd.description = "Add the transaction fee to an input of a transaction" +
-		" in the wallet"
+		" in the wallet. -q quiet."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		qflag := flag.Bool("q", false, "quiet mode; no output")
@@ -294,7 +296,7 @@ var listtxs = func() *fctCmd {
 var listtxsall = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli listtxs [all] [-T]"
-	cmd.description = "List all transactions from the Factoid Chain"
+	cmd.description = "List all transactions from the Factoid Chain. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool("T", false, "display only the TxID")
@@ -329,7 +331,7 @@ var listtxsaddress = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli listtxs address [-T] ECADDRESS|FCTADDRESS"
 	cmd.description = "List transaction from the Factoid Chain with a" +
-		" specific address"
+		" specific address. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool("T", false, "display only the TxID")
@@ -363,7 +365,7 @@ var listtxsaddress = func() *fctCmd {
 var listtxsid = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli listtxs id TXID"
-	cmd.description = "List transaction from the Factoid Chain"
+	cmd.description = "List transaction from the Factoid Chain. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool("T", false, "display only the TxID")
@@ -396,7 +398,8 @@ var listtxsid = func() *fctCmd {
 var listtxsname = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli listtxs name TXNAME"
-	cmd.description = "Show a current working transaction in the wallet"
+	cmd.description = "Show a current working transaction in the wallet. -T" +
+		" TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool("T", false, "display transaction txid only")
@@ -434,7 +437,7 @@ var listtxsrange = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli listtxs range [-T] START END"
 	cmd.description = "List the transactions from the Factoid Chain within" +
-		" the specified range"
+		" the specified range. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool("T", false, "display only the TxID")
@@ -478,7 +481,8 @@ var listtxsrange = func() *fctCmd {
 var listtxstmp = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli listtxs tmp"
-	cmd.description = "List current working transactions in the wallet"
+	cmd.description = "List current working transactions in the wallet. -N" +
+		" Names."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		ndisp := flag.Bool("N", false, "display transaction names only")
@@ -507,7 +511,7 @@ var subtxfee = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli subtxfee [-q] TXNAME ADDRESS"
 	cmd.description = "Subtract the transaction fee from an output of a" +
-		" transaction in the wallet"
+		" transaction in the wallet. -q quiet."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		qflag := flag.Bool("q", false, "quiet mode; no output")
@@ -540,7 +544,7 @@ var subtxfee = func() *fctCmd {
 var signtx = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli signtx [-qT] TXNAME"
-	cmd.description = "Sign a transaction in the wallet"
+	cmd.description = "Sign a transaction in the wallet. -q quiet. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		qflag := flag.Bool("q", false, "quiet mode; no output")
@@ -601,10 +605,12 @@ var composetx = func() *fctCmd {
 // sendtx composes and sends the signed transaction to factomd
 var sendtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sendtx TXNAME"
+	cmd.helpMsg = "factom-cli sendtx [-qT] TXNAME"
 	cmd.description = "Send a Transaction to Factom"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		qflag := flag.Bool("q", false, "quiet mode; no output")
+		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
 
@@ -617,7 +623,15 @@ var sendtx = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("TxID:", t)
+		// output
+		switch {
+		// quiet mode; don't print anything
+		case *qflag:
+		case *tdisp:
+			fmt.Println(t)
+		default:
+			fmt.Println("TxID:", t)
+		}
 	}
 	help.Add("sendtx", cmd)
 	return cmd
