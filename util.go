@@ -8,8 +8,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 // exidCollector accumulates the external ids from the command line -e and -E
