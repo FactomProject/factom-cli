@@ -108,6 +108,11 @@ var addentry = func() *fctCmd {
 	return cmd
 }()
 
+type entryRequest struct {
+	Entry factom.Entry `json:"entry"`
+	ECPub string       `json:"ecpub"`
+}
+
 var composeentry = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli composeentry -c CHAINID [-e EXTID1 -e EXTID2 -E BEEF1D ...] ECADDRESS <STDIN>"
@@ -155,42 +160,14 @@ var composeentry = func() *fctCmd {
 			e.Content = p
 		}
 
-		if !factom.ChainExists(e.ChainID) {
-			errorln("Chain", e.ChainID, "was not found")
-			return
-		}
-
-		// get the ec address from the wallet
-		ec, err := factom.FetchECAddress(ecpub)
+		commit, reveal, err := factom.WalletComposeEntryCommitReveal(e, ecpub)
 		if err != nil {
 			errorln(err)
 			return
 		}
 
-		// check ec address balance
-		balance, err := factom.GetECBalance(ecpub)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		if balance == 0 {
-			errorln("Entry Credit balance is zero")
-			return
-		}
-
-		j, err := factom.ComposeEntryCommit(e, ec)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		fmt.Println(j)
-
-		j, err = factom.ComposeEntryReveal(e)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		fmt.Println(j)
+		fmt.Println(commit)
+		fmt.Println(reveal)
 	}
 	help.Add("composeentry", cmd)
 	return cmd
