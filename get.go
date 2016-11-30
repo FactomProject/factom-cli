@@ -344,14 +344,14 @@ var getHeights = func() *fctCmd {
 var getWalletHeight = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get walletheight"
-	cmd.description = "Get the current heights of the wallet"
+	cmd.description = "Get the number of factoid blocks factom-walletd has cached"
 	cmd.execFunc = func(args []string) {
 		height, err := factom.GetWalletHeight()
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Printf("Wallet Height: %v\n", height)
+		fmt.Printf("WalletHeight: %v\n", height)
 	}
 	help.Add("get walletheight", cmd)
 	return cmd
