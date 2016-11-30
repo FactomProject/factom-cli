@@ -16,7 +16,7 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights|pendingentries|pendingtransactions|raw"
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|firstentry|head|heights|walletheight|pendingentries|pendingtransactions|raw"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -27,6 +27,7 @@ var get = func() *fctCmd {
 		c.Handle("allentries", getAllEntries)
 		c.Handle("head", getHead)
 		c.Handle("heights", getHeights)
+		c.Handle("walletheight", getWalletHeight)
 		c.Handle("dblock", getDBlock)
 		c.Handle("chainhead", getChainHead)
 		c.Handle("eblock", getEBlock)
@@ -337,6 +338,22 @@ var getHeights = func() *fctCmd {
 		fmt.Println(height.String())
 	}
 	help.Add("get heights", cmd)
+	return cmd
+}()
+
+var getWalletHeight = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get walletheight"
+	cmd.description = "Get the number of factoid blocks factom-walletd has cached"
+	cmd.execFunc = func(args []string) {
+		height, err := factom.GetWalletHeight()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Printf("WalletHeight: %v\n", height)
+	}
+	help.Add("get walletheight", cmd)
 	return cmd
 }()
 
