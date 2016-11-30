@@ -52,9 +52,6 @@ var addentry = func() *fctCmd {
 		}
 		e.ChainID = *cid
 
-		//for _, id := range eids {
-		//	e.ExtIDs = append(e.ExtIDs, []byte(id))
-		//}
 		e.ExtIDs = exidCollector
 
 		// Entry.Content is read from stdin
@@ -96,7 +93,7 @@ var addentry = func() *fctCmd {
 			}
 		}
 
-		// commit the chain
+		// commit entry
 		txid, err := factom.CommitEntry(e, ec)
 		if err != nil {
 			errorln(err)
@@ -104,14 +101,7 @@ var addentry = func() *fctCmd {
 		}
 		fmt.Println("CommitTxID:", txid)
 
-		if !*fflag {
-			if _, err := waitOnCommitAck(txid); err != nil {
-				errorln(err)
-				return
-			}
-		}
-
-		// reveal chain
+		// reveal entry
 		hash, err := factom.RevealEntry(e)
 		if err != nil {
 			errorln(err)
@@ -121,6 +111,10 @@ var addentry = func() *fctCmd {
 		fmt.Println("Entryhash:", hash)
 
 		if !*fflag {
+			if _, err := waitOnCommitAck(txid); err != nil {
+				errorln(err)
+				return
+			}
 			if _, err := waitOnRevealAck(txid); err != nil {
 				errorln(err)
 				return
