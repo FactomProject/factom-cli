@@ -15,7 +15,7 @@ import (
 var signmessage = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli signmessage ADDRESS 'message'"
-	cmd.description = "Sign the message with the given Factoid address"
+	cmd.description = "Sign the message with the given Factoid or EntryCredit address"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -45,7 +45,7 @@ var signmessage = func() *fctCmd {
 var verifymessage = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli verifymessage ADDRESS 'signature' 'message'"
-	cmd.description = "Verify the signature for the given message and Factoid address"
+	cmd.description = "Verify the signature for the given message and Factoid or EntryCredit address"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
