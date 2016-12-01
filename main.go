@@ -143,6 +143,8 @@ func main() {
 	c.Handle("newfctaddress", newfctaddress)
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
+	c.Handle("signmessage", signmessage)
+	c.Handle("verifymessage", verifymessage)
 	c.Handle("backupwallet", backupwallet)
 
 	// transaction commands
