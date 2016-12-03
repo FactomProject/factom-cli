@@ -606,7 +606,7 @@ var composetx = func() *fctCmd {
 var sendtx = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli sendtx [-fqT] TXNAME"
-	cmd.description = "Send a Transaction to Factom"
+	cmd.description = "Send a Transaction to Factomd. -f Force. -q Quiet. -T TxID"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		fflag := flag.Bool(
@@ -638,7 +638,7 @@ var sendtx = func() *fctCmd {
 		default:
 			fmt.Println("TxID:", tx.TxID)
 		}
-		
+
 		// wait for the transaction to be acknowledged by the server
 		if !*fflag {
 			s, err := waitOnFctAck(tx.TxID)
@@ -646,7 +646,7 @@ var sendtx = func() *fctCmd {
 				errorln(err)
 				return
 			}
-			if !*qflag {
+			if !*qflag && !*tdisp {
 				fmt.Println("Status:", s)
 			}
 		}
@@ -658,8 +658,9 @@ var sendtx = func() *fctCmd {
 // sendfct sends factoids between 2 addresses
 var sendfct = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli sendfct [-fT] FROMADDRESS TOADDRESS AMOUNT"
-	cmd.description = "Send Factoids between 2 addresses"
+	cmd.helpMsg = "factom-cli sendfct [-fqrT] FROMADDRESS TOADDRESS AMOUNT"
+	cmd.description = "Send Factoids between 2 addresses. -f Force. -q Quiet. " +
+		"-r Netki DNS resolve. -T TxID"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")
@@ -669,6 +670,7 @@ var sendfct = func() *fctCmd {
 			"force the transaction to be sent without acknowledgement or"+
 				" balance checks",
 		)
+		qflag := flag.Bool("q", false, "quiet mode; no output")
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
@@ -705,6 +707,7 @@ var sendfct = func() *fctCmd {
 		}
 
 		switch {
+		case *qflag:
 		case *tdisp:
 			fmt.Println(tx.TxID)
 		default:
@@ -718,7 +721,9 @@ var sendfct = func() *fctCmd {
 				errorln(err)
 				return
 			}
-			fmt.Println("Status:", s)
+			if !*qflag && !*tdisp {
+				fmt.Println("Status:", s)
+			}
 		}
 	}
 	help.Add("sendfct", cmd)
@@ -728,8 +733,9 @@ var sendfct = func() *fctCmd {
 // buyec sends factoids between 2 addresses
 var buyec = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli buyec [-fT] FCTADDRESS ECADDRESS ECAMOUNT"
-	cmd.description = "Buy entry credits"
+	cmd.helpMsg = "factom-cli buyec [-fqrT] FCTADDRESS ECADDRESS ECAMOUNT"
+	cmd.description = "Buy ECAMOUNT number of entry credits. -f Force. " +
+		"-q Quiet. -r Netki DNS resolve. -T TxID"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")
@@ -739,6 +745,7 @@ var buyec = func() *fctCmd {
 			"force the transaction to be sent without acknowledgement or"+
 				" balance checks",
 		)
+		qflag := flag.Bool("q", false, "quiet mode; no output")
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
 		args = flag.Args()
@@ -780,6 +787,7 @@ var buyec = func() *fctCmd {
 			return
 		}
 		switch {
+		case *qflag:
 		case *tdisp:
 			fmt.Println(tx.TxID)
 		default:
@@ -793,7 +801,9 @@ var buyec = func() *fctCmd {
 				errorln(err)
 				return
 			}
-			fmt.Println("Status:", s)
+			if !*qflag && !*tdisp {
+				fmt.Println("Status:", s)
+			}
 		}
 	}
 	help.Add("buyec", cmd)
