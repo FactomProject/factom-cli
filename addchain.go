@@ -169,49 +169,17 @@ var composechain = func() *fctCmd {
 			e.Content = p
 		}
 
-		// get the ec address from the wallet
-		ec, err := factom.FetchECAddress(ecpub)
-		if err != nil {
-			errorln(err)
-			return
-		}
-
 		c := factom.NewChain(e)
 
-		if !*fflag {
-			if factom.ChainExists(c.ChainID) {
-				errorln("Chain", c.ChainID, "already exists")
-				return
-			}
-
-			// check ec address balance
-			balance, err := factom.GetECBalance(ecpub)
-			if err != nil {
-				errorln(err)
-				return
-			}
-			if cost, err := factom.EntryCost(c.FirstEntry); err != nil {
-				errorln(err)
-				return
-			} else if balance < int64(cost)+10 {
-				errorln("Not enough Entry Credits")
-				return
-			}
-		}
-
-		j, err := factom.ComposeChainCommit(c, ec)
+		commit, reveal, err := factom.WalletComposeChainCommitReveal(c, ecpub)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println(j)
 
-		j, err = factom.ComposeChainReveal(c)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		fmt.Println(j)
+		fmt.Println(commit)
+		fmt.Println(reveal)
+
 	}
 	help.Add("composechain", cmd)
 	return cmd
