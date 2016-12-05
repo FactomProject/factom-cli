@@ -15,7 +15,7 @@ import (
 
 var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addchain [-f -e EXTID1 -e EXTID2 -E BINEXTID3" +
+	cmd.helpMsg = "factom-cli addchain [-f -e EXTID1 -e EXTID2 -x BINEXTID3" +
 		" ...] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Chain. Read data for the First" +
 		" Entry from stdin. Use the Entry Credits from the specified address."
@@ -27,7 +27,7 @@ var addchain = func() *fctCmd {
 		os.Args = args
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
-		flag.Var(&eHex, "E", "external id for the entry in hex")
+		flag.Var(&eHex, "x", "external id for the entry in hex")
 		fflag := flag.Bool(
 			"f",
 			false,
@@ -125,7 +125,7 @@ var addchain = func() *fctCmd {
 
 var composechain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composechain [-f -e EXTID1 -e EXTID2 -E" +
+	cmd.helpMsg = "factom-cli composechain [-f -e EXTID1 -e EXTID2 -x" +
 		" BINEXTID3 ...] ECADDRESS <STDIN>"
 	cmd.description = "Create API calls to create a new Factom Chain. Read" +
 		" data for the First Entry from stdin. Use the Entry Credits from the" +
@@ -138,7 +138,7 @@ var composechain = func() *fctCmd {
 		os.Args = args
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
-		flag.Var(&eHex, "E", "external id for the entry in hex")
+		flag.Var(&eHex, "x", "external id for the entry in hex")
 		fflag := flag.Bool(
 			"f",
 			false,

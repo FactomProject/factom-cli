@@ -100,26 +100,27 @@ var addentry = func() *fctCmd {
 			return
 		}
 		fmt.Println("CommitTxID:", txid)
-
+		if !*fflag {
+			if _, err := waitOnCommitAck(txid); err != nil {
+				errorln(err)
+				return
+			}
+		}
 		// reveal entry
 		hash, err := factom.RevealEntry(e)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println("ChainID:", *cid)
-		fmt.Println("Entryhash:", hash)
-
 		if !*fflag {
-			if _, err := waitOnCommitAck(txid); err != nil {
-				errorln(err)
-				return
-			}
 			if _, err := waitOnRevealAck(txid); err != nil {
 				errorln(err)
 				return
 			}
 		}
+		fmt.Println("ChainID:", *cid)
+		fmt.Println("Entryhash:", hash)
+
 	}
 	help.Add("addentry", cmd)
 	return cmd
