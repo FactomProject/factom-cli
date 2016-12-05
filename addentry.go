@@ -179,7 +179,7 @@ var composeentry = func() *fctCmd {
 			e.Content = p
 		}
 
-		commit, reveal, err := factom.WalletComposeEntryCommitReveal(e, ecpub)
+		commit, reveal, err := factom.WalletComposeEntryCommitReveal(e, ecpub, *fflag)
 		if err != nil {
 			errorln(err)
 			return

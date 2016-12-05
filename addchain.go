@@ -171,7 +171,7 @@ var composechain = func() *fctCmd {
 
 		c := factom.NewChain(e)
 
-		commit, reveal, err := factom.WalletComposeChainCommitReveal(c, ecpub)
+		commit, reveal, err := factom.WalletComposeChainCommitReveal(c, ecpub, *fflag)
 		if err != nil {
 			errorln(err)
 			return
