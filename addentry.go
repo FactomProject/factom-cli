@@ -35,6 +35,10 @@ var addentry = func() *fctCmd {
 			"force the entry to commit and reveal without waiting on any"+
 				" acknowledgement checks",
 		)
+		cdisp := flag.Bool("C", false, "display only the ChainID")
+		edisp := flag.Bool("E", false, "display only the Entry Hash")
+		tdisp := flag.Bool("T", false, "display only the TxID")
+
 		flag.Parse()
 		args = flag.Args()
 
@@ -43,6 +47,12 @@ var addentry = func() *fctCmd {
 			return
 		}
 		ecpub := args[0]
+
+		// display normal output iff no display flags are set
+		display := true
+		if *cdisp || *edisp || *tdisp {
+			display = false
+		}
 
 		e := new(factom.Entry)
 
@@ -99,7 +109,12 @@ var addentry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("CommitTxID:", txid)
+		if display {
+			fmt.Println("CommitTxID:", txid)
+		} else if *tdisp {
+			fmt.Println(txid)
+		}
+
 		if !*fflag {
 			if _, err := waitOnCommitAck(txid); err != nil {
 				errorln(err)
@@ -118,8 +133,15 @@ var addentry = func() *fctCmd {
 				return
 			}
 		}
-		fmt.Println("ChainID:", *cid)
-		fmt.Println("Entryhash:", hash)
+		if display {
+			fmt.Println("ChainID:", e.ChainID)
+			fmt.Println("Entryhash:", hash)
+		} else if *cdisp {
+			fmt.Println(e.ChainID)
+		} else if *edisp {
+			fmt.Println(hash)
+		}
+
 
 	}
 	help.Add("addentry", cmd)
