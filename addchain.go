@@ -34,6 +34,9 @@ var addchain = func() *fctCmd {
 			"force the chain to commit and reveal without waiting on any"+
 				" acknowledgement checks",
 		)
+		tdisp := flag.Bool("T", false, "display only the TxID")
+		cdisp := flag.Bool("C", false, "display only the ChainID")
+		edisp := flag.Bool("E", false, "display only the Entry Hash")
 		flag.Parse()
 		args = flag.Args()
 
@@ -42,6 +45,12 @@ var addchain = func() *fctCmd {
 			return
 		}
 		ecpub := args[0]
+		
+		// display normal output iff no display flags are set
+		display := true
+		if *tdisp || *cdisp || *edisp {
+			display = false
+		}
 
 		e := new(factom.Entry)
 
@@ -94,7 +103,11 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("CommitTxID:", txid)
+		if display {
+			fmt.Println("CommitTxID:", txid)
+		} else if *tdisp {
+			fmt.Println(txid)
+		}
 
 		if !*fflag {
 			if _, err := waitOnCommitAck(txid); err != nil {
@@ -109,8 +122,14 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("ChainID:", c.ChainID)
-		fmt.Println("Entryhash:", hash)
+		if display {
+			fmt.Println("ChainID:", c.ChainID)
+			fmt.Println("Entryhash:", hash)
+		} else if *cdisp {
+			fmt.Println(c.ChainID)
+		} else if *edisp {
+			fmt.Println(hash)
+		}
 
 		if !*fflag {
 			if _, err := waitOnRevealAck(txid); err != nil {
