@@ -25,16 +25,29 @@ var addentry = func() *fctCmd {
 			cid   = flag.String("c", "", "hex encoded chainid for the entry")
 			eAcii extidsASCII
 			eHex  extidsHex
+			nAcii namesASCII
+			nHex  namesHex
 		)
+
+		// -e -x extids
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "x", "external id for the entry in hex")
+
+		// -n -h names
+		nameCollector = make([][]byte, 0)
+		flag.Var(&nAcii, "n", "ascii name component")
+		flag.Var(&nHex, "h", "hex binary name component")
+
+		// -f force
 		fflag := flag.Bool(
 			"f",
 			false,
 			"force the entry to commit and reveal without waiting on any"+
 				" acknowledgement checks",
 		)
+
+		// -CET display flags
 		cdisp := flag.Bool("C", false, "display only the ChainID")
 		edisp := flag.Bool("E", false, "display only the Entry Hash")
 		tdisp := flag.Bool("T", false, "display only the TxID")
@@ -56,11 +69,15 @@ var addentry = func() *fctCmd {
 
 		e := new(factom.Entry)
 
-		if *cid == "" {
+		// set the chainid from -c or from -n -h
+		if *cid != "" {
+			e.ChainID = *cid
+		} else if len(nameCollector) != 0 {
+			e.ChainID = nametoid(nameCollector)
+		} else {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		e.ChainID = *cid
 
 		e.ExtIDs = exidCollector
 
@@ -160,16 +177,28 @@ var composeentry = func() *fctCmd {
 			cid   = flag.String("c", "", "hex encoded chainid for the entry")
 			eAcii extidsASCII
 			eHex  extidsHex
+			nAcii namesASCII
+			nHex  namesHex
 		)
+
+		// -e -x extids
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
 		flag.Var(&eHex, "x", "external id for the entry in hex")
+
+		// -n -h names
+		nameCollector = make([][]byte, 0)
+		flag.Var(&nAcii, "n", "ascii name component")
+		flag.Var(&nHex, "h", "hex binary name component")
+
+		// -f force
 		fflag := flag.Bool(
 			"f",
 			false,
 			"force the entry to commit and reveal without waiting on any"+
 				" acknowledgement checks",
 		)
+
 		flag.Parse()
 		args = flag.Args()
 
@@ -181,11 +210,15 @@ var composeentry = func() *fctCmd {
 
 		e := new(factom.Entry)
 
-		if *cid == "" {
+		// set the chainid from -c or from -n -h
+		if *cid != "" {
+			e.ChainID = *cid
+		} else if len(nameCollector) != 0 {
+			e.ChainID = nametoid(nameCollector)
+		} else {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		e.ChainID = *cid
 
 		e.ExtIDs = exidCollector
 
