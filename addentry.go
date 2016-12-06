@@ -15,8 +15,8 @@ import (
 
 var addentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addentry -c CHAINID [-f -e EXTID1 -e EXTID2 -E" +
-		" BEEF1D ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addentry [-CET] -c CHAINID [-f -e EXTID1" +
+		" -e EXTID2 -x HEXEXTID ...] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Entry. Read data for the Entry" +
 		" from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
@@ -28,7 +28,7 @@ var addentry = func() *fctCmd {
 		)
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
-		flag.Var(&eHex, "E", "external id for the entry in hex")
+		flag.Var(&eHex, "x", "external id for the entry in hex")
 		fflag := flag.Bool(
 			"f",
 			false,
@@ -141,7 +141,6 @@ var addentry = func() *fctCmd {
 		} else if *edisp {
 			fmt.Println(hash)
 		}
-
 
 	}
 	help.Add("addentry", cmd)

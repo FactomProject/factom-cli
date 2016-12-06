@@ -15,8 +15,8 @@ import (
 
 var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addchain [-f -e EXTID1 -e EXTID2 -x BINEXTID3" +
-		" ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addchain [-CET] [-f -e EXTID1 -e EXTID2" +
+		" -x HEXEXTID ...] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Chain. Read data for the First" +
 		" Entry from stdin. Use the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
@@ -45,7 +45,7 @@ var addchain = func() *fctCmd {
 			return
 		}
 		ecpub := args[0]
-		
+
 		// display normal output iff no display flags are set
 		display := true
 		if *tdisp || *cdisp || *edisp {
