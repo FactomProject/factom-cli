@@ -144,8 +144,8 @@ var addchain = func() *fctCmd {
 
 var composechain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composechain [-f -e EXTID1 -e EXTID2 -x" +
-		" BINEXTID3 ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli composechain [-f -e EXTID1 -e EXTID2" +
+		" -x HEXEXTID ...] ECADDRESS <STDIN>"
 	cmd.description = "Create API calls to create a new Factom Chain. Read" +
 		" data for the First Entry from stdin. Use the Entry Credits from the" +
 		" specified address."

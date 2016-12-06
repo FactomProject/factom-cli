@@ -150,7 +150,7 @@ var addentry = func() *fctCmd {
 var composeentry = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli composeentry -c CHAINID [-f -e EXTID1 -e EXTID2" +
-		" -E BEEF1D ...] ECADDRESS <STDIN>"
+		" -x HEXEXTID ...] ECADDRESS <STDIN>"
 	cmd.description = "Create API calls to create a new Factom Entry. Read" +
 		" data for the Entry from stdin. Use the Entry Credits from the" +
 		" specified address."
@@ -163,7 +163,7 @@ var composeentry = func() *fctCmd {
 		)
 		exidCollector = make([][]byte, 0)
 		flag.Var(&eAcii, "e", "external id for the entry in ascii")
-		flag.Var(&eHex, "E", "external id for the entry in hex")
+		flag.Var(&eHex, "x", "external id for the entry in hex")
 		fflag := flag.Bool(
 			"f",
 			false,
