@@ -87,16 +87,11 @@ var addtxinput = func() *fctCmd {
 			return
 		}
 
-		var amt uint64
-		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
-			errorln(err)
-		} else if i < 0 {
-			errorln("AMOUNT may not be less than 0")
-		} else {
-			amt = uint64(i * 1e8)
-		}
-
-		tx, err := factom.AddTransactionInput(args[0], args[1], amt)
+		tx, err := factom.AddTransactionInput(
+			args[0],
+			args[1],
+			factom.FactoidToFactoshi(args[2]),
+		)
 		if err != nil {
 			errorln(err)
 			return
@@ -131,15 +126,6 @@ var addtxoutput = func() *fctCmd {
 			return
 		}
 
-		var amt uint64
-		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
-			errorln(err)
-		} else if i < 0 {
-			errorln("AMOUNT may not be less than 0")
-		} else {
-			amt = uint64(i * 1e8)
-		}
-
 		out := args[1]
 		if *res {
 			if f, _, err := factom.ResolveDnsName(args[1]); err != nil {
@@ -152,7 +138,11 @@ var addtxoutput = func() *fctCmd {
 			}
 		}
 
-		tx, err := factom.AddTransactionOutput(args[0], out, amt)
+		tx, err := factom.AddTransactionOutput(
+			args[0],
+			out,
+			factom.FactoidToFactoshi(args[2]),
+		)
 		if err != nil {
 			errorln(err)
 			return
@@ -187,15 +177,6 @@ var addtxecoutput = func() *fctCmd {
 			return
 		}
 
-		var amt uint64
-		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
-			errorln(err)
-		} else if i < 0 {
-			errorln("AMOUNT may not be less than 0")
-		} else {
-			amt = uint64(i * 1e8)
-		}
-
 		out := args[1]
 		if *res {
 			if _, e, err := factom.ResolveDnsName(args[1]); err != nil {
@@ -208,7 +189,11 @@ var addtxecoutput = func() *fctCmd {
 			}
 		}
 
-		tx, err := factom.AddTransactionECOutput(args[0], out, amt)
+		tx, err := factom.AddTransactionECOutput(
+			args[0],
+			out,
+			factom.FactoidToFactoshi(args[2]),
+		)
 		if err != nil {
 			errorln(err)
 			return
@@ -691,16 +676,11 @@ var sendfct = func() *fctCmd {
 			tofc = f
 		}
 
-		var amt uint64
-		if i, err := strconv.ParseFloat(args[2], 64); err != nil {
-			errorln(err)
-		} else if i < 0 {
-			errorln("AMOUNT may not be less than 0")
-		} else {
-			amt = uint64(i * 1e8)
-		}
-
-		tx, err := factom.SendFactoid(args[0], tofc, amt)
+		tx, err := factom.SendFactoid(
+			args[0],
+			tofc,
+			factom.FactoidToFactoshi(args[2]),
+		)
 		if err != nil {
 			errorln(err)
 			return
