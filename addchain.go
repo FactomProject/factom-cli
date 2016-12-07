@@ -196,8 +196,16 @@ var composechain = func() *fctCmd {
 			return
 		}
 
-		fmt.Println(commit)
-		fmt.Println(reveal)
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+commit.String()+"'",
+			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+		)
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+reveal.String()+"'",
+			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+		)
 
 	}
 	help.Add("composechain", cmd)

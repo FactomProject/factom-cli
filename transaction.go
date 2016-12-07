@@ -596,7 +596,11 @@ var composetx = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println(string(p))
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+string(p)+"'",
+			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+		)
 	}
 	help.Add("composetx", cmd)
 	return cmd
