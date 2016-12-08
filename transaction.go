@@ -173,7 +173,7 @@ var addtxoutput = func() *fctCmd {
 // addtxecoutput adds an entry credit output to a transaction in the wallet.
 var addtxecoutput = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addtxecoutput [-r] TXNAME ADDRESS AMOUNT"
+	cmd.helpMsg = "factom-cli addtxecoutput [-rq] TXNAME ADDRESS AMOUNT"
 	cmd.description = "Add an Entry Credit output to a transaction in the" +
 		" wallet. -r Netki DNS resolve. -q quiet."
 	cmd.execFunc = func(args []string) {
