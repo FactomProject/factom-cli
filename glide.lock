@@ -1,5 +1,5 @@
-hash: 2d18da43bc1de2891aaea278405c86dc10bbac6383752091543ee5fc86013ba5
-updated: 2016-12-05T03:59:29.670401426-06:00
+hash: 5b3de1f2637c9409d87171cb259dc4b1b9ba6e554274b561478b9399b1d55ac4
+updated: 2016-12-08T02:56:01.476656963-06:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -21,12 +21,12 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: a20db97b57934fdfcba832c966a132c34cee32dd
+  version: 82ea84b2375840271429d3db05f9e4a86c3fc04d
   subpackages:
   - wallet
   - wallet/wsapi
 - name: github.com/FactomProject/factomd
-  version: 3ccdd7b13d3ea22e3a11b11b3f8ebe573c22f2b7
+  version: f81520c499fa12d2bae4dadede5ee012cad7c706
   subpackages:
   - common/constants
   - common/interfaces
@@ -34,17 +34,17 @@ imports:
   - log
   - util
 - name: github.com/FactomProject/go-bip32
-  version: 58394f75c1d04ee30972d810015f491b9c7bee02
+  version: 3b593af1c415abc1017648e4eb24a88c32fee0f3
 - name: github.com/FactomProject/go-bip39
   version: b26bf5b8a88111792f0c215417dac76dd5d79e7c
 - name: github.com/FactomProject/go-bip44
-  version: 16882256c7583834d58c3996e63142a7af1bfac5
+  version: fd672f46ddc35bb381f497f7b64c9cf34f9e0703
 - name: github.com/FactomProject/go-simplejson
   version: aabad6e819789e569bd6aabf444c935aa9ba1e44
 - name: github.com/FactomProject/netki-go-partner-client
   version: 426acb535e66cc2f9e6226ae254555e3572fd142
 - name: golang.org/x/crypto
-  version: 8a549a1948fc5271eb24f36dcb0d3b47dec75a16
+  version: 95cb608f365d51e0e69abc646ec90c0e26fb427f
   subpackages:
   - pbkdf2
   - ripemd160
