@@ -118,7 +118,7 @@ var getChainHead = func() *fctCmd {
 	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -h HEXNAME2 ...|CHAINID] [-K]"
 	cmd.description = "Get the Entry Block Head of the specified Chain. -n" +
 		" and -h to specify the chain name. -K to only return the Entry" +
-		" Block Key Merkel Root."
+		" Block Key Merkle Root."
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
@@ -174,7 +174,7 @@ var getChainHead = func() *fctCmd {
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get dblock KEYMR"
-	cmd.description = "Get dblock contents by Key Merkel Root"
+	cmd.description = "Get dblock contents by Key Merkle Root"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -199,7 +199,7 @@ var getDBlock = func() *fctCmd {
 var getEBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get eblock KEYMR"
-	cmd.description = "Get Entry Block by Key Merkel Root"
+	cmd.description = "Get Entry Block by Key Merkle Root"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -301,7 +301,7 @@ var getHead = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get head [-K]"
 	cmd.description = "Get the latest completed Directory Block. -K to only" +
-		" return the Directory Block Key Merkel Root."
+		" return the Directory Block Key Merkle Root."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		kdisp := flag.Bool(
