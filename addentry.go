@@ -15,10 +15,12 @@ import (
 
 var addentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addentry [-CET] -c CHAINID [-f -e EXTID1" +
-		" -e EXTID2 -x HEXEXTID ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addentry [-fq] [-n NAME1 -h HEXNAME2" +
+		" ...|-c CHAINID] [-e EXTID1 -e EXTID2 -x HEXEXTID ...] [-CET]" +
+		" ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Entry. Read data for the Entry" +
-		" from stdin. Use the Entry Credits from the specified address."
+		" from stdin. Use the Entry Credits from the specified address." +
+		" -C ChainID. -E EntryHash. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -36,8 +38,8 @@ var addentry = func() *fctCmd {
 
 		// -n -h names
 		nameCollector = make([][]byte, 0)
-		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "h", "hex binary name component")
+		flag.Var(&nAcii, "n", "ascii name element")
+		flag.Var(&nHex, "h", "hex binary name element")
 
 		// -f force
 		fflag := flag.Bool(
@@ -52,6 +54,9 @@ var addentry = func() *fctCmd {
 		edisp := flag.Bool("E", false, "display only the Entry Hash")
 		tdisp := flag.Bool("T", false, "display only the TxID")
 
+		// -q quiet flags
+		qflag := flag.Bool("q", false, "quiet mode; no output")
+
 		flag.Parse()
 		args = flag.Args()
 
@@ -61,9 +66,9 @@ var addentry = func() *fctCmd {
 		}
 		ecpub := args[0]
 
-		// display normal output iff no display flags are set
+		// display normal output iff no display flags are set and quiet is unspecified
 		display := true
-		if *cdisp || *edisp || *tdisp {
+		if *cdisp || *edisp || *tdisp || *qflag {
 			display = false
 		}
 
@@ -166,8 +171,9 @@ var addentry = func() *fctCmd {
 
 var composeentry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composeentry -c CHAINID [-f -e EXTID1 -e EXTID2" +
-		" -x HEXEXTID ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli composeentry [-f] [-n NAME1 -h HEXNAME2" +
+		" ...|-c CHAINID]  [-e EXTID1 -e EXTID2 -x HEXEXTID ...] ECADDRESS" +
+		" <STDIN>"
 	cmd.description = "Create API calls to create a new Factom Entry. Read" +
 		" data for the Entry from stdin. Use the Entry Credits from the" +
 		" specified address."
@@ -188,8 +194,8 @@ var composeentry = func() *fctCmd {
 
 		// -n -h names
 		nameCollector = make([][]byte, 0)
-		flag.Var(&nAcii, "n", "ascii name component")
-		flag.Var(&nHex, "h", "hex binary name component")
+		flag.Var(&nAcii, "n", "ascii name element")
+		flag.Var(&nHex, "h", "hex binary name element")
 
 		// -f force
 		fflag := flag.Bool(

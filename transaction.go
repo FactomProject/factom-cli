@@ -610,7 +610,7 @@ var composetx = func() *fctCmd {
 var sendtx = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli sendtx [-fqT] TXNAME"
-	cmd.description = "Send a Transaction to Factomd. -f Force. -q Quiet. -T TxID"
+	cmd.description = "Send a Transaction to Factomd. -f force. -q quiet. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		fflag := flag.Bool(
@@ -663,8 +663,8 @@ var sendtx = func() *fctCmd {
 var sendfct = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli sendfct [-fqrT] FROMADDRESS TOADDRESS AMOUNT"
-	cmd.description = "Send Factoids between 2 addresses. -f Force. -q Quiet. " +
-		"-r Netki DNS resolve. -T TxID"
+	cmd.description = "Send Factoids between 2 addresses. -f force. -q quiet. " +
+		"-r Netki DNS resolve. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")
@@ -738,8 +738,8 @@ var sendfct = func() *fctCmd {
 var buyec = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli buyec [-fqrT] FCTADDRESS ECADDRESS ECAMOUNT"
-	cmd.description = "Buy ECAMOUNT number of entry credits. -f Force. " +
-		"-q Quiet. -r Netki DNS resolve. -T TxID"
+	cmd.description = "Buy ECAMOUNT number of entry credits. -f force. " +
+		"-q quiet. -r Netki DNS resolve. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")

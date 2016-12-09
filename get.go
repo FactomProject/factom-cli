@@ -55,8 +55,8 @@ var getAllEntries = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get allentries [-n NAME1 -h HEXNAME2" +
 		" ...|CHAINID] [-E]"
-	cmd.description = "Get all of the Entries in a Chain. -n and -h to" +
-		" specify the chain name. -E to only return the Entry Hashes."
+	cmd.description = "Get all of the Entries confirmed in a Chain. -n and" +
+		" -h to specify the chain name. -E EntryHash."
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
@@ -116,9 +116,8 @@ var getAllEntries = func() *fctCmd {
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -h HEXNAME2 ...|CHAINID] [-K]"
-	cmd.description = "Get the Entry Block Head of the specified Chain. -n" +
-		" and -h to specify the chain name. -K to only return the Entry" +
-		" Block Key Merkle Root."
+	cmd.description = "Get the latest Entry Block of the specified Chain. -n" +
+		" and -h to specify the chain name. -K KeyMR."
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
@@ -249,7 +248,7 @@ var getEntry = func() *fctCmd {
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...|CHAINID] [-E]"
-	cmd.description = "Get the first Entry in a Chain. -E to only return the Entry Hash"
+	cmd.description = "Get the first Entry in a Chain. -E EntryHash"
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
@@ -300,8 +299,7 @@ var getFirstEntry = func() *fctCmd {
 var getHead = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get head [-K]"
-	cmd.description = "Get the latest completed Directory Block. -K to only" +
-		" return the Directory Block Key Merkle Root."
+	cmd.description = "Get the latest completed Directory Block. -K KeyMR."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		kdisp := flag.Bool(
@@ -417,7 +415,7 @@ var getPendingEntries = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingentries [-E]"
 	cmd.description = "Get all pending entries, which may not yet be written" +
-		" to blockchain. -E to only return the Entry Hashes."
+		" to blockchain. -E EntryHash."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		edisp := flag.Bool(
@@ -471,7 +469,7 @@ var getPendingTransactions = func() *fctCmd {
 
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingtransactions [-T]"
-	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain. -T to only return the Transaction ID."
+	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool(

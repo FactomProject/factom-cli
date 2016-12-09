@@ -139,7 +139,7 @@ func waitOnFctAck(txid string) (string, error) {
 		return "", err
 	case s := <-stat:
 		return s, nil
-	case <-time.After(10 * time.Second):
+	case <-time.After(60 * time.Second):
 		return "", fmt.Errorf("timeout: no acknowledgement found")
 	}
 
