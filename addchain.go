@@ -15,10 +15,11 @@ import (
 
 var addchain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addchain [-f -e EXTID1 -e EXTID2 -x BINEXTID3" +
-		" ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli addchain [-fq] [-n NAME1 -n NAME2 -h HEXNAME3" +
+		" ] [-CET] ECADDRESS <STDIN>"
 	cmd.description = "Create a new Factom Chain. Read data for the First" +
-		" Entry from stdin. Use the Entry Credits from the specified address."
+		" Entry from stdin. Use the Entry Credits from the specified address." +
+		" -C ChainID. -E EntryHash. -T TxID."
 	cmd.execFunc = func(args []string) {
 		var (
 			eAcii extidsASCII
@@ -26,14 +27,20 @@ var addchain = func() *fctCmd {
 		)
 		os.Args = args
 		exidCollector = make([][]byte, 0)
-		flag.Var(&eAcii, "e", "external id for the entry in ascii")
-		flag.Var(&eHex, "x", "external id for the entry in hex")
+		flag.Var(&eAcii, "n", "Chain name element in ascii. Also is extid of"+
+			" First Entry")
+		flag.Var(&eHex, "h", "Chain name element in hex. Also is extid of"+
+			" First Entry")
 		fflag := flag.Bool(
 			"f",
 			false,
 			"force the chain to commit and reveal without waiting on any"+
 				" acknowledgement checks",
 		)
+		cdisp := flag.Bool("C", false, "display only the ChainID")
+		edisp := flag.Bool("E", false, "display only the Entry Hash")
+		tdisp := flag.Bool("T", false, "display only the TxID")
+		qflag := flag.Bool("q", false, "quiet mode; no output")
 		flag.Parse()
 		args = flag.Args()
 
@@ -42,6 +49,12 @@ var addchain = func() *fctCmd {
 			return
 		}
 		ecpub := args[0]
+
+		// display normal output iff no display flags are set and quiet is unspecified
+		display := true
+		if *tdisp || *cdisp || *edisp || *qflag {
+			display = false
+		}
 
 		e := new(factom.Entry)
 
@@ -94,7 +107,11 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("CommitTxID:", txid)
+		if display {
+			fmt.Println("CommitTxID:", txid)
+		} else if *tdisp {
+			fmt.Println(txid)
+		}
 
 		if !*fflag {
 			if _, err := waitOnCommitAck(txid); err != nil {
@@ -109,8 +126,14 @@ var addchain = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println("ChainID:", c.ChainID)
-		fmt.Println("Entryhash:", hash)
+		if display {
+			fmt.Println("ChainID:", c.ChainID)
+			fmt.Println("Entryhash:", hash)
+		} else if *cdisp {
+			fmt.Println(c.ChainID)
+		} else if *edisp {
+			fmt.Println(hash)
+		}
 
 		if !*fflag {
 			if _, err := waitOnRevealAck(txid); err != nil {
@@ -125,8 +148,8 @@ var addchain = func() *fctCmd {
 
 var composechain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composechain [-f -e EXTID1 -e EXTID2 -x" +
-		" BINEXTID3 ...] ECADDRESS <STDIN>"
+	cmd.helpMsg = "factom-cli composechain [-f] [-n NAME1 -n NAME2" +
+		" -h HEXNAME3 ] ECADDRESS <STDIN>"
 	cmd.description = "Create API calls to create a new Factom Chain. Read" +
 		" data for the First Entry from stdin. Use the Entry Credits from the" +
 		" specified address."
@@ -137,8 +160,10 @@ var composechain = func() *fctCmd {
 		)
 		os.Args = args
 		exidCollector = make([][]byte, 0)
-		flag.Var(&eAcii, "e", "external id for the entry in ascii")
-		flag.Var(&eHex, "x", "external id for the entry in hex")
+		flag.Var(&eAcii, "n", "Chain name element in ascii. Also is extid of"+
+			" First Entry")
+		flag.Var(&eHex, "h", "Chain name element in hex. Also is extid of"+
+			" First Entry")
 		fflag := flag.Bool(
 			"f",
 			false,
@@ -177,8 +202,16 @@ var composechain = func() *fctCmd {
 			return
 		}
 
-		fmt.Println(commit)
-		fmt.Println(reveal)
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+commit.String()+"'",
+			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+		)
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+reveal.String()+"'",
+			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+		)
 
 	}
 	help.Add("composechain", cmd)
