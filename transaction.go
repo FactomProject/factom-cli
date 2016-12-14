@@ -528,10 +528,15 @@ var subtxfee = func() *fctCmd {
 // signtx signs a transaction in the wallet
 var signtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli signtx [-qT] TXNAME"
+	cmd.helpMsg = "factom-cli signtx [-fqT] TXNAME"
 	cmd.description = "Sign a transaction in the wallet. -q quiet. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the transaction to be signed without fee or balance checks",
+		)
 		qflag := flag.Bool("q", false, "quiet mode; no output")
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
@@ -541,10 +546,21 @@ var signtx = func() *fctCmd {
 			return
 		}
 
-		tx, err := factom.SignTransaction(args[0])
-		if err != nil {
-			errorln(err)
-			return
+		tx := new(factom.Transaction)
+		if *fflag {
+			t, err := factom.ForceSignTransaction(args[0])
+			if err != nil {
+				errorln(err)
+				return
+			}
+			tx = t
+		} else {
+			t, err := factom.SignTransaction(args[0])
+			if err != nil {
+				errorln(err)
+				return
+			}
+			tx = t
 		}
 
 		// output
