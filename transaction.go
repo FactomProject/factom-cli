@@ -547,21 +547,12 @@ var signtx = func() *fctCmd {
 		}
 
 		tx := new(factom.Transaction)
-		if *fflag {
-			t, err := factom.ForceSignTransaction(args[0])
-			if err != nil {
-				errorln(err)
-				return
-			}
-			tx = t
-		} else {
-			t, err := factom.SignTransaction(args[0])
-			if err != nil {
-				errorln(err)
-				return
-			}
-			tx = t
+		t, err := factom.SignTransaction(args[0], *fflag)
+		if err != nil {
+			errorln(err)
+			return
 		}
+		tx = t
 
 		// output
 		switch {
@@ -700,6 +691,7 @@ var sendfct = func() *fctCmd {
 			args[0],
 			tofc,
 			factom.FactoidToFactoshi(args[2]),
+			*fflag,
 		)
 		if err != nil {
 			errorln(err)
@@ -781,7 +773,7 @@ var buyec = func() *fctCmd {
 			amt = uint64(i) * rate
 		}
 
-		tx, err := factom.BuyEC(args[0], toec, amt)
+		tx, err := factom.BuyEC(args[0], toec, amt, *fflag)
 		if err != nil {
 			errorln(err)
 			return
