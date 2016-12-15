@@ -528,10 +528,15 @@ var subtxfee = func() *fctCmd {
 // signtx signs a transaction in the wallet
 var signtx = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli signtx [-qT] TXNAME"
+	cmd.helpMsg = "factom-cli signtx [-fqT] TXNAME"
 	cmd.description = "Sign a transaction in the wallet. -q quiet. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the transaction to be signed without fee or balance checks",
+		)
 		qflag := flag.Bool("q", false, "quiet mode; no output")
 		tdisp := flag.Bool("T", false, "display only the TxID")
 		flag.Parse()
@@ -541,11 +546,13 @@ var signtx = func() *fctCmd {
 			return
 		}
 
-		tx, err := factom.SignTransaction(args[0])
+		tx := new(factom.Transaction)
+		t, err := factom.SignTransaction(args[0], *fflag)
 		if err != nil {
 			errorln(err)
 			return
 		}
+		tx = t
 
 		// output
 		switch {
@@ -684,6 +691,7 @@ var sendfct = func() *fctCmd {
 			args[0],
 			tofc,
 			factom.FactoidToFactoshi(args[2]),
+			*fflag,
 		)
 		if err != nil {
 			errorln(err)
@@ -765,7 +773,7 @@ var buyec = func() *fctCmd {
 			amt = uint64(i) * rate
 		}
 
-		tx, err := factom.BuyEC(args[0], toec, amt)
+		tx, err := factom.BuyEC(args[0], toec, amt, *fflag)
 		if err != nil {
 			errorln(err)
 			return
