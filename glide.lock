@@ -1,5 +1,5 @@
 hash: 5b3de1f2637c9409d87171cb259dc4b1b9ba6e554274b561478b9399b1d55ac4
-updated: 2016-12-15T09:23:49.56450247-06:00
+updated: 2016-12-16T11:47:50.362535497-06:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -21,12 +21,12 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: 1079565fd8208c09a7b08a4ce4085170662e08e6
+  version: d52f420d076fdc778974a0db0f8d36ced9a229b4
   subpackages:
   - wallet
   - wallet/wsapi
 - name: github.com/FactomProject/factomd
-  version: 3311be77cd573a325a464b65fd68af51eca383cc
+  version: 21224fc5864b381ea5f8a96bf5fcc3b78c445f6a
   subpackages:
   - common/constants
   - common/interfaces
@@ -44,7 +44,7 @@ imports:
 - name: github.com/FactomProject/netki-go-partner-client
   version: 426acb535e66cc2f9e6226ae254555e3572fd142
 - name: golang.org/x/crypto
-  version: 9a6f0a01987842989747adff311d80750ba25530
+  version: 9b1a210a06ea1176ec1f0a1ddf83ad7463b8ea3e
   subpackages:
   - pbkdf2
   - ripemd160
