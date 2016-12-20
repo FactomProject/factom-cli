@@ -655,8 +655,8 @@ var sendtx = func() *fctCmd {
 var sendfct = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli sendfct [-fqrT] FROMADDRESS TOADDRESS AMOUNT"
-	cmd.description = "Send Factoids between 2 addresses. -f force. -q quiet. " +
-		"-r Netki DNS resolve. -T TxID."
+	cmd.description = "Send Factoids between 2 addresses. -f force. -q quiet." +
+		" -r Netki DNS resolve. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		res := flag.Bool("r", false, "resolve dns address")
@@ -687,10 +687,15 @@ var sendfct = func() *fctCmd {
 			tofc = f
 		}
 
+		amt := factom.FactoidToFactoshi(args[2])
+		if amt == 0 {
+			errorln("amount must be greater than 0")
+			return
+		}
 		tx, err := factom.SendFactoid(
 			args[0],
 			tofc,
-			factom.FactoidToFactoshi(args[2]),
+			amt,
 			*fflag,
 		)
 		if err != nil {
