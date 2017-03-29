@@ -19,6 +19,7 @@ const Version = "0.2.0.2"
 
 func main() {
 	var (
+		helpflag = flag.Bool("h", false, "Print help message")
 		walletRpcUser      = flag.String("walletuser", "", "Username for API connections to factom-walletd")
 		walletRpcPassword  = flag.String("walletpassword", "", "Password for API connections to factom-walletd")
 		factomdRpcUser     = flag.String("factomduser", "", "Username for API connections to factomd")
@@ -35,6 +36,10 @@ func main() {
 	)
 	flag.Parse()
 
+	if *helpflag {
+		help.All()
+	}
+	
 	//see if the config file has values which should be used instead of null strings
 	filename := util.ConfigFilename() //file name and path to factomd.conf file
 	//if the config file doesn't exist, it gives lots of warnings when util.ReadConfig is called.
