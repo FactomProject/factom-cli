@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -28,9 +29,16 @@ func (h *helper) Add(s string, c *fctCmd) {
 }
 
 func (h *helper) All() {
-	flag.Usage()
+	flag.VisitAll(func(f *flag.Flag) {
+		m, err := regexp.MatchString("^test", f.Name)
+		if err != nil {
+			errorln(err)
+		}
+		if !m {
+			fmt.Printf("%s\n\t%s\n\n", "-"+f.Name, f.Usage)
+		}
+	})
 
-	fmt.Println()
 	keys := make([]string, 0)
 	for k := range h.topics {
 		keys = append(keys, k)
