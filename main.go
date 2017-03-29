@@ -19,11 +19,6 @@ const Version = "0.2.0.2"
 
 func main() {
 	var (
-		helpflag = flag.Bool(
-			"h",
-			false,
-			"Print help message",
-		)
 		walletRpcUser = flag.String(
 			"walletuser",
 			"",
@@ -80,10 +75,6 @@ func main() {
 		)
 	)
 	flag.Parse()
-
-	if *helpflag {
-		help.All()
-	}
 
 	// see if the config file has values which should be used instead of null
 	// strings
