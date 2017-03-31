@@ -1,5 +1,5 @@
 hash: 5b3de1f2637c9409d87171cb259dc4b1b9ba6e554274b561478b9399b1d55ac4
-updated: 2017-03-29T18:16:06.367536672-05:00
+updated: 2017-03-31T16:20:55.795296625-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -21,12 +21,12 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: 30f32c415a83221681876a600c221466382a776c
+  version: cceac7c3e8611bff774b218d65b4215b2498cd5c
   subpackages:
   - wallet
   - wallet/wsapi
 - name: github.com/FactomProject/factomd
-  version: 1d4a3c713609efe5f780781f83d982a122607bfa
+  version: 9f119afafe95d0961b72331ee7cfad546ad909ef
   subpackages:
   - common/constants
   - common/interfaces
