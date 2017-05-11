@@ -15,7 +15,7 @@ import (
 )
 
 // Version of factom-cli
-const Version = "0.2.2.0"
+const Version = "0.2.2.1"
 
 func main() {
 	var (
