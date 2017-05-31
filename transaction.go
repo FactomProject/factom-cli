@@ -588,10 +588,13 @@ var composetx = func() *fctCmd {
 			errorln(err)
 			return
 		}
+
+		factomdServer := GetFactomdServer()
+
 		fmt.Println(
 			"curl -X POST --data-binary",
 			"'"+string(p)+"'",
-			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
 		)
 	}
 	help.Add("composetx", cmd)
