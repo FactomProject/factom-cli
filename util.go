@@ -15,6 +15,16 @@ import (
 	"github.com/FactomProject/factom"
 )
 
+// GetFactomdServer returns the current factomd server set in the factom package.
+// This is used for compose functions to put the appropriate url in the sample curl
+//		localhost:8088 is returned if the factom package does not have one set
+func GetFactomdServer() string {
+	if factom.RpcConfig != nil && factom.RpcConfig.FactomdServer != "" {
+		return factom.RpcConfig.FactomdServer
+	}
+	return "localhost:8088"
+}
+
 // exidCollector accumulates the external ids from the command line -e and -E
 // flags
 var exidCollector [][]byte

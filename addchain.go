@@ -160,6 +160,7 @@ var composechain = func() *fctCmd {
 		)
 		os.Args = args
 		exidCollector = make([][]byte, 0)
+
 		flag.Var(&eAcii, "n", "Chain name element in ascii. Also is extid of"+
 			" First Entry")
 		flag.Var(&eHex, "h", "Chain name element in hex. Also is extid of"+
@@ -202,15 +203,17 @@ var composechain = func() *fctCmd {
 			return
 		}
 
+		factomdServer := GetFactomdServer()
+
 		fmt.Println(
 			"curl -X POST --data-binary",
 			"'"+commit.String()+"'",
-			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
 		)
 		fmt.Println(
 			"curl -X POST --data-binary",
 			"'"+reveal.String()+"'",
-			"-H 'content-type:text/plain;' http://localhost:8088/v2",
+			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
 		)
 
 	}
