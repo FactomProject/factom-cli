@@ -465,6 +465,7 @@ var getPendingTransactions = func() *fctCmd {
 		Inputs        []LineItem
 		Outputs       []LineItem
 		ECOutputs     []LineItem
+		Fees          int64
 	}
 
 	cmd := new(fctCmd)
@@ -500,20 +501,23 @@ var getPendingTransactions = func() *fctCmd {
 				default:
 					fmt.Println("TxID:", tran.TransactionID)
 					for _, in := range tran.Inputs {
-						fmt.Println("Input:", in.UserAddress, in.Amount)
+						fmt.Println("Input:", in.UserAddress, in.Amount/1e9)
 					}
 
 					if len(tran.Outputs) != 0 {
 
 						for _, out := range tran.Outputs {
-							fmt.Println("Output:", out.UserAddress, out.Amount)
+							fmt.Println("Output:", out.UserAddress, out.Amount/1e9)
 						}
 					}
 
 					if len(tran.ECOutputs) != 0 {
 						for _, ecout := range tran.ECOutputs {
-							fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount)
+							fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount/1e9)
 						}
+					}
+					if tran.Fees != 0 {
+						fmt.Printf("Fees: %8.8f", float64(tran.Fees)/1e9)
 					}
 					fmt.Println("")
 				}
