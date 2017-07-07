@@ -517,7 +517,7 @@ var getPendingTransactions = func() *fctCmd {
 						}
 					}
 					if tran.Fees != 0 {
-						fmt.Printf("Fees:%8.8f", float64(tran.Fees)/1e9)
+						fmt.Printf("Fees: %8.8f", float64(tran.Fees)/1e9)
 					}
 					fmt.Println("")
 				}
