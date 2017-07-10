@@ -166,7 +166,7 @@ func waitOnCommitAck(txid string) (string, error) {
 	// poll for the acknowledgement
 	go func() {
 		for {
-			s, err := factom.EntryACK(txid, "")
+			s, err := factom.EntryCommitACK(txid, "")
 			if err != nil {
 				errchan <- err
 				break
@@ -202,7 +202,8 @@ func waitOnRevealAck(txid string) (string, error) {
 	// poll for the acknowledgement
 	go func() {
 		for {
-			s, err := factom.EntryACK(txid, "")
+			// All 0s signals an entry
+			s, err := factom.EntryRevealACK(txid, "", "0000000000000000000000000000000000000000000000000000000000000000")
 			if err != nil {
 				errchan <- err
 				break
