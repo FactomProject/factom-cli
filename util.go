@@ -171,6 +171,7 @@ func waitOnCommitAck(txid string) (string, error) {
 				errchan <- err
 				break
 			}
+
 			if (s.CommitData.Status != "Unknown") && (s.CommitData.Status != "NotConfirmed") {
 				stat <- s.CommitData.Status
 				break
@@ -208,6 +209,7 @@ func waitOnRevealAck(txid string) (string, error) {
 				errchan <- err
 				break
 			}
+
 			if (s.EntryData.Status != "Unknown") && (s.EntryData.Status != "NotConfirmed") {
 				stat <- s.EntryData.Status
 				break
