@@ -129,7 +129,7 @@ var addentry = func() *fctCmd {
 		var repeated bool
 		txid, err := factom.CommitEntry(e, ec)
 		if err != nil {
-			if err.Error() != "Repeated Commit: A commit with equal or greater payment already exists" {
+			if len(err.Error()) > 15 && err.Error()[:15] != "Repeated Commit" {
 				errorln(err)
 				return
 			}
