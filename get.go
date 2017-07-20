@@ -147,12 +147,18 @@ var getChainHead = func() *fctCmd {
 			chainid = args[0]
 		}
 
-		head, err := factom.GetChainHead(chainid)
+		head, err := factom.GetChainHeadAndStatus(chainid)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		eblock, err := factom.GetEBlock(head)
+
+		if head.ChainHead == "" && head.ChainInProcessList {
+			errorln(fmt.Errorf("Chain not yet included in a Directory Block"))
+			return
+		}
+
+		eblock, err := factom.GetEBlock(head.ChainHead)
 		if err != nil {
 			errorln(err)
 			return
