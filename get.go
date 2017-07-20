@@ -166,9 +166,9 @@ var getChainHead = func() *fctCmd {
 
 		switch {
 		case *kdisp:
-			fmt.Println(head)
+			fmt.Println(head.ChainHead)
 		default:
-			fmt.Println("EBlock:", head)
+			fmt.Println("EBlock:", head.ChainHead)
 			fmt.Println(eblock)
 		}
 	}
