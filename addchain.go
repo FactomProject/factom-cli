@@ -102,21 +102,30 @@ var addchain = func() *fctCmd {
 		}
 
 		// commit the chain
+		var repeated bool
 		txid, err := factom.CommitChain(c, ec)
 		if err != nil {
-			errorln(err)
-			return
-		}
-		if display {
-			fmt.Println("CommitTxID:", txid)
-		} else if *tdisp {
-			fmt.Println(txid)
-		}
-
-		if !*fflag {
-			if _, err := waitOnCommitAck(txid); err != nil {
+			if len(err.Error()) > 15 && err.Error()[:15] != "Repeated Commit" {
 				errorln(err)
 				return
+			}
+
+			fmt.Println("Repeated Commit: A commit with equal or greater payment already exists, skipping commit")
+			repeated = true
+		}
+
+		if !repeated {
+			if display {
+				fmt.Println("CommitTxID:", txid)
+			} else if *tdisp {
+				fmt.Println(txid)
+			}
+
+			if !*fflag {
+				if _, err := waitOnCommitAck(txid); err != nil {
+					errorln(err)
+					return
+				}
 			}
 		}
 
@@ -136,7 +145,7 @@ var addchain = func() *fctCmd {
 		}
 
 		if !*fflag {
-			if _, err := waitOnRevealAck(txid); err != nil {
+			if _, err := waitOnRevealAck(hash); err != nil {
 				errorln(err)
 				return
 			}

@@ -126,21 +126,30 @@ var addentry = func() *fctCmd {
 		}
 
 		// commit entry
+		var repeated bool
 		txid, err := factom.CommitEntry(e, ec)
 		if err != nil {
-			errorln(err)
-			return
-		}
-		if display {
-			fmt.Println("CommitTxID:", txid)
-		} else if *tdisp {
-			fmt.Println(txid)
-		}
-
-		if !*fflag {
-			if _, err := waitOnCommitAck(txid); err != nil {
+			if len(err.Error()) > 15 && err.Error()[:15] != "Repeated Commit" {
 				errorln(err)
 				return
+			}
+
+			fmt.Println("Repeated Commit: A commit with equal or greater payment already exists, skipping commit")
+			repeated = true
+		}
+
+		if !repeated {
+			if display {
+				fmt.Println("CommitTxID:", txid)
+			} else if *tdisp {
+				fmt.Println(txid)
+			}
+
+			if !*fflag {
+				if _, err := waitOnCommitAck(txid); err != nil {
+					errorln(err)
+					return
+				}
 			}
 		}
 		// reveal entry
@@ -150,7 +159,7 @@ var addentry = func() *fctCmd {
 			return
 		}
 		if !*fflag {
-			if _, err := waitOnRevealAck(txid); err != nil {
+			if _, err := waitOnRevealAck(hash); err != nil {
 				errorln(err)
 				return
 			}
