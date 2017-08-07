@@ -16,8 +16,9 @@ import (
 )
 
 var abheight = func() *fctCmd {
+	var supressRawData string
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get abheight HEIGHT"
+	cmd.helpMsg = "factom-cli get abheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Admin Block by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -35,10 +36,18 @@ var abheight = func() *fctCmd {
 			return
 		}
 
+		if len(args) > 1 {
+			supressRawData = args[1]
+		}
+
 		resp, err := factom.GetBlockByHeightRaw("a", height)
 		if err != nil {
 			errorln(err)
 			return
+		}
+
+		if supressRawData == "-r" {
+			resp.RawData = ""
 		}
 
 		data, err := json.Marshal(resp)
@@ -57,8 +66,9 @@ var abheight = func() *fctCmd {
 }()
 
 var dbheight = func() *fctCmd {
+	var supressRawData string
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dbheight HEIGHT"
+	cmd.helpMsg = "factom-cli get dbheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Directory Block by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -76,10 +86,18 @@ var dbheight = func() *fctCmd {
 			return
 		}
 
+		if len(args) > 1 {
+			supressRawData = args[1]
+		}
+
 		resp, err := factom.GetBlockByHeightRaw("d", height)
 		if err != nil {
 			errorln(err)
 			return
+		}
+
+		if supressRawData == "-r" {
+			resp.RawData = ""
 		}
 
 		data, err := json.Marshal(resp)
@@ -98,8 +116,9 @@ var dbheight = func() *fctCmd {
 }()
 
 var ecbheight = func() *fctCmd {
+	var supressRawData string
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get ecbheight HEIGHT"
+	cmd.helpMsg = "factom-cli get ecbheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Entry Credit Block by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -117,10 +136,18 @@ var ecbheight = func() *fctCmd {
 			return
 		}
 
+		if len(args) > 1 {
+			supressRawData = args[1]
+		}
+
 		resp, err := factom.GetBlockByHeightRaw("ec", height)
 		if err != nil {
 			errorln(err)
 			return
+		}
+
+		if supressRawData == "-r" {
+			resp.RawData = ""
 		}
 
 		data, err := json.Marshal(resp)
@@ -139,8 +166,9 @@ var ecbheight = func() *fctCmd {
 }()
 
 var fbheight = func() *fctCmd {
+	var supressRawData string
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get fbheight HEIGHT"
+	cmd.helpMsg = "factom-cli get fbheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Factoid Block by height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -158,10 +186,18 @@ var fbheight = func() *fctCmd {
 			return
 		}
 
+		if len(args) > 1 {
+			supressRawData = args[1]
+		}
+
 		resp, err := factom.GetBlockByHeightRaw("f", height)
 		if err != nil {
 			errorln(err)
 			return
+		}
+
+		if supressRawData == "-r" {
+			resp.RawData = ""
 		}
 
 		data, err := json.Marshal(resp)
