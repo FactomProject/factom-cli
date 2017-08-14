@@ -100,9 +100,14 @@ func factoshiToFactoid(v interface{}) string {
 	if err != nil {
 		return ""
 	}
+	sign := ""
+	if value < 0 {
+		sign = "-"
+		value = -value
+	}
 	d := value / 1e8
 	r := value % 1e8
-	ds := fmt.Sprintf("%d", d)
+	ds := fmt.Sprintf("%s%d", sign, d)
 	rs := fmt.Sprintf("%08d", r)
 	rs = strings.TrimRight(rs, "0")
 	if len(rs) > 0 {
