@@ -18,17 +18,17 @@ func TestHeights(t *testing.T) {
 
 	testEc := Ecbheight
 
-	fmt.Println(testEc)
+	fmt.Println(testEc.helpMsg)
 
 	testA := Abheight
 
-	fmt.Println(testA)
+	fmt.Println(testA.helpMsg)
 
 	testDB := Dbheight
 
-	fmt.Println(testDB)
+	fmt.Println(testDB.helpMsg)
 
 	testF := Fbheight
 
-	fmt.Println(testF)
+	fmt.Println(testF.helpMsg)
 }

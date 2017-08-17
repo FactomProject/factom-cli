@@ -15,8 +15,10 @@ import (
 	"github.com/FactomProject/factom"
 )
 
+// Abheight - public so it can be accessed by tests
 var Abheight = func() *fctCmd {
 	var supressRawData string
+	fmt.Println("0:", os.Args[0])
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get abheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Admin Block by height"
