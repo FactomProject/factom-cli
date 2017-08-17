@@ -64,7 +64,6 @@ var Abheight = func() *fctCmd {
 	help.Add("get abheight", cmd)
 	return cmd
 }()
-
 var Dbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -114,7 +113,6 @@ var Dbheight = func() *fctCmd {
 	help.Add("get dbheight", cmd)
 	return cmd
 }()
-
 var Ecbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -164,7 +162,6 @@ var Ecbheight = func() *fctCmd {
 	help.Add("get ecbheight", cmd)
 	return cmd
 }()
-
 var Fbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
