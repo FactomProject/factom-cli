@@ -15,7 +15,7 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-var abheight = func() *fctCmd {
+var Abheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get abheight HEIGHT -r (to suppress Raw Data)"
@@ -65,7 +65,7 @@ var abheight = func() *fctCmd {
 	return cmd
 }()
 
-var dbheight = func() *fctCmd {
+var Dbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get dbheight HEIGHT -r (to suppress Raw Data)"
@@ -115,7 +115,7 @@ var dbheight = func() *fctCmd {
 	return cmd
 }()
 
-var ecbheight = func() *fctCmd {
+var Ecbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get ecbheight HEIGHT -r (to suppress Raw Data)"
@@ -165,7 +165,7 @@ var ecbheight = func() *fctCmd {
 	return cmd
 }()
 
-var fbheight = func() *fctCmd {
+var Fbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get fbheight HEIGHT -r (to suppress Raw Data)"
