@@ -37,7 +37,6 @@ var abheight = func() *fctCmd {
 		}
 
 		if len(args) > 1 {
-
 			supressRawData = args[1]
 		}
 
