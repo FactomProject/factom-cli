@@ -15,7 +15,11 @@ import (
 )
 
 // Version of factom-cli
-const Version = "0.2.2.7"
+// FactomcliVersion sets the semantic version number of the build
+// $ go install -ldflags "-X main.FactomcliVersion=`cat VERSION`" -v
+// It also seems to need to have the previous binary deleted if recompiling to have this message show up if no code has changed.
+
+var FactomcliVersion string = "BuiltWithoutVersion"
 
 func main() {
 	var (
