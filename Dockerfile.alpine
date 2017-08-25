@@ -21,7 +21,7 @@ COPY . .
 ARG GOOS=linux
 
 # Build and install factom-cli
-RUN go install -ldflags "-X main.FactomcliVersion=`cat VERSION`"
+RUN go install
 
 # Now squash everything
 FROM alpine:3.6

@@ -26,6 +26,6 @@ COPY . .
 ARG GOOS=linux
 
 # Build and install factom-cli
-RUN go install -ldflags "-X main.FactomcliVersion=`cat VERSION`"
+RUN go install
 
 ENTRYPOINT ["/go/bin/factom-cli"]
