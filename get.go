@@ -383,7 +383,7 @@ var properties = func() *fctCmd {
 
 		fdv, fdverr, fdapiv, fdapiverr, fwv, fwverr, fwapiv, fwapiverr := factom.GetProperties()
 
-		fmt.Println("CLI Version:", Version)
+		fmt.Println("CLI Version:", FactomcliVersion)
 		if fdverr == "" {
 			fmt.Println("Factomd Version:", fdv)
 		} else {
