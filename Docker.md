@@ -34,7 +34,7 @@ e.g.
 So yeah, you want to get your binary _out_ of the container. To do so, you basically mount your target into the container, and copy the binary over, like so
 
 
-`docker run --rm --entrypoint='' -v <FULLY_QUALIFIED_PATH_TO_TARGET_DIRECTORY>:/destination factom-cli_container /bin/cp /go/bin/chihaya /destination`
+`docker run --rm --entrypoint='' -v <FULLY_QUALIFIED_PATH_TO_TARGET_DIRECTORY>:/destination factom-cli_container /bin/cp /go/bin/factom-cli /destination`
 
 e.g.
 
