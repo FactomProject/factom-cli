@@ -5,7 +5,7 @@ jobs:
   build:
     working_directory: /go/src/github.com/FactomProject/factom-cli
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.10
 
     steps:
       - checkout
@@ -19,14 +19,14 @@ jobs:
           command: |
             go get -v github.com/Masterminds/glide
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get goveralls
           command: |
             go get github.com/mattn/goveralls
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get the dependencies
@@ -44,7 +44,7 @@ jobs:
   test:
     working_directory: /go/src/github.com/FactomProject/factom-cli
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.10
 
     steps:
       - checkout
@@ -58,14 +58,14 @@ jobs:
           command: |
             go get -v github.com/Masterminds/glide
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get goveralls
           command: |
             go get github.com/mattn/goveralls
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get the dependencies
@@ -89,7 +89,7 @@ jobs:
   coveralls:
     working_directory: /go/src/github.com/FactomProject/factomd-cli
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.10
 
     steps:
       - checkout
@@ -103,14 +103,14 @@ jobs:
           command: |
             go get -v github.com/Masterminds/glide
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get goveralls
           command: |
             go get github.com/mattn/goveralls
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get the dependencies
