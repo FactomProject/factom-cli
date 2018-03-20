@@ -1,5 +1,5 @@
 
-FROM golang:1.9.3
+FROM golang:1.10
 
 # Get git
 RUN apt-get update \
