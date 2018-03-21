@@ -5,7 +5,7 @@ jobs:
   build:
     working_directory: /go/src/github.com/FactomProject/factom-cli
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.10
 
     steps:
       - checkout
@@ -19,14 +19,14 @@ jobs:
           command: |
             go get -v github.com/Masterminds/glide
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get goveralls
           command: |
             go get github.com/mattn/goveralls
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get the dependencies
@@ -44,7 +44,7 @@ jobs:
   test:
     working_directory: /go/src/github.com/FactomProject/factom-cli
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.10
 
     steps:
       - checkout
@@ -58,14 +58,14 @@ jobs:
           command: |
             go get -v github.com/Masterminds/glide
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get goveralls
           command: |
             go get github.com/mattn/goveralls
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get the dependencies
@@ -89,7 +89,7 @@ jobs:
   coveralls:
     working_directory: /go/src/github.com/FactomProject/factomd-cli
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.10
 
     steps:
       - checkout
@@ -103,14 +103,14 @@ jobs:
           command: |
             go get -v github.com/Masterminds/glide
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get goveralls
           command: |
             go get github.com/mattn/goveralls
             cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.12.3
+            git checkout tags/v0.13.1
             go install
       - run:
           name: Get the dependencies
@@ -138,7 +138,7 @@ jobs:
     working_directory: /go/src/github.com/FactomProject/factom-cli
 
     docker:
-      - image: docker:17.06.0-ce-git
+      - image: factominc/elixir_python
 
     steps:
       - checkout
@@ -171,39 +171,69 @@ jobs:
       - run:
           name: Push  master / develop to DockerHub
           command: |
+
+           # Login to DockerHub
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+            # If there is a tag, use it
+            if [ "$CIRCLE_TAG" != "" ]; then
+              docker tag factom-cli factominc/factom-cli:${CIRCLE_TAG}
+              docker push factominc/factom-cli:${CIRCLE_TAG}
+              docker tag factom-cli-alpine factominc/factom-cli:${CIRCLE_TAG}-alpine
+              docker push factominc/factom-cli:${CIRCLE_TAG}-alpine
+            fi
 
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
 
-              # If there is a tag, use it
-              if [ "$CIRCLE_TAG" != "" ]; then
-                docker tag factom-cli-alpine factominc/factom-cli:${TAG}-alpine
-                docker push factominc/factom-cli:${TAG}-alpine
-                docker tag factom-cli factominc/factom-cli:${TAG}
-                docker push factominc/factom-cli:${TAG}
-              fi
-
-              # But tag it as alpine/latest anyhow
-              docker tag factom-cli-alpine factominc/factom-cli:alpine
-              docker push factominc/factom-cli:alpine
+              # Tag master as latest
               docker tag factom-cli factominc/factom-cli:latest
               docker push factominc/factom-cli:latest
+              docker tag factom-cli-alpine factominc/factom-cli:alpine
+              docker push factominc/factom-cli:alpine
+            fi
 
-            elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
 
-              # If there is a tag, use it
-              if [ "$CIRCLE_TAG" != "" ]; then
-                docker tag factom-cli-alpine factominc/factom-cli:${TAG}-alpine-develop
-                docker push factominc/factom-cli:${TAG}-alpine-develop
-                docker tag factom-cli factominc/factom-cli:${TAG}-develop
-                docker push factominc/factom-cli:${TAG}-develop
-              fi
-
-              # But tag it as alpine-develop/develop anyhow
-              docker tag factom-cli-alpine factominc/factom-cli:alpine-develop
-              docker push factominc/factom-cli:alpine-develop
+              # Tag develop as develop anyhow
               docker tag factom-cli factominc/factom-cli:develop
               docker push factominc/factom-cli:develop
+              docker tag factom-cli-alpine factominc/factom-cli:alpine-develop
+              docker push factominc/factom-cli:alpine-develop
+            fi
+
+            docker logout
+
+      - run:
+          name: Push images to AWS ECR
+          command: |
+            # Login to AWS ECR
+            login="$(aws ecr get-login  --no-include-email --region $AWS_REGION)"
+            ${login}
+
+            # If there is a tag, use it
+            if [ "$CIRCLE_TAG" != "" ]; then
+              docker tag factom-cli ${AWS_REPO_BASE_URI}/factom-cli:${CIRCLE_TAG}
+              docker push ${AWS_REPO_BASE_URI}/factom-cli:${CIRCLE_TAG}
+              docker tag factom-cli-alpine ${AWS_REPO_BASE_URI}/factom-cli:${CIRCLE_TAG}-alpine
+              docker push ${AWS_REPO_BASE_URI}/factom-cli:${CIRCLE_TAG}-alpine
+            fi
+
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+
+              # Tag master as latest
+              docker tag factom-cli ${AWS_REPO_BASE_URI}/factom-cli:latest
+              docker push ${AWS_REPO_BASE_URI}/factom-cli:latest
+              docker tag factom-cli-alpine ${AWS_REPO_BASE_URI}/factom-cli:alpine
+              docker push ${AWS_REPO_BASE_URI}/factom-cli:alpine
+            fi
+
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+
+              # Tag develop as develop anyhow
+              docker tag factom-cli ${AWS_REPO_BASE_URI}/factom-cli:develop
+              docker push ${AWS_REPO_BASE_URI}/factom-cli:develop
+              docker tag factom-cli-alpine ${AWS_REPO_BASE_URI}/factom-cli:alpine-develop
+              docker push ${AWS_REPO_BASE_URI}/factom-cli:alpine-develop
             fi
 
             docker logout
@@ -230,9 +260,42 @@ jobs:
 #                   ---------- docker_build
 #
 #
+
 workflows:
   version: 2
-  build:
+  commit-workflow:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - coveralls:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - test
+      - docker_build:
+          filters:
+            tags:
+              only: /.*/
+          context: org-global
+          requires:
+            - test
+
+  scheduled-workflow:
+    triggers:
+      - schedule:
+          cron: "30 5 * * *"
+          filters:
+            branches:
+              only: develop
     jobs:
       - build
       - test:
