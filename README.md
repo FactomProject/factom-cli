@@ -19,6 +19,11 @@ and transactions on the Factom blockchain by calling out to both
 - [CLI completion](https://github.com/AdamSLevy/complete-factom-cli) for Bash,
   Zsh or Fish
 
+## Package distribution
+`factom-cli` is installed with the Factom package found
+[here](https://github.com/FactomProject/distribution). This also installs
+`factomd` and `factom-walletd`.
+
 ## Build and install
 ```
 go get -u github.com/FactomProject/factom-cli
