@@ -66,6 +66,25 @@ var balance = func() *fctCmd {
 	return cmd
 }()
 
+var balancetotals = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli balancetotals"
+	cmd.description = "This is the total number of Factoids and Entry Credits in the wallet"
+	cmd.execFunc = func(args []string) {
+		fs, fa, es, ea, err := factom.GetBalanceTotals()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println("savedFCT:", factoshiToFactoid(fs))
+		fmt.Println("ackFCT:", factoshiToFactoid(fa))
+		fmt.Println("savedEC:", es)
+		fmt.Println("ackEC:", ea)
+	}
+	help.Add("balancetotals", cmd)
+	return cmd
+}()
+
 // ecrate shows the entry credit conversion rate in factoids
 var ecrate = func() *fctCmd {
 	cmd := new(fctCmd)
