@@ -66,6 +66,8 @@ var balance = func() *fctCmd {
 	return cmd
 }()
 
+// balancetotals shows the total balance of all of the Factoid and Entry Credts
+// in the wallet
 var balancetotals = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli [-FS -FA -ES -EA] balancetotals"
