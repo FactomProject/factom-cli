@@ -71,15 +71,34 @@ var balancetotals = func() *fctCmd {
 	cmd.helpMsg = "factom-cli balancetotals"
 	cmd.description = "This is the total number of Factoids and Entry Credits in the wallet"
 	cmd.execFunc = func(args []string) {
+		os.Args = args
+		var fsdisp = flag.Bool("FS", false, "Display only the savedFCT value")
+		var fadisp = flag.Bool("FA", false, "Display only the ackFCT value")
+		var esdisp = flag.Bool("ES", false, "Display only the savedEC value")
+		var eadisp = flag.Bool("EA", false, "Display only the ackEC value")
+		flag.Parse()
+		args = flag.Args()
+
 		fs, fa, es, ea, err := factom.GetBalanceTotals()
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println("savedFCT:", factoshiToFactoid(fs))
-		fmt.Println("ackFCT:", factoshiToFactoid(fa))
-		fmt.Println("savedEC:", es)
-		fmt.Println("ackEC:", ea)
+		switch {
+		case *fsdisp:
+			fmt.Println(fs)
+		case *fadisp:
+			fmt.Println(fa)
+		case *esdisp:
+			fmt.Println(es)
+		case *eadisp:
+			fmt.Println(ea)
+		default:
+			fmt.Println("savedFCT:", factoshiToFactoid(fs))
+			fmt.Println("ackFCT:", factoshiToFactoid(fa))
+			fmt.Println("savedEC:", es)
+			fmt.Println("ackEC:", ea)
+		}
 	}
 	help.Add("balancetotals", cmd)
 	return cmd
