@@ -84,6 +84,7 @@ var balancetotals = func() *fctCmd {
 			errorln(err)
 			return
 		}
+
 		switch {
 		case *fsdisp:
 			fmt.Println(factoshiToFactoid(fs))
