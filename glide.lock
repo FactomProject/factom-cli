@@ -1,5 +1,5 @@
 hash: 5b3de1f2637c9409d87171cb259dc4b1b9ba6e554274b561478b9399b1d55ac4
-updated: 2018-08-21T14:09:12.441179954-05:00
+updated: 2018-08-24T15:59:31.826457954-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -21,7 +21,7 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: 4e4fe49327eea4767e00f74addb3a351eb083a90
+  version: 523cd6b57a4c05a0b88545e5dd15ff68aee65147
   subpackages:
   - wallet
   - wallet/wsapi
@@ -62,7 +62,7 @@ imports:
   - ripemd160
   - ssh/terminal
 - name: golang.org/x/sys
-  version: 8dbc5d05d6edcc104950cc299a1ce6641235bc86
+  version: 4910a1d54f876d7b22162a85f4d066d3ee649450
   subpackages:
   - unix
   - windows
