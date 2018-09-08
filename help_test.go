@@ -10,7 +10,7 @@ func Test_newHelper(t *testing.T) {
 		name string
 		want *helper
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -34,7 +34,7 @@ func Test_helper_Add(t *testing.T) {
 		fields fields
 		args   args
 	}{
-	// TODO: Add test cases.
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
