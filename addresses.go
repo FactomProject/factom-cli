@@ -70,7 +70,7 @@ var balance = func() *fctCmd {
 // in the wallet
 var balancetotals = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli [-FS -FA -ES -EA] balancetotals"
+	cmd.helpMsg = "factom-cli balancetotals [-FS -FA -ES -EA]"
 	cmd.description = "This is the total number of Factoids and Entry Credits in the wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
