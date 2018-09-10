@@ -1,5 +1,5 @@
 hash: 5b3de1f2637c9409d87171cb259dc4b1b9ba6e554274b561478b9399b1d55ac4
-updated: 2017-04-20T10:56:39.11253783-05:00
+updated: 2018-08-24T15:59:31.826457954-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -21,14 +21,16 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: e7e415550cf08b64fe17b9ae943f817fb97fb89a
+  version: 0473b0dd9b46610c9e521bd852a93e3e091d7f37
   subpackages:
   - wallet
   - wallet/wsapi
 - name: github.com/FactomProject/factomd
-  version: d1e672cf525f99dc993c78b5b0f28dfe219bf8ad
+  version: feb1b81eff8c440f76cf2866ceeb9207974bcef2
   subpackages:
+  - activations
   - common/constants
+  - common/globals
   - common/interfaces
   - common/primitives
   - common/primitives/random
@@ -42,21 +44,34 @@ imports:
   version: fd672f46ddc35bb381f497f7b64c9cf34f9e0703
 - name: github.com/FactomProject/go-simplejson
   version: aabad6e819789e569bd6aabf444c935aa9ba1e44
+- name: github.com/FactomProject/goleveldb
+  version: e7800c6976c5d75f0a9c5e9e0e2ff8086940e58f
+  subpackages:
+  - leveldb
+  - leveldb/errors
+  - leveldb/storage
+  - leveldb/util
 - name: github.com/FactomProject/netki-go-partner-client
   version: 426acb535e66cc2f9e6226ae254555e3572fd142
+- name: github.com/sirupsen/logrus
+  version: 89742aefa4b206dcf400792f3bd35b542998eb3b
 - name: golang.org/x/crypto
-  version: c3b1d0d6d8690eaebe3064711b026770cc37efa3
+  version: 614d502a4dac94afa3a6ce146bd1736da82514c6
   subpackages:
   - pbkdf2
   - ripemd160
+  - ssh/terminal
+- name: golang.org/x/sys
+  version: 4910a1d54f876d7b22162a85f4d066d3ee649450
+  subpackages:
+  - unix
+  - windows
 - name: gopkg.in/gcfg.v1
-  version: 27e4946190b4a327b539185f2b5b1f7c84730728
+  version: 61b2c08bc8f6068f7c5ca684372f9a6cb1c45ebe
   subpackages:
   - scanner
   - token
   - types
 - name: gopkg.in/warnings.v0
-  version: 8a331561fe74dadba6edfc59f3be66c22c3b065d
+  version: ec4a0fea49c7b46c2aeb0b51aac55779c607e52b
 testImports: []
-
- 

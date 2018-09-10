@@ -183,6 +183,7 @@ func main() {
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
 	c.Handle("balance", balance)
+	c.Handle("balancetotals", balancetotals)
 	c.Handle("composechain", composechain)
 	c.Handle("composeentry", composeentry)
 	c.Handle("ecrate", ecrate)
