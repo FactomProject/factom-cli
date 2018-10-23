@@ -216,10 +216,10 @@ func main() {
 
 	// identity commands
 	c.Handle("newidentitykey", newIdentityKey)
-	c.Handle("importidentitykey", importIdentityKeys)
+	c.Handle("importidentitykeys", importIdentityKeys)
 	c.Handle("exportidentitykeys", exportIdentityKeys)
 	c.Handle("listidentitykeys", listIdentityKeys)
-	c.Handle("removeidentitykey", removeIdentityKey)
+	c.Handle("rmidentitykey", removeIdentityKey)
 	c.Handle("addidentitychain", addIdentityChain)
 	c.Handle("addidentitykeyreplacement", addIdentityKeyReplacement)
 	c.Handle("composeidentitychain", composeIdentityChain)

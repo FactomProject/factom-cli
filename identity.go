@@ -132,7 +132,7 @@ var addIdentityChain = func() *fctCmd {
 			}
 		}
 	}
-	help.Add("createidentity", cmd)
+	help.Add("addidentitychain", cmd)
 	return cmd
 }()
 

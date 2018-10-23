@@ -99,7 +99,7 @@ var listIdentityKeys = func() *fctCmd {
 			fmt.Println(k.PubString())
 		}
 	}
-	help.Add("listaddresses", cmd)
+	help.Add("listidentitykeys", cmd)
 	return cmd
 }()
 
