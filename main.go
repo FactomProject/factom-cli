@@ -183,7 +183,7 @@ func main() {
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
 	c.Handle("balance", balance)
-	c.Handle("balancetotals", balancetotals)
+	//c.Handle("balancetotals", balancetotals)
 	c.Handle("composechain", composechain)
 	c.Handle("composeentry", composeentry)
 	c.Handle("ecrate", ecrate)
@@ -213,6 +213,18 @@ func main() {
 	c.Handle("sendtx", sendtx)
 	c.Handle("sendfct", sendfct)
 	c.Handle("buyec", buyec)
+
+	// identity commands
+	c.Handle("newidentitykey", newIdentityKey)
+	c.Handle("importidentitykey", importIdentityKeys)
+	c.Handle("exportidentitykeys", exportIdentityKeys)
+	c.Handle("listidentitykeys", listIdentityKeys)
+	c.Handle("removeidentitykey", removeIdentityKey)
+	c.Handle("addidentitychain", addIdentityChain)
+	c.Handle("addidentitykeyreplacement", addIdentityKeyReplacement)
+	c.Handle("composeidentitychain", composeIdentityChain)
+	c.Handle("composeidentitykeyreplacement", composeIdentityKeyReplacement)
+	c.Handle("getidentitykeysatheight", getIdentityKeysAtHeight)
 
 	c.HandleDefault(help)
 	c.Execute(args)
