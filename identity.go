@@ -294,15 +294,15 @@ var addIdentityKeyReplacement = func() *fctCmd {
 
 var addIdentityAttribute = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addidentityattribute [-fq] -creceiver CHAINID -cdestination CHAINID -csigner CHAINID" +
+	cmd.helpMsg = "factom-cli addidentityattribute [-fq] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
 		" -signerkey PUBKEY -attribute ATTRIBUTE_JSON_ARRAY ECADDRESS [-CET]"
 	cmd.description = "Create a new Identity Attribute Entry using the Entry Credits from the specified address." +
 		" Optional output flags: -C ChainID. -E EntryHash. -T TxID."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 
+		c := flag.String("c", "", "hex encoded chainid for where the attribute entry is written")
 		cReceiver := flag.String("creceiver", "", "hex encoded chainid for the identity receiving the attribute")
-		cDestination := flag.String("cdestination", "", "hex encoded chainid for where the attribute entry is written")
 		cSigner := flag.String("csigner", "", "hex encoded chainid for the identity signing/giving the attribute")
 		signerKeyString := flag.String("signerkey", "", "public identity key that signs the attribute entry"+
 			" (must be stored in wallet and should be currently valid for signer's identity)")
@@ -349,15 +349,15 @@ var addIdentityAttribute = func() *fctCmd {
 
 		// check for missing/invalid chain id params
 		if len(*cReceiver) != 64 {
-			errorln("Missing/invalid receiver ChainID")
+			errorln("Missing/invalid receiver ChainID (-creceiver)")
 			fmt.Println(cmd.helpMsg)
 			return
-		} else if len(*cDestination) != 64 {
-			errorln("Missing/invalid destination ChainID")
+		} else if len(*c) != 64 {
+			errorln("Missing/invalid destination ChainID (-c)")
 			fmt.Println(cmd.helpMsg)
 			return
 		} else if len(*cSigner) != 64 {
-			errorln("Missing/invalid signer ChainID")
+			errorln("Missing/invalid signer ChainID (-csigner)")
 			fmt.Println(cmd.helpMsg)
 			return
 		}
@@ -384,7 +384,7 @@ var addIdentityAttribute = func() *fctCmd {
 			}
 		}
 
-		e := factom.NewIdentityAttributeEntry(*cReceiver, *cDestination, *attributesJSON, signerKey, *cSigner)
+		e := factom.NewIdentityAttributeEntry(*cReceiver, *c, *attributesJSON, signerKey, *cSigner)
 
 		// display normal output iff no display flags are set and quiet is unspecified
 		display := true
@@ -604,6 +604,109 @@ var composeIdentityKeyReplacement = func() *fctCmd {
 		)
 	}
 	help.Add("composeidentitykeyreplacement", cmd)
+	return cmd
+}()
+
+var composeIdentityAttribute = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli composeidentityattribute [-f] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
+		" -signerkey PUBKEY -attribute ATTRIBUTE_JSON_ARRAY ECADDRESS"
+	cmd.description = "Create a new Identity Attribute Entry using the Entry Credits from the specified address."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+
+		c := flag.String("c", "", "hex encoded chainid for where the attribute entry is written")
+		cReceiver := flag.String("creceiver", "", "hex encoded chainid for the identity receiving the attribute")
+		cSigner := flag.String("csigner", "", "hex encoded chainid for the identity signing/giving the attribute")
+		signerKeyString := flag.String("signerkey", "", "public identity key that signs the attribute entry"+
+			" (must be stored in wallet and should be currently valid for signer's identity)")
+		attributesJSON := flag.String("attribute", "", "JSON array describing the attribute to assign"+
+			" (must be in the format of '[{\"key\":KEY,\"value\":VALUE},{\"key\":KEY,\"value\":VALUE},...]'")
+
+		// -f force
+		fflag := flag.Bool(
+			"f",
+			false,
+			"force the entry to commit and reveal without waiting on any"+
+				" acknowledgement checks",
+		)
+
+		flag.Parse()
+
+		// get EC key pair from wallet
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		ecpub := args[0]
+
+		// get signer identity key pair from wallet
+		signerKey, err := factom.FetchIdentityKey(*signerKeyString)
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		// check for missing/invalid chain id params
+		if len(*cReceiver) != 64 {
+			errorln("Missing/invalid receiver ChainID (-creceiver)")
+			fmt.Println(cmd.helpMsg)
+			return
+		} else if len(*c) != 64 {
+			errorln("Missing/invalid destination ChainID (-c)")
+			fmt.Println(cmd.helpMsg)
+			return
+		} else if len(*cSigner) != 64 {
+			errorln("Missing/invalid signer ChainID (-csigner)")
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		// check that attributes array can be unmarshalled and contains no nil keys or values
+		// TODO: move this validation into factom.NewIdentityAttributeEntry() instead
+		var attributes []factom.IdentityAttribute
+		err = json.Unmarshal([]byte(*attributesJSON), &attributes)
+		if err != nil {
+			errorln("Invalid attribute array: ", err)
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+		for _, attribute := range attributes {
+			if attribute.Key == nil {
+				errorln("All attribute keys must not be nil")
+				fmt.Println(cmd.helpMsg)
+				return
+			}
+			if attribute.Value == nil {
+				errorln("All attribute values must not be nil")
+				fmt.Println(cmd.helpMsg)
+				return
+			}
+		}
+
+		e := factom.NewIdentityAttributeEntry(*cReceiver, *c, *attributesJSON, signerKey, *cSigner)
+
+		commit, reveal, err := factom.WalletComposeEntryCommitReveal(e, ecpub, *fflag)
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		factomdServer := GetFactomdServer()
+
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+commit.String()+"'",
+			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
+		)
+		fmt.Println(
+			"curl -X POST --data-binary",
+			"'"+reveal.String()+"'",
+			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
+		)
+	}
+	help.Add("composeidentityattribute", cmd)
 	return cmd
 }()
 
