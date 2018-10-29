@@ -223,9 +223,11 @@ func main() {
 	c.Handle("addidentitychain", addIdentityChain)
 	c.Handle("addidentitykeyreplacement", addIdentityKeyReplacement)
 	c.Handle("addidentityattribute", addIdentityAttribute)
+	c.Handle("addidentityattributeendorsement", addIdentityAttributeEndorsement)
 	c.Handle("composeidentitychain", composeIdentityChain)
 	c.Handle("composeidentitykeyreplacement", composeIdentityKeyReplacement)
 	c.Handle("composeidentityattribute", composeIdentityAttribute)
+	c.Handle("composeidentityattributeendorsement", composeIdentityAttributeEndorsement)
 	c.Handle("getidentitykeysatheight", getIdentityKeysAtHeight)
 
 	c.HandleDefault(help)
