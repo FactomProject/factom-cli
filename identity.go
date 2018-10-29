@@ -8,13 +8,44 @@ import (
 
 	"github.com/FactomProject/factom"
 	"encoding/json"
+	"github.com/FactomProject/cli"
 )
+
+var identity = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli identity addchain|addkeyreplacement|addattribute|addattributeendorsement|" +
+		"composechain|composekeyreplacement|composeattribute|composeattributeendorsement|getkeysatheight"
+	cmd.description = "Create/manage Factom Identity Chains, their currently valid keys, attributes, and" +
+		" attribute endorsements"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		c := cli.New()
+		c.Handle("addchain", addIdentityChain)
+		c.Handle("addkeyreplacement", addIdentityKeyReplacement)
+		c.Handle("addattribute", addIdentityAttribute)
+		c.Handle("addattributeendorsement", addIdentityAttributeEndorsement)
+		c.Handle("composechain", composeIdentityChain)
+		c.Handle("composekeyreplacement", composeIdentityKeyReplacement)
+		c.Handle("composeattribute", composeIdentityAttribute)
+		c.Handle("composeattributeendorsement", composeIdentityAttributeEndorsement)
+		c.Handle("getkeysatheight", getIdentityKeysAtHeight)
+		c.HandleDefaultFunc(func(args []string) {
+			fmt.Println(cmd.helpMsg)
+		})
+		c.Execute(args)
+	}
+	help.Add("get", cmd)
+	return cmd
+}()
 
 // 'add' commands: actually submit requests to a factomd instance
 
 var addIdentityChain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addidentitychain [-fq] [-n NAME1 -n NAME2] [-k PUBKEY1 -k PUBKEY2] [-CET] ECADDRESS"
+	cmd.helpMsg = "factom-cli identity addchain [-fq] [-n NAME1 -n NAME2] [-k PUBKEY1 -k PUBKEY2] [-CET] ECADDRESS"
 	cmd.description = "Create a new Identity Chain. Use the Entry Credits from the specified address." +
 		"Optional output flags: -C ChainID. -E EntryHash. -T TxID."
 	cmd.execFunc = func(args []string) {
@@ -133,13 +164,13 @@ var addIdentityChain = func() *fctCmd {
 			}
 		}
 	}
-	help.Add("addidentitychain", cmd)
+	help.Add("identity addchain", cmd)
 	return cmd
 }()
 
 var addIdentityKeyReplacement = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addidentitykeyreplacement [-fq] [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]" +
+	cmd.helpMsg = "factom-cli identity addkeyreplacement [-fq] [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]" +
 		" --oldkey PUBKEY --newkey PUBKEY --signerkey PUBKEY ECADDRESS [-CET]"
 	cmd.description = "Create a new Identity Key Replacement Entry using the Entry Credits from the specified address." +
 		" The oldkey is replaced by the newkey, and signerkey (same or higher priority as" +
@@ -288,13 +319,13 @@ var addIdentityKeyReplacement = func() *fctCmd {
 		}
 
 	}
-	help.Add("addidentitykeyreplacement", cmd)
+	help.Add("identity addkeyreplacement", cmd)
 	return cmd
 }()
 
 var addIdentityAttribute = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addidentityattribute [-fq] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
+	cmd.helpMsg = "factom-cli identity addattribute [-fq] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
 		" -signerkey PUBKEY -attribute ATTRIBUTE_JSON_ARRAY ECADDRESS [-CET]"
 	cmd.description = "Create a new Identity Attribute Entry using the Entry Credits from the specified address." +
 		" Optional output flags: -C ChainID. -E EntryHash. -T TxID."
@@ -462,13 +493,13 @@ var addIdentityAttribute = func() *fctCmd {
 		}
 
 	}
-	help.Add("addidentityattribute", cmd)
+	help.Add("identity addattribute", cmd)
 	return cmd
 }()
 
 var addIdentityAttributeEndorsement = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli addidentityattributeendorsement [-fq] -c CHAINID -csigner CHAINID -signerkey PUBKEY" +
+	cmd.helpMsg = "factom-cli identity addattributeendorsement [-fq] -c CHAINID -csigner CHAINID -signerkey PUBKEY" +
 		" -entryhash ENTRYHASH ECADDRESS [-CET]"
 	cmd.description = "Create a new Endorsement Entry for the Identity Attribute at the given entry hash. Uses the" +
 		" Entry Credits from the specified address. Optional output flags: -C ChainID. -E EntryHash. -T TxID."
@@ -611,7 +642,7 @@ var addIdentityAttributeEndorsement = func() *fctCmd {
 		}
 
 	}
-	help.Add("addidentityattributeendorsement", cmd)
+	help.Add("identity addattributeendorsement", cmd)
 	return cmd
 }()
 
@@ -619,7 +650,7 @@ var addIdentityAttributeEndorsement = func() *fctCmd {
 
 var composeIdentityChain = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composeidentitychain [-f] [-n NAME1 -n NAME2] [-k PUBKEY1 -k PUBKEY2] ECADDRESS"
+	cmd.helpMsg = "factom-cli identity composechain [-f] [-n NAME1 -n NAME2] [-k PUBKEY1 -k PUBKEY2] ECADDRESS"
 	cmd.description = "Create API calls to create a new Factom Identity Chain. Use the Entry Credits from the" +
 		" specified address."
 	cmd.execFunc = func(args []string) {
@@ -670,13 +701,13 @@ var composeIdentityChain = func() *fctCmd {
 		)
 
 	}
-	help.Add("composeidentitychain", cmd)
+	help.Add("identity composechain", cmd)
 	return cmd
 }()
 
 var composeIdentityKeyReplacement = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composeidentitykeyreplacement [-f] [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]" +
+	cmd.helpMsg = "factom-cli identity composekeyreplacement [-f] [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]" +
 		" --oldkey PUBKEY --newkey PUBKEY --signerkey PUBKEY ECADDRESS"
 	cmd.description = "Create API calls to create a new Identity key replacement entry using the Entry Credits from" +
 		" the specified address. The oldkey is replaced by the newkey, and signerkey (same or higher priority as" +
@@ -752,13 +783,13 @@ var composeIdentityKeyReplacement = func() *fctCmd {
 			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
 		)
 	}
-	help.Add("composeidentitykeyreplacement", cmd)
+	help.Add("identity composekeyreplacement", cmd)
 	return cmd
 }()
 
 var composeIdentityAttribute = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composeidentityattribute [-f] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
+	cmd.helpMsg = "factom-cli identity composeattribute [-f] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
 		" -signerkey PUBKEY -attribute ATTRIBUTE_JSON_ARRAY ECADDRESS"
 	cmd.description = "Create API calls to create a new Identity Attribute Entry using the Entry Credits from the specified address."
 	cmd.execFunc = func(args []string) {
@@ -855,13 +886,13 @@ var composeIdentityAttribute = func() *fctCmd {
 			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
 		)
 	}
-	help.Add("composeidentityattribute", cmd)
+	help.Add("identity composeattribute", cmd)
 	return cmd
 }()
 
 var composeIdentityAttributeEndorsement = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli composeidentityattributeendorsement [-f] -c CHAINID -csigner CHAINID -signerkey PUBKEY" +
+	cmd.helpMsg = "factom-cli identity composeattributeendorsement [-f] -c CHAINID -csigner CHAINID -signerkey PUBKEY" +
 		" -entryhash ENTRYHASH ECADDRESS"
 	cmd.description = "Compose API calls to create a new Endorsement Entry for the Identity Attribute at the given" +
 		" entry hash. Uses the Entry Credits from the specified address."
@@ -934,7 +965,7 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 			"-H 'content-type:text/plain;' http://"+factomdServer+"/v2",
 		)
 	}
-	help.Add("composeidentityattributeendorsement", cmd)
+	help.Add("identity composeattributeendorsement", cmd)
 	return cmd
 }()
 
@@ -943,7 +974,7 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 
 var getIdentityKeysAtHeight = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli getidentitykeysatheight [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN] HEIGHT"
+	cmd.helpMsg = "factom-cli identity getkeysatheight [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN] HEIGHT"
 	cmd.description = "Gets the set of identity public keys that were valid for the given identity chain at the" +
 		" specified height."
 	cmd.execFunc = func(args []string) {
@@ -991,6 +1022,6 @@ var getIdentityKeysAtHeight = func() *fctCmd {
 			fmt.Println(k)
 		}
 	}
-	help.Add("getidentitykeysatheight", cmd)
+	help.Add("identity getkeysatheight", cmd)
 	return cmd
 }()
