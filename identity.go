@@ -6,9 +6,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/FactomProject/factom"
 	"encoding/json"
 	"github.com/FactomProject/cli"
+	"github.com/FactomProject/factom"
 )
 
 var identity = func() *fctCmd {
@@ -37,7 +37,7 @@ var identity = func() *fctCmd {
 		})
 		c.Execute(args)
 	}
-	help.Add("get", cmd)
+	help.Add("identity", cmd)
 	return cmd
 }()
 
@@ -901,7 +901,7 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 
 		c := flag.String("c", "", "hex encoded chainid for where the endorsement entry is written")
 		cSigner := flag.String("csigner", "", "hex encoded chainid for the identity signing/giving the endorsement")
-		signerKeyString := flag.String("signerkey", "", "public identity key that signs the endorsement entry" +
+		signerKeyString := flag.String("signerkey", "", "public identity key that signs the endorsement entry"+
 			" (must be stored in wallet and should be currently valid for signer's identity)")
 		entryHash := flag.String("entryhash", "", "hex encoded entry hash for the attribute entry being endorsed")
 
@@ -968,7 +968,6 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 	help.Add("identity composeattributeendorsement", cmd)
 	return cmd
 }()
-
 
 // Other commands
 
