@@ -20,7 +20,7 @@ import:
 - package: github.com/FactomProject/ed25519
   version: master
 - package: github.com/FactomProject/factom
-  version: develop
+  version: FD-670_IdentityWalletdAPI
   subpackages:
   - wallet
   - wallet/wsapi
