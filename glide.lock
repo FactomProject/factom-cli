@@ -1,5 +1,5 @@
-hash: 86d963c6abdd97890fd51a76f7d4b3fb44f854f905d78c1de9bbd87da43e0377
-updated: 2018-10-31T11:23:16.724272272-05:00
+hash: 2270e472db082f69c2266ce850d6a6e85258d578fccf0ac5375c5d3a60d8ca12
+updated: 2018-10-31T11:45:09.205563696-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -20,9 +20,9 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: d74233e4791ab7786d7de29ba6382dabcf9ae698
+  version: 09534ac56566d655cbdd49d38de85dc41cf62ca5
 - name: github.com/FactomProject/factomd
-  version: b3cbad1e45e4941daa80feb3ee68edf0499dfdc0
+  version: e8403d3e9cee2fb5aabb96899260a4497cfea4fe
   subpackages:
   - activations
   - common/constants
@@ -43,7 +43,6 @@ imports:
 - name: github.com/FactomProject/goleveldb
   version: e7800c6976c5d75f0a9c5e9e0e2ff8086940e58f
   subpackages:
-  - leveldb
   - leveldb/errors
   - leveldb/storage
   - leveldb/util
