@@ -1,5 +1,5 @@
-hash: 5b3de1f2637c9409d87171cb259dc4b1b9ba6e554274b561478b9399b1d55ac4
-updated: 2018-08-24T15:59:31.826457954-05:00
+hash: 86d963c6abdd97890fd51a76f7d4b3fb44f854f905d78c1de9bbd87da43e0377
+updated: 2018-10-31T11:23:16.724272272-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -11,7 +11,6 @@ imports:
   version: 43986820ccd50b2b02b83e575cb3a39c87457482
   subpackages:
   - base58
-  - certs
 - name: github.com/FactomProject/btcutilecc
   version: d3a63a5752ecf3fbc06bd97365da752111c263df
 - name: github.com/FactomProject/cli
@@ -21,12 +20,9 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: 0473b0dd9b46610c9e521bd852a93e3e091d7f37
-  subpackages:
-  - wallet
-  - wallet/wsapi
+  version: d74233e4791ab7786d7de29ba6382dabcf9ae698
 - name: github.com/FactomProject/factomd
-  version: feb1b81eff8c440f76cf2866ceeb9207974bcef2
+  version: b3cbad1e45e4941daa80feb3ee68edf0499dfdc0
   subpackages:
   - activations
   - common/constants
@@ -53,16 +49,18 @@ imports:
   - leveldb/util
 - name: github.com/FactomProject/netki-go-partner-client
   version: 426acb535e66cc2f9e6226ae254555e3572fd142
+- name: github.com/konsorten/go-windows-terminal-sequences
+  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/sirupsen/logrus
-  version: 89742aefa4b206dcf400792f3bd35b542998eb3b
+  version: fd2308367ebd427ec910c1ac82f3805db3de1918
 - name: golang.org/x/crypto
-  version: 614d502a4dac94afa3a6ce146bd1736da82514c6
+  version: 4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06
   subpackages:
   - pbkdf2
   - ripemd160
   - ssh/terminal
 - name: golang.org/x/sys
-  version: 4910a1d54f876d7b22162a85f4d066d3ee649450
+  version: 9b800f95dbbc54abff0acf7ee32d88ba4e328c89
   subpackages:
   - unix
   - windows
