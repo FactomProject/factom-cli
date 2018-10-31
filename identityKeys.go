@@ -118,6 +118,7 @@ var removeIdentityKey = func() *fctCmd {
 		err := factom.RemoveIdentityKey(pub)
 		if err != nil {
 			fmt.Printf("%v\n", err)
+			return
 		}
 	}
 	help.Add("rmidentitykey", cmd)

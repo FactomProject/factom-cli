@@ -91,6 +91,7 @@ var addIdentityChain = func() *fctCmd {
 		c, err := factom.NewIdentityChain(nAscii, kAscii)
 		if err != nil {
 			errorln("Error composing identity chain struct: ", err.Error())
+			return
 		}
 
 		if !*fflag {
@@ -235,11 +236,13 @@ var addIdentityKeyReplacement = func() *fctCmd {
 		signerKey, err := factom.FetchIdentityKey(*signerKeyString)
 		if err != nil {
 			errorln(fmt.Errorf("Failed to fetch signer key from wallet"))
+			return
 		}
 
 		e, err := factom.NewIdentityKeyReplacementEntry(identityChainID, *oldKeyString, *newKeyString, signerKey)
 		if err != nil {
 			errorln("Error composing identity key replacement entry: ", err.Error())
+			return
 		}
 
 		// get the ec address from the wallet
@@ -679,6 +682,7 @@ var composeIdentityChain = func() *fctCmd {
 		c, err := factom.NewIdentityChain(nAscii, kAscii)
 		if err != nil {
 			errorln("Error composing identity chain struct: ", err.Error())
+			return
 		}
 
 		commit, reveal, err := factom.WalletComposeChainCommitReveal(c, ecpub, *fflag)
@@ -757,11 +761,13 @@ var composeIdentityKeyReplacement = func() *fctCmd {
 		signerKey, err := factom.FetchIdentityKey(*signerKeyString)
 		if err != nil {
 			errorln(fmt.Errorf("Failed to fetch signer key from wallet"))
+			return
 		}
 
 		e, err := factom.NewIdentityKeyReplacementEntry(identityChainID, *oldKeyString, *newKeyString, signerKey)
 		if err != nil {
 			errorln("Error composing identity key replacement entry: ", err.Error())
+			return
 		}
 
 		commit, reveal, err := factom.WalletComposeEntryCommitReveal(e, ecpub, *fflag)
@@ -1015,6 +1021,7 @@ var getIdentityKeysAtHeight = func() *fctCmd {
 		keys, err := i.GetKeysAtHeight(int64(height))
 		if err != nil {
 			errorln(err)
+			return
 		}
 
 		for _, k := range keys {
