@@ -1016,9 +1016,7 @@ var getIdentityKeysAtHeight = func() *fctCmd {
 			return
 		}
 
-		i := factom.Identity{}
-		i.ChainID = identityChainID
-		keys, err := i.GetKeysAtHeight(int64(height))
+		keys, err := factom.GetIdentityKeysAtHeight(identityChainID, int64(height))
 		if err != nil {
 			errorln(err)
 			return
