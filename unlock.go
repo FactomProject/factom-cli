@@ -16,7 +16,7 @@ import (
 // unlockwallet creates a new transaction in the wallet.
 var unlockwallet = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli walletpassphrase [-v] \"passphrase\" <seconds-to-unlock>"
+	cmd.helpMsg = "factom-cli unlockwallet [-v] \"passphrase\" <seconds-to-unlock>"
 	cmd.description = "Unlock the wallet for some number of seconds; must be an encrypted wallet. -v verbose."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -49,6 +49,6 @@ var unlockwallet = func() *fctCmd {
 		default:
 		}
 	}
-	help.Add("walletpassphrase", cmd)
+	help.Add("unlockwallet", cmd)
 	return cmd
 }()
