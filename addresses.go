@@ -66,7 +66,7 @@ var balance = func() *fctCmd {
 	return cmd
 }()
 
-/*// balancetotals shows the total balance of all of the Factoid and Entry Credts
+// balancetotals shows the total balance of all of the Factoid and Entry Credts
 // in the wallet
 var balancetotals = func() *fctCmd {
 	cmd := new(fctCmd)
@@ -105,7 +105,7 @@ var balancetotals = func() *fctCmd {
 	}
 	help.Add("balancetotals", cmd)
 	return cmd
-}()*/
+}()
 
 // ecrate shows the entry credit conversion rate in factoids
 var ecrate = func() *fctCmd {
