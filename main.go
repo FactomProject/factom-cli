@@ -215,6 +215,14 @@ func main() {
 	c.Handle("sendfct", sendfct)
 	c.Handle("buyec", buyec)
 
+	// identity commands
+	c.Handle("newidentitykey", newIdentityKey)
+	c.Handle("importidentitykeys", importIdentityKeys)
+	c.Handle("exportidentitykeys", exportIdentityKeys)
+	c.Handle("listidentitykeys", listIdentityKeys)
+	c.Handle("rmidentitykey", removeIdentityKey)
+	c.Handle("identity", identity)
+
 	c.HandleDefault(help)
 	c.Execute(args)
 }
