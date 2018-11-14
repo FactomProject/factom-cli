@@ -385,7 +385,7 @@ var getHeights = func() *fctCmd {
 		case *edisp:
 			fmt.Println(heights.EntryHeight)
 		default:
-			fmt.Println(heights.String())
+			fmt.Print(heights.String())
 		}
 	}
 	help.Add("get heights", cmd)
