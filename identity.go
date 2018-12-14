@@ -227,6 +227,7 @@ var addIdentityKeyReplacement = func() *fctCmd {
 		if *cid != "" {
 			identityChainID = *cid
 		} else if len(nameCollector) != 0 {
+			nameCollector = append([][]byte{[]byte("IdentityChain")}, nameCollector...)
 			identityChainID = nametoid(nameCollector)
 		} else {
 			fmt.Println(cmd.helpMsg)
@@ -752,6 +753,7 @@ var composeIdentityKeyReplacement = func() *fctCmd {
 		if *cid != "" {
 			identityChainID = *cid
 		} else if len(nameCollector) != 0 {
+			nameCollector = append([][]byte{[]byte("IdentityChain")}, nameCollector...)
 			identityChainID = nametoid(nameCollector)
 		} else {
 			fmt.Println(cmd.helpMsg)
@@ -1010,6 +1012,7 @@ var getIdentityKeysAtHeight = func() *fctCmd {
 		if *cid != "" {
 			identityChainID = *cid
 		} else if len(nameCollector) != 0 {
+			nameCollector = append([][]byte{[]byte("IdentityChain")}, nameCollector...)
 			identityChainID = nametoid(nameCollector)
 		} else {
 			fmt.Println(cmd.helpMsg)
