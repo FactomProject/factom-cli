@@ -13,8 +13,8 @@ import (
 
 var identity = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli identity addchain|addkeyreplacement|addattribute|addattributeendorsement|" +
-		"composechain|composekeyreplacement|composeattribute|composeattributeendorsement|getkeysatheight"
+	cmd.helpMsg = "factom-cli identity addchain|addkeyreplacement|addattribute|addattributeendorsement|composechain|" +
+		"composekeyreplacement|composeattribute|composeattributeendorsement|getactivekeys|getactivekeysatheight"
 	cmd.description = "Create/manage Factom Identity Chains, their currently valid keys, attributes, and" +
 		" attribute endorsements"
 	cmd.execFunc = func(args []string) {
@@ -31,7 +31,8 @@ var identity = func() *fctCmd {
 		c.Handle("composekeyreplacement", composeIdentityKeyReplacement)
 		c.Handle("composeattribute", composeIdentityAttribute)
 		c.Handle("composeattributeendorsement", composeIdentityAttributeEndorsement)
-		c.Handle("getkeysatheight", getIdentityKeysAtHeight)
+		c.Handle("getactivekeys", getActiveIdentityKeys)
+		c.Handle("getactivekeysatheight", getActiveIdentityKeysAtHeight)
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
 		})
@@ -979,11 +980,55 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 
 // Other commands
 
-var getIdentityKeysAtHeight = func() *fctCmd {
+var getActiveIdentityKeys = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli identity getkeysatheight [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN] HEIGHT"
+	cmd.helpMsg = "factom-cli identity getactivekeys [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]"
+	cmd.description = "Gets the set of identity public keys that are active for the given identity chain at the" +
+		" highest known block height."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		var (
+			name namesASCII
+			cid  = flag.String("c", "", "hex encoded chainid for the identity of interest")
+		)
+
+		// -n names
+		nameCollector = make([][]byte, 0)
+		flag.Var(&name, "n", "an element of the identity's name (used if no ChainID is provided with -c)")
+
+		flag.Parse()
+
+		// set the chainid from -c or from -n
+		var identityChainID string
+		if *cid != "" {
+			identityChainID = *cid
+		} else if len(nameCollector) != 0 {
+			nameCollector = append([][]byte{[]byte("IdentityChain")}, nameCollector...)
+			identityChainID = nametoid(nameCollector)
+		} else {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		keys, _, err := factom.GetActiveIdentityKeys(identityChainID)
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		for _, k := range keys {
+			fmt.Println(k)
+		}
+	}
+	help.Add("identity getactivekeys", cmd)
+	return cmd
+}()
+
+var getActiveIdentityKeysAtHeight = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli identity getactivekeysatheight [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN] HEIGHT"
 	cmd.description = "Gets the set of identity public keys that were valid for the given identity chain at the" +
-		" specified height."
+		" specified block height."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -1019,7 +1064,7 @@ var getIdentityKeysAtHeight = func() *fctCmd {
 			return
 		}
 
-		keys, err := factom.GetIdentityKeysAtHeight(identityChainID, int64(height))
+		keys, err := factom.GetActiveIdentityKeysAtHeight(identityChainID, int64(height))
 		if err != nil {
 			errorln(err)
 			return
@@ -1029,6 +1074,6 @@ var getIdentityKeysAtHeight = func() *fctCmd {
 			fmt.Println(k)
 		}
 	}
-	help.Add("identity getkeysatheight", cmd)
+	help.Add("identity getactivekeysatheight", cmd)
 	return cmd
 }()
