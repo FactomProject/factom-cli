@@ -106,7 +106,7 @@ func (n *keysASCII) String() string {
 func (k *keysASCII) Set(s string) error {
 	*k = append(*k, s)
 	if factom.IdentityKeyStringType(s) != factom.IDPub {
-		return fmt.Errorf("Provided key string not a valid public identity key: %d", s)
+		return fmt.Errorf("Provided key string not a valid public identity key: %s", s)
 	}
 	b := base58.Decode(s)
 	key := factom.NewIdentityKey()
