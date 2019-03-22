@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/FactomProject/btcutil/base58"
 	"github.com/FactomProject/factom"
 )
 
@@ -92,6 +93,24 @@ func (n *namesHex) Set(s string) error {
 		return err
 	}
 	nameCollector = append(nameCollector[:], b)
+	return nil
+}
+
+// keysASCII will be a flag receiver for ASCII identity keys.
+type keysASCII []string
+
+func (n *keysASCII) String() string {
+	return fmt.Sprint(*n)
+}
+
+func (k *keysASCII) Set(s string) error {
+	*k = append(*k, s)
+	if factom.IdentityKeyStringType(s) != factom.IDPub {
+		return fmt.Errorf("Provided key string not a valid public identity key: %s", s)
+	}
+	b := base58.Decode(s)
+	key := factom.NewIdentityKey()
+	copy(key.Pub[:], b[factom.IDKeyPrefixLength:factom.IDKeyBodyLength])
 	return nil
 }
 

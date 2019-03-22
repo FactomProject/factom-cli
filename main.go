@@ -198,6 +198,7 @@ func main() {
 	c.Handle("receipt", receipt)
 	c.Handle("backupwallet", backupwallet)
 	c.Handle("rmaddress", removeAddress)
+	c.Handle("unlockwallet", unlockwallet)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
@@ -213,6 +214,14 @@ func main() {
 	c.Handle("sendtx", sendtx)
 	c.Handle("sendfct", sendfct)
 	c.Handle("buyec", buyec)
+
+	// identity commands
+	c.Handle("newidentitykey", newIdentityKey)
+	c.Handle("importidentitykeys", importIdentityKeys)
+	c.Handle("exportidentitykeys", exportIdentityKeys)
+	c.Handle("listidentitykeys", listIdentityKeys)
+	c.Handle("rmidentitykey", removeIdentityKey)
+	c.Handle("identity", identity)
 
 	c.HandleDefault(help)
 	c.Execute(args)
