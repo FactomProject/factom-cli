@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
@@ -178,8 +179,9 @@ var getChainHead = func() *fctCmd {
 
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dblock [-r] KEYMR"
-	cmd.description = "Get dblock contents by Key Merkle Root."
+	cmd.helpMsg = "factom-cli get dblock [-r] HEIGHT|KEYMR"
+	cmd.description = "Get a Directory Block from factom by its Key Merkel " +
+		"Root or by its Height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		rawout := flag.Bool(
@@ -194,8 +196,16 @@ var getDBlock = func() *fctCmd {
 			return
 		}
 
-		keymr := args[0]
-		dblock, raw, err := factom.GetDBlock(keymr)
+		dblock, raw, err := func() (dblock *factom.DBlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetDBlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetDBlockByHeight(i)
+		}()
 		if err != nil {
 			errorln(err)
 			return
