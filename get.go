@@ -364,26 +364,10 @@ var getHeights = func() *fctCmd {
 	cmd.description = "Get the current heights of various items in factomd."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		ddisp := flag.Bool(
-			"D",
-			false,
-			"display only the DirectoryBlock height",
-		)
-		ldisp := flag.Bool(
-			"L",
-			false,
-			"display only the Leader height",
-		)
-		bdisp := flag.Bool(
-			"B",
-			false,
-			"display only the EntryBlock height",
-		)
-		edisp := flag.Bool(
-			"E",
-			false,
-			"display only the Entry height",
-		)
+		ddisp := flag.Bool("D", false, "display only the Directory Block height")
+		ldisp := flag.Bool("L", false, "display only the Leader height")
+		bdisp := flag.Bool("B", false, "display only the EntryBlock height")
+		edisp := flag.Bool("E", false, "display only the Entry height")
 		flag.Parse()
 		args = flag.Args()
 
@@ -443,28 +427,7 @@ var properties = func() *fctCmd {
 		}
 
 		fmt.Println("CLI Version:", FactomcliVersion)
-		if props.FactomdVersionErr != "" {
-			fmt.Println("Factomd Version Unavailable:", props.FactomdVersionErr)
-		} else {
-			fmt.Println("Factomd Version:", props.FactomdVersion)
-		}
-
-		if props.FactomdAPIVersionErr != "" {
-			fmt.Println("Factomd API Version Unavailable:", props.FactomdAPIVersionErr)
-		} else {
-			fmt.Println("Factomd API Version:", props.FactomdAPIVersion)
-		}
-
-		if props.WalletVersionErr != "" {
-			fmt.Println("Wallet Version Unavailable:", props.WalletVersionErr)
-		} else {
-			fmt.Println("Wallet Version:", props.WalletVersion)
-		}
-		if props.WalletAPIVersionErr != "" {
-			fmt.Println("Wallet API Version Unavailable:", props.WalletAPIVersionErr)
-		} else {
-			fmt.Println("Wallet API Version:", props.WalletAPIVersion)
-		}
+		fmt.Println(props)
 	}
 	help.Add("properties", cmd)
 	return cmd
