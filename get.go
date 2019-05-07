@@ -412,22 +412,39 @@ var getWalletHeight = func() *fctCmd {
 
 var properties = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli properties"
+	cmd.helpMsg = "factom-cli properties [-CFAWL]"
 	cmd.description = "Get version information about factomd and the factom wallet"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		cdisp := flag.Bool("C", false, "display only the CLI version")
+		fdisp := flag.Bool("F", false, "display only the factomd version")
+		adisp := flag.Bool("A", false, "display only the factomd API version")
+		wdisp := flag.Bool("W", false, "display only the factom-wallet version")
+		ldisp := flag.Bool("L", false, "display only the wallet API version")
 		flag.Parse()
 		args = flag.Args()
 
-		// fdv, fdverr, fdapiv, fdapiverr, fwv, fwverr, fwapiv, fwapiverr := factom.GetProperties()
 		props, err := factom.GetProperties()
 		if err != nil {
 			errorln(err)
 			return
 		}
 
-		fmt.Println("CLI Version:", FactomcliVersion)
-		fmt.Println(props)
+		switch {
+		case *cdisp:
+			fmt.Println(FactomcliVersion)
+		case *fdisp:
+			fmt.Println(props.FactomdVersion)
+		case *adisp:
+			fmt.Println(props.FactomdAPIVersion)
+		case *wdisp:
+			fmt.Println(props.WalletVersion)
+		case *ldisp:
+			fmt.Println(props.WalletAPIVersion)
+		default:
+			fmt.Println("CLI Version:", FactomcliVersion)
+			fmt.Println(props)
+		}
 	}
 	help.Add("properties", cmd)
 	return cmd
