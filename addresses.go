@@ -113,7 +113,7 @@ var ecrate = func() *fctCmd {
 	cmd.helpMsg = "factom-cli ecrate"
 	cmd.description = "It takes this many Factoids to buy an Entry Credit.  Displays the larger between current and future rates. Also used to set Factoid fees."
 	cmd.execFunc = func(args []string) {
-		rate, err := factom.GetRate()
+		rate, err := factom.GetECRate()
 		if err != nil {
 			errorln(err)
 			return

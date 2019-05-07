@@ -26,15 +26,15 @@ var get = func() *fctCmd {
 		args = flag.Args()
 
 		c := cli.New()
-		c.Handle("abheight", Abheight)
+		// c.Handle("abheight", Abheight)
 		c.Handle("allentries", getAllEntries)
 		c.Handle("chainhead", getChainHead)
-		c.Handle("dbheight", Dbheight)
+		// c.Handle("dbheight", Dbheight)
 		c.Handle("dblock", getDBlock)
 		c.Handle("eblock", getEBlock)
-		c.Handle("ecbheight", Ecbheight)
+		// c.Handle("ecbheight", Ecbheight)
 		c.Handle("entry", getEntry)
-		c.Handle("fbheight", Fbheight)
+		// c.Handle("fbheight", Fbheight)
 		c.Handle("firstentry", getFirstEntry)
 		c.Handle("head", getHead)
 		c.Handle("heights", getHeights)
@@ -147,18 +147,18 @@ var getChainHead = func() *fctCmd {
 			chainid = args[0]
 		}
 
-		head, err := factom.GetChainHeadAndStatus(chainid)
+		head, inPL, err := factom.GetChainHead(chainid)
 		if err != nil {
 			errorln(err)
 			return
 		}
 
-		if head.ChainHead == "" && head.ChainInProcessList {
-			errorln(fmt.Errorf("Chain not yet included in a Directory Block"))
+		if head == "" && inPL {
+			errorln(factom.ErrChainPending)
 			return
 		}
 
-		eblock, err := factom.GetEBlock(head.ChainHead)
+		eblock, err := factom.GetEBlock(head)
 		if err != nil {
 			errorln(err)
 			return
@@ -166,9 +166,9 @@ var getChainHead = func() *fctCmd {
 
 		switch {
 		case *kdisp:
-			fmt.Println(head.ChainHead)
+			fmt.Println(head)
 		default:
-			fmt.Println("EBlock:", head.ChainHead)
+			fmt.Println("EBlock:", head)
 			fmt.Println(eblock)
 		}
 	}
@@ -178,10 +178,15 @@ var getChainHead = func() *fctCmd {
 
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dblock KEYMR"
-	cmd.description = "Get dblock contents by Key Merkle Root"
+	cmd.helpMsg = "factom-cli get dblock [-r] KEYMR"
+	cmd.description = "Get dblock contents by Key Merkle Root."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		rawout := flag.Bool(
+			"r",
+			false,
+			"display the hex encoding of the raw Directory Block",
+		)
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
@@ -190,12 +195,18 @@ var getDBlock = func() *fctCmd {
 		}
 
 		keymr := args[0]
-		dblock, err := factom.GetDBlock(keymr)
+		dblock, raw, err := factom.GetDBlock(keymr)
 		if err != nil {
 			errorln(err)
 			return
 		}
-		fmt.Println(dblock)
+
+		switch {
+		case *rawout:
+			fmt.Printf("%x\n", raw)
+		default:
+			fmt.Println(dblock)
+		}
 	}
 	help.Add("get dblock", cmd)
 	return cmd
@@ -304,7 +315,7 @@ var getFirstEntry = func() *fctCmd {
 
 var getHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get head [-K]"
+	cmd.helpMsg = "factom-cli get head [-r][-K]"
 	cmd.description = "Get the latest completed Directory Block. -K KeyMR."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -312,6 +323,11 @@ var getHead = func() *fctCmd {
 			"K",
 			false,
 			"display only the KeyMR of the directory block",
+		)
+		rawout := flag.Bool(
+			"r",
+			false,
+			"display the hex encoding of the raw Directory Block",
 		)
 		flag.Parse()
 		args = flag.Args()
@@ -322,7 +338,7 @@ var getHead = func() *fctCmd {
 			return
 		}
 
-		dblock, err := factom.GetDBlock(head)
+		dblock, raw, err := factom.GetDBlock(head)
 		if err != nil {
 			errorln(err)
 			return
@@ -331,6 +347,8 @@ var getHead = func() *fctCmd {
 		switch {
 		case *kdisp:
 			fmt.Println(head)
+		case *rawout:
+			fmt.Printf("%x\n", raw)
 		default:
 			fmt.Println("DBlock:", head)
 			fmt.Println(dblock)
@@ -343,7 +361,7 @@ var getHead = func() *fctCmd {
 var getHeights = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get heights [-DLBE]"
-	cmd.description = "Get the current heights of various items in factomd"
+	cmd.description = "Get the current heights of various items in factomd."
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		ddisp := flag.Bool(
@@ -417,32 +435,36 @@ var properties = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		fdv, fdverr, fdapiv, fdapiverr, fwv, fwverr, fwapiv, fwapiverr := factom.GetProperties()
+		// fdv, fdverr, fdapiv, fdapiverr, fwv, fwverr, fwapiv, fwapiverr := factom.GetProperties()
+		props, err := factom.GetProperties()
+		if err != nil {
+			errorln(err)
+			return
+		}
 
 		fmt.Println("CLI Version:", FactomcliVersion)
-		if fdverr == "" {
-			fmt.Println("Factomd Version:", fdv)
+		if props.FactomdVersionErr != "" {
+			fmt.Println("Factomd Version Unavailable:", props.FactomdVersionErr)
 		} else {
-			fmt.Println("Factomd Version Unavailable:", fdverr)
+			fmt.Println("Factomd Version:", props.FactomdVersion)
 		}
 
-		if fdapiverr == "" {
-			fmt.Println("Factomd API Version:", fdapiv)
+		if props.FactomdAPIVersionErr != "" {
+			fmt.Println("Factomd API Version Unavailable:", props.FactomdAPIVersionErr)
 		} else {
-			fmt.Println("Factomd API Version Unavailable:", fdapiverr)
+			fmt.Println("Factomd API Version:", props.FactomdAPIVersion)
 		}
 
-		if fwverr == "" {
-			fmt.Println("Wallet Version:", fwv)
+		if props.WalletVersionErr != "" {
+			fmt.Println("Wallet Version Unavailable:", props.WalletVersionErr)
 		} else {
-			fmt.Println("Wallet Version Unavailable:", fwverr)
+			fmt.Println("Wallet Version:", props.WalletVersion)
 		}
-		if fwapiverr == "" {
-			fmt.Println("Wallet API Version:", fwapiv)
+		if props.WalletAPIVersionErr != "" {
+			fmt.Println("Wallet API Version Unavailable:", props.WalletAPIVersionErr)
 		} else {
-			fmt.Println("Wallet API Version Unavailable:", fwapiverr)
+			fmt.Println("Wallet API Version:", props.WalletAPIVersion)
 		}
-
 	}
 	help.Add("properties", cmd)
 	return cmd

@@ -1,7 +1,0 @@
-package: github.com/FactomProject/factom-cli
-import:
-- package: github.com/FactomProject/cli
-- package: github.com/FactomProject/factom
-- package: github.com/FactomProject/factomd
-  subpackages:
-  - util

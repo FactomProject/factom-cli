@@ -774,7 +774,7 @@ var buyec = func() *fctCmd {
 			errorln("AMOUNT may not be less than 0")
 			return
 		} else {
-			rate, err := factom.GetRate()
+			rate, err := factom.GetECRate()
 			if err != nil {
 				errorln(err)
 			}
