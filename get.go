@@ -180,16 +180,16 @@ var getChainHead = func() *fctCmd {
 
 var getABlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get ABlock [-r] HEIGHT|KEYMR"
+	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
 	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
 		"or by its Height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		rawout := flag.Bool(
-			"r",
-			false,
-			"display the hex encoding of the raw Directory Block",
-		)
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
+		ddisp := flag.Bool("D", false, "display only the Directory Block height")
+		bdisp := flag.Bool("B", false, "display only the Backreference Hash")
+		pdisp := flag.Bool("P", false, "display only the Previous Backreference Hash")
+		ldisp := flag.Bool("L", false, "display only the Lookup Hash")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
@@ -213,8 +213,16 @@ var getABlock = func() *fctCmd {
 		}
 
 		switch {
-		case *rawout:
+		case *rdisp:
 			fmt.Printf("%x\n", raw)
+		case *ddisp:
+			fmt.Println(ablock.DBHeight)
+		case *bdisp:
+			fmt.Println(ablock.BackReverenceHash)
+		case *pdisp:
+			fmt.Println(ablock.PrevBackreferenceHash)
+		case *ldisp:
+			fmt.Println(ablock.LookupHash)
 		default:
 			fmt.Println(ablock)
 		}
