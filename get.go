@@ -179,16 +179,23 @@ var getChainHead = func() *fctCmd {
 
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dblock [-r] HEIGHT|KEYMR"
+	cmd.helpMsg = "factom-cli get dblock [-RHKAVNBPFTDC] HEIGHT|KEYMR"
 	cmd.description = "Get a Directory Block from factom by its Key Merkel " +
 		"Root or by its Height"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		rawout := flag.Bool(
-			"r",
-			false,
-			"display the hex encoding of the raw Directory Block",
-		)
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
+		hdisp := flag.Bool("H", false, "display only the Directory Block Hash")
+		kdisp := flag.Bool("K", false, "display only the Directory Block Key Merkel Root")
+		adisp := flag.Bool("A", false, "display only the Directory Block Header Hash")
+		vdisp := flag.Bool("V", false, "display only the Directory Block Header Version")
+		ndisp := flag.Bool("N", false, "display only the Network ID")
+		bdisp := flag.Bool("B", false, "display only the Directory Block Body Merkel Root")
+		pdisp := flag.Bool("P", false, "display only the Previous Directory Block Key Merkel Root")
+		fdisp := flag.Bool("F", false, "display only the Previous Directory Block Full Hash")
+		tdisp := flag.Bool("T", false, "display only the Directory Block Timestamp")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		cdisp := flag.Bool("C", false, "display only the Directory Block Count")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
@@ -212,8 +219,30 @@ var getDBlock = func() *fctCmd {
 		}
 
 		switch {
-		case *rawout:
+		case *rdisp:
 			fmt.Printf("%x\n", raw)
+		case *hdisp:
+			fmt.Println(dblock.DBHash)
+		case *kdisp:
+			fmt.Println(dblock.KeyMR)
+		case *adisp:
+			fmt.Println(dblock.HeaderHash)
+		case *vdisp:
+			fmt.Println(dblock.Header.Version)
+		case *ndisp:
+			fmt.Println(dblock.Header.NetworkID)
+		case *bdisp:
+			fmt.Println(dblock.Header.BodyMR)
+		case *pdisp:
+			fmt.Println(dblock.Header.PrevKeyMR)
+		case *fdisp:
+			fmt.Println(dblock.Header.PrevFullHash)
+		case *tdisp:
+			fmt.Println(dblock.Header.Timestamp)
+		case *ddisp:
+			fmt.Println(dblock.Header.DBHeight)
+		case *cdisp:
+			fmt.Println(dblock.Header.BlockCount)
 		default:
 			fmt.Println(dblock)
 		}
