@@ -240,7 +240,7 @@ var getEBlock = func() *fctCmd {
 var getEntry = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get entry [-RC] HASH"
-	cmd.description = "Get Entry by Hash"
+	cmd.description = "Get Entry by Hash. -R raw entry. -C ChainID"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry")
@@ -278,19 +278,18 @@ var getEntry = func() *fctCmd {
 
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...|CHAINID] [-E]"
-	cmd.description = "Get the first Entry in a Chain. -E EntryHash"
+	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...|CHAINID] [-REC]"
+	cmd.description = "Get the first Entry in a Chain. -R RawEntry. -E EntryHash. -C ChainID."
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
-		edisp := flag.Bool(
-			"E",
-			false,
-			"display only the EntryHash of the first entry",
-		)
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry")
+		edisp := flag.Bool("E", false, "display only the EntryHash")
+		cdisp := flag.Bool("C", false, "display only the ChainID")
+
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
 		flag.Var(&nHex, "h", "hex binary name component")
@@ -316,12 +315,20 @@ var getFirstEntry = func() *fctCmd {
 		}
 
 		switch {
+		case *rdisp:
+			b, err := entry.MarshalBinary()
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Printf("%x\n", b)
 		case *edisp:
 			fmt.Printf("%x\n", entry.Hash())
+		case *cdisp:
+			fmt.Println(entry.ChainID)
 		default:
 			fmt.Println(entry)
 		}
-
 	}
 	help.Add("get firstentry", cmd)
 	return cmd
