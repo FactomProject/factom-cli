@@ -116,19 +116,16 @@ var getAllEntries = func() *fctCmd {
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -h HEXNAME2 ...|CHAINID] [-K]"
-	cmd.description = "Get the latest Entry Block of the specified Chain. -n" +
-		" and -h to specify the chain name. -K KeyMR."
+	cmd.description = "Get the latest Entry Block of the specified Chain. -n " +
+		"and -h to specify the chain name. -K KeyMR."
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
-		kdisp := flag.Bool(
-			"K",
-			false,
-			"display only the KeyMR of the entry block",
-		)
+		kdisp := flag.Bool("K", false, "display only the Entry Block Key Merkel Root")
+
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
 		flag.Var(&nHex, "h", "hex binary name component")
@@ -168,7 +165,6 @@ var getChainHead = func() *fctCmd {
 		case *kdisp:
 			fmt.Println(head)
 		default:
-			fmt.Println("EBlock:", head)
 			fmt.Println(eblock)
 		}
 	}
