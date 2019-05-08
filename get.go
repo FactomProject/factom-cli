@@ -239,10 +239,12 @@ var getEBlock = func() *fctCmd {
 
 var getEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get entry HASH"
+	cmd.helpMsg = "factom-cli get entry [-RC] HASH"
 	cmd.description = "Get Entry by Hash"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry")
+		cdisp := flag.Bool("C", false, "display only the Chain ID")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
@@ -256,7 +258,19 @@ var getEntry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println(entry)
+		switch {
+		case *rdisp:
+			b, err := entry.MarshalBinary()
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Printf("%x\n", b)
+		case *cdisp:
+			fmt.Println(entry.ChainID)
+		default:
+			fmt.Println(entry)
+		}
 	}
 	help.Add("get entry", cmd)
 	return cmd
