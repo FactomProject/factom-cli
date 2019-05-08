@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
@@ -32,6 +33,7 @@ var get = func() *fctCmd {
 		// c.Handle("dbheight", Dbheight)
 		c.Handle("dblock", getDBlock)
 		c.Handle("eblock", getEBlock)
+		c.Handle("fblock", getFBlock)
 		// c.Handle("ecbheight", Ecbheight)
 		c.Handle("entry", getEntry)
 		// c.Handle("fbheight", Fbheight)
@@ -234,6 +236,61 @@ var getEBlock = func() *fctCmd {
 		fmt.Println(eblock)
 	}
 	help.Add("get eblock", cmd)
+	return cmd
+}()
+
+var getFBlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get fblock [-RBPLED] KEYMR|HEIGHT"
+	cmd.description = "Get a Factoid Block by its Key Merkle Root or Height"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Factoid Block")
+		bdisp := flag.Bool("B", false, "display only the Body Merkel Root")
+		pdisp := flag.Bool("P", false, "display only the Previous Key Merkel Root")
+		ldisp := flag.Bool("L", false, "display only the Previous Ledger Key Merkel Root")
+		edisp := flag.Bool("E", false, "display only the Exchange Rate")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		fblock, raw, err := func() (fblock *factom.FBlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetFBlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetFBlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *bdisp:
+			fmt.Println(fblock.BodyMR)
+		case *pdisp:
+			fmt.Println(fblock.PrevKeyMR)
+		case *ldisp:
+			fmt.Println(fblock.PrevLedgerKeyMR)
+		case *edisp:
+			fmt.Println(fblock.ExchRate)
+		case *ddisp:
+			fmt.Println(fblock.DBHeight)
+		default:
+			fmt.Println(fblock)
+		}
+	}
+	help.Add("get fblock", cmd)
 	return cmd
 }()
 
