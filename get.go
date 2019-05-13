@@ -116,7 +116,7 @@ var getAllEntries = func() *fctCmd {
 
 var getAuthorities = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get authorities [-RHKAVNBPFTDC]"
+	cmd.helpMsg = "factom-cli get authorities"
 	cmd.description = "Get information about the authority servers on the " +
 		"Factom network"
 	cmd.execFunc = func(args []string) {
