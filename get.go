@@ -44,6 +44,7 @@ var get = func() *fctCmd {
 		c.Handle("pendingentries", getPendingEntries)
 		c.Handle("pendingtransactions", getPendingTransactions)
 		c.Handle("raw", getraw)
+		c.Handle("tps", getTPS)
 		c.Handle("walletheight", getWalletHeight)
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
@@ -718,5 +719,36 @@ var getPendingTransactions = func() *fctCmd {
 
 	}
 	help.Add("get pendingtransactions", cmd)
+	return cmd
+}()
+
+var getTPS = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get tps [-IT]"
+	cmd.description = "Get the current instant and total average rate of " +
+		"Transactions Per Second."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		idisp := flag.Bool("I", false, "display only the instant TPS rate")
+		tdisp := flag.Bool("T", false, "display only the total averaged TPS rate")
+		flag.Parse()
+
+		i, t, err := factom.GetTPS()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *idisp:
+			fmt.Println(i)
+		case *tdisp:
+			fmt.Println(t)
+		default:
+			fmt.Println("Instant:", i)
+			fmt.Println("Total:", t)
+		}
+	}
+	help.Add("get tps", cmd)
 	return cmd
 }()
