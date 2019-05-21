@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 // balance prints the current balance of the specified address
@@ -17,6 +18,11 @@ var balance = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli balance [-r] ADDRESS"
 	cmd.description = "If this is an EC Address, returns number of Entry Credits. If this is a Factoid Address, returns the Factoid balance."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-r": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var res = flag.Bool("r", false, "resolve dns address")

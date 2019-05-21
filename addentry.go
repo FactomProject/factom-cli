@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 var addentry = func() *fctCmd {
@@ -21,6 +22,19 @@ var addentry = func() *fctCmd {
 	cmd.description = "Create a new Factom Entry. Read data for the Entry" +
 		" from stdin. Use the Entry Credits from the specified address." +
 		" -C ChainID. -E EntryHash. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f": complete.PredictNothing,
+			"-q": complete.PredictNothing,
+
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+
+			"-C": complete.PredictNothing,
+			"-E": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (

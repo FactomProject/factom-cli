@@ -82,7 +82,10 @@ func main() {
 
 	cliCompletion := complete.New("factom-cli", complete.Command{
 		Sub: complete.Commands{
-			"test": test.completion,
+			"addchain":     addchain.completion,
+			"addentry":     addentry.completion,
+			"backupwallet": backupwallet.completion,
+			"balance":      balance.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
@@ -191,9 +194,9 @@ func main() {
 	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
 	factom.SetWalletEncryption(*walletTLSflag, *walletTLSCert)
 	factom.SetFactomdEncryption(*factomdTLSflag, *factomdTLSCert)
+
 	c := cli.New()
 	c.Handle("help", help)
-	c.Handle("status", status)
 	c.Handle("addchain", addchain)
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
@@ -212,8 +215,8 @@ func main() {
 	c.Handle("newfctaddress", newfctaddress)
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
-	c.Handle("backupwallet", backupwallet)
 	c.Handle("rmaddress", removeAddress)
+	c.Handle("status", status)
 	c.Handle("unlockwallet", unlockwallet)
 
 	// transaction commands
