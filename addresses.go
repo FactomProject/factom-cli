@@ -78,6 +78,14 @@ var balancetotals = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli balancetotals [-FS -FA -ES -EA]"
 	cmd.description = "This is the total number of Factoids and Entry Credits in the wallet"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-FS": complete.PredictNothing,
+			"-FA": complete.PredictNothing,
+			"-ES": complete.PredictNothing,
+			"-EA": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var fsdisp = flag.Bool("FS", false, "Display only the savedFCT value")
