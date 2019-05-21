@@ -12,6 +12,7 @@ import (
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 	"github.com/FactomProject/factomd/util"
+	"github.com/posener/complete"
 )
 
 // Version of factom-cli
@@ -78,7 +79,21 @@ func main() {
 				" (default ~/.factom/m2/factomdAPIpub.cert)",
 		)
 	)
+
+	cliCompletion := complete.New("factom-cli", complete.Command{
+		Sub: complete.Commands{
+			"test": test.completion,
+		},
+	})
+	cliCompletion.CLI.InstallName = "complete"
+	cliCompletion.CLI.UninstallName = "uncomplete"
+	cliCompletion.AddFlags(nil)
+
 	flag.Parse()
+
+	if cliCompletion.Complete() {
+		return
+	}
 
 	// see if the config file has values which should be used instead of null
 	// strings
