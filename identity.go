@@ -1,14 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"strconv"
 
-	"encoding/json"
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 var identity = func() *fctCmd {
@@ -17,6 +18,20 @@ var identity = func() *fctCmd {
 		"composekeyreplacement|composeattribute|composeattributeendorsement|getactivekeys|getactivekeysatheight"
 	cmd.description = "Create/manage Factom Identity Chains, their currently valid keys, attributes, and" +
 		" attribute endorsements"
+	cmd.completion = complete.Command{
+		Sub: complete.Commands{
+			"addchain":                    addIdentityChain.completion,
+			"addkeyreplacement":           addIdentityKeyReplacement.completion,
+			"addattribute":                addIdentityAttribute.completion,
+			"addattributeendorsement":     complete.Command{},
+			"composechain":                complete.Command{},
+			"composekeyreplacement":       complete.Command{},
+			"composeattribute":            complete.Command{},
+			"composeattributeendorsement": complete.Command{},
+			"getactivekeys":               complete.Command{},
+			"getactivekeysatheight":       complete.Command{},
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -49,6 +64,17 @@ var addIdentityChain = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity addchain [-fq] [-n NAME1 -n NAME2] [-k PUBKEY1 -k PUBKEY2] [-CET] ECADDRESS"
 	cmd.description = "Create a new Identity Chain. Use the Entry Credits from the specified address." +
 		"Optional output flags: -C ChainID. -E EntryHash. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f": complete.PredictNothing,
+			"-q": complete.PredictNothing,
+			"-n": complete.PredictAnything,
+			"-k": complete.PredictAnything,
+			"-C": complete.PredictNothing,
+			"-E": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			nAscii namesASCII
@@ -177,6 +203,20 @@ var addIdentityKeyReplacement = func() *fctCmd {
 	cmd.description = "Create a new Identity Key Replacement Entry using the Entry Credits from the specified address." +
 		" The oldkey is replaced by the newkey, and signerkey (same or higher priority as" +
 		" oldkey) authorizes the replacement. Optional output flags: -C ChainID. -E EntryHash. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":          complete.PredictNothing,
+			"-q":          complete.PredictNothing,
+			"-c":          complete.PredictAnything,
+			"-n":          complete.PredictAnything,
+			"--oldkey":    complete.PredictAnything,
+			"--newkey":    complete.PredictAnything,
+			"--signerkey": complete.PredictAnything,
+			"-C":          complete.PredictNothing,
+			"-E":          complete.PredictNothing,
+			"-T":          complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -334,6 +374,20 @@ var addIdentityAttribute = func() *fctCmd {
 		" -signerkey PUBKEY -attribute ATTRIBUTE_JSON_ARRAY ECADDRESS [-CET]"
 	cmd.description = "Create a new Identity Attribute Entry using the Entry Credits from the specified address." +
 		" Optional output flags: -C ChainID. -E EntryHash. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":         complete.PredictNothing,
+			"-q":         complete.PredictNothing,
+			"-c":         complete.PredictAnything,
+			"-creceiver": complete.PredictAnything,
+			"-csigner":   complete.PredictAnything,
+			"-signerkey": complete.PredictAnything,
+			"-attribute": complete.PredictAnything,
+			"-C":         complete.PredictNothing,
+			"-E":         complete.PredictNothing,
+			"-T":         complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 

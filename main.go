@@ -117,6 +117,13 @@ func main() {
 			"sendtx":        sendtx.completion,
 			"sendfct":       sendfct.completion,
 			"buyec":         buyec.completion,
+
+			"newidentitykey":     complete.Command{},
+			"importidentitykeys": complete.Command{},
+			"exportidentitykeys": complete.Command{},
+			"listidentitykeys":   complete.Command{},
+			"rmidentitykey":      complete.Command{},
+			"identity":           identity.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
