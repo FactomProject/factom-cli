@@ -88,6 +88,7 @@ func main() {
 			"balance":       balance.completion,
 			"balancetotals": balancetotals.completion,
 			"composechain":  composechain.completion,
+			"composeentry":  composeentry.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"

@@ -200,6 +200,17 @@ var composeentry = func() *fctCmd {
 	cmd.description = "Create API calls to create a new Factom Entry. Read" +
 		" data for the Entry from stdin. Use the Entry Credits from the" +
 		" specified address."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f": complete.PredictNothing,
+
+			"-c": complete.PredictAnything,
+			"-e": complete.PredictAnything,
+			"-x": complete.PredictAnything,
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
