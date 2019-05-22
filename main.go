@@ -103,6 +103,20 @@ func main() {
 			"rmaddress":       complete.Command{},
 			"status":          status.completion,
 			"unlockwallet":    unlockwallet.completion,
+
+			"newtx":         newtx.completion,
+			"rmtx":          complete.Command{},
+			"listtxs":       listtxs.completion,
+			"addtxinput":    addtxinput.completion,
+			"addtxoutput":   addtxoutput.completion,
+			"addtxecoutput": addtxecoutput.completion,
+			"addtxfee":      addtxfee.completion,
+			"subtxfee":      subtxfee.completion,
+			"signtx":        signtx.completion,
+			"composetx":     complete.Command{},
+			"sendtx":        sendtx.completion,
+			"sendfct":       sendfct.completion,
+			"buyec":         buyec.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
