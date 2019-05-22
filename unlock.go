@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 // unlockwallet creates a new transaction in the wallet.
@@ -18,6 +19,11 @@ var unlockwallet = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli unlockwallet [-v] \"passphrase\" <seconds-to-unlock>"
 	cmd.description = "Unlock the wallet for some number of seconds; must be an encrypted wallet. -v verbose."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-v": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		vflag := flag.Bool("v", false, "verbose mode; print relock time in UTC epoch seconds when the unlock is successful")

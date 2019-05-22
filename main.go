@@ -102,7 +102,7 @@ func main() {
 			"receipt":         complete.Command{},
 			"rmaddress":       complete.Command{},
 			"status":          status.completion,
-			"unlockwallet":    complete.Command{},
+			"unlockwallet":    unlockwallet.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
