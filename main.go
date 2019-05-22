@@ -93,6 +93,16 @@ func main() {
 			"ecrate":          complete.Command{},
 			"exportaddresses": complete.Command{},
 			"get":             get.completion,
+			"importaddresses": complete.Command{},
+			"importkoinify":   complete.Command{},
+			"listaddresses":   complete.Command{},
+			"newecaddress":    complete.Command{},
+			"newfctaddress":   complete.Command{},
+			"properties":      properties.completion,
+			"receipt":         complete.Command{},
+			"rmaddress":       complete.Command{},
+			"status":          status.completion,
+			"unlockwallet":    complete.Command{},
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
