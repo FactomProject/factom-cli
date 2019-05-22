@@ -87,6 +87,7 @@ func main() {
 			"backupwallet":  backupwallet.completion,
 			"balance":       balance.completion,
 			"balancetotals": balancetotals.completion,
+			"composechain":  composechain.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
