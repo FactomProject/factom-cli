@@ -461,6 +461,9 @@ var getEBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get eblock KEYMR"
 	cmd.description = "Get Entry Block by Key Merkle Root"
+	cmd.completion = complete.Command{
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
