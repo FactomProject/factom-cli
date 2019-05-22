@@ -13,6 +13,7 @@ import (
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 var get = func() *fctCmd {
@@ -21,6 +22,27 @@ var get = func() *fctCmd {
 		"firstentry|head|heights|walletheight|pendingentries|" +
 		"pendingtransactions|raw|dbheight|abheight|fbheight|ecbheight"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
+	cmd.completion = complete.Command{
+		Sub: complete.Commands{
+			"allentries":          getAllEntries.completion,
+			"authorities":         getAuthorities.completion,
+			"chainhead":           getChainHead.completion,
+			"currentminute":       getCurrentMinute.completion,
+			"ablock":              getABlock.completion,
+			"dblock":              getDBlock.completion,
+			"eblock":              getEBlock.completion,
+			"fblock":              getFBlock.completion,
+			"entry":               getEntry.completion,
+			"firstentry":          getFirstEntry.completion,
+			"head":                getHead.completion,
+			"heights":             getHeights.completion,
+			"pendingentries":      getPendingEntries.completion,
+			"pendingtransactions": getPendingTransactions.completion,
+			"raw":                 getraw.completion,
+			"tps":                 getTPS.completion,
+			"walletheight":        getWalletHeight.completion,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -33,8 +55,8 @@ var get = func() *fctCmd {
 		c.Handle("chainhead", getChainHead)
 		c.Handle("currentminute", getCurrentMinute)
 		// c.Handle("dbheight", Dbheight)
-		c.Handle("dblock", getDBlock)
 		c.Handle("ablock", getABlock)
+		c.Handle("dblock", getDBlock)
 		c.Handle("eblock", getEBlock)
 		c.Handle("fblock", getFBlock)
 		// c.Handle("ecbheight", Ecbheight)
@@ -63,6 +85,14 @@ var getAllEntries = func() *fctCmd {
 		" ...|CHAINID] [-E]"
 	cmd.description = "Get all of the Entries confirmed in a Chain. -n and" +
 		" -h to specify the chain name. -E EntryHash."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+
+			"-E": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
@@ -202,6 +232,16 @@ var getABlock = func() *fctCmd {
 	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
 	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
 		"or by its Height"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+		},
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
@@ -254,6 +294,20 @@ var getCurrentMinute = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get currentminute [-LDMBNTSXFR]"
 	cmd.description = "Get information about the current minute and other properties of the factom network."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-L": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-M": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-N": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+			"-S": complete.PredictNothing,
+			"-X": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+			"-R": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		ldisp := flag.Bool("L", false, "display only the Leader height")

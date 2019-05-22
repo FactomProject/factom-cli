@@ -82,14 +82,17 @@ func main() {
 
 	cliCompletion := complete.New("factom-cli", complete.Command{
 		Sub: complete.Commands{
-			"addchain":      addchain.completion,
-			"addentry":      addentry.completion,
-			"backupwallet":  backupwallet.completion,
-			"balance":       balance.completion,
-			"balancetotals": balancetotals.completion,
-			"composechain":  composechain.completion,
-			"composeentry":  composeentry.completion,
-			"diagnostics":   diagnostics.completion,
+			"addchain":        addchain.completion,
+			"addentry":        addentry.completion,
+			"backupwallet":    backupwallet.completion,
+			"balance":         balance.completion,
+			"balancetotals":   balancetotals.completion,
+			"composechain":    composechain.completion,
+			"composeentry":    composeentry.completion,
+			"diagnostics":     diagnostics.completion,
+			"ecrate":          complete.Command{},
+			"exportaddresses": complete.Command{},
+			"get":             get.completion,
 		},
 	})
 	cliCompletion.CLI.InstallName = "complete"
