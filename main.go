@@ -122,7 +122,7 @@ func main() {
 			"importidentitykeys": complete.Command{},
 			"exportidentitykeys": complete.Command{},
 			"listidentitykeys":   complete.Command{},
-			"rmidentitykey":      complete.Command{},
+			"rmidentitykey":      removeIdentityKey.completion,
 			"identity":           identity.completion,
 		},
 	})
