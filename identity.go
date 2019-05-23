@@ -74,6 +74,7 @@ var addIdentityChain = func() *fctCmd {
 			"-E": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		var (
@@ -209,13 +210,14 @@ var addIdentityKeyReplacement = func() *fctCmd {
 			"-q":          complete.PredictNothing,
 			"-c":          complete.PredictAnything,
 			"-n":          complete.PredictAnything,
-			"--oldkey":    complete.PredictAnything,
+			"--oldkey":    predictIdentityKey,
 			"--newkey":    complete.PredictAnything,
-			"--signerkey": complete.PredictAnything,
+			"--signerkey": predictIdentityKey,
 			"-C":          complete.PredictNothing,
 			"-E":          complete.PredictNothing,
 			"-T":          complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -381,12 +383,13 @@ var addIdentityAttribute = func() *fctCmd {
 			"-c":         complete.PredictAnything,
 			"-creceiver": complete.PredictAnything,
 			"-csigner":   complete.PredictAnything,
-			"-signerkey": complete.PredictAnything,
+			"-signerkey": predictIdentityKey,
 			"-attribute": complete.PredictAnything,
 			"-C":         complete.PredictNothing,
 			"-E":         complete.PredictNothing,
 			"-T":         complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -568,12 +571,13 @@ var addIdentityAttributeEndorsement = func() *fctCmd {
 			"-q":         complete.PredictNothing,
 			"-c":         complete.PredictAnything,
 			"-csigner":   complete.PredictAnything,
-			"-signerkey": complete.PredictAnything,
+			"-signerkey": predictIdentityKey,
 			"-entryhash": complete.PredictAnything,
 			"-C":         complete.PredictNothing,
 			"-E":         complete.PredictNothing,
 			"-T":         complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -731,6 +735,7 @@ var composeIdentityChain = func() *fctCmd {
 			"-n": complete.PredictAnything,
 			"-k": complete.PredictAnything,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		var (
@@ -797,9 +802,9 @@ var composeIdentityKeyReplacement = func() *fctCmd {
 			"-f":          complete.PredictNothing,
 			"-c":          complete.PredictAnything,
 			"-n":          complete.PredictAnything,
-			"--oldkey":    complete.PredictAnything,
+			"--oldkey":    predictIdentityKey,
 			"--newkey":    complete.PredictAnything,
-			"--signerkey": complete.PredictAnything,
+			"--signerkey": predictIdentityKey,
 		},
 	}
 	cmd.execFunc = func(args []string) {
@@ -891,9 +896,10 @@ var composeIdentityAttribute = func() *fctCmd {
 			"-c":         complete.PredictAnything,
 			"-creceiver": complete.PredictAnything,
 			"-csigner":   complete.PredictAnything,
-			"-signerkey": complete.PredictAnything,
+			"-signerkey": predictIdentityKey,
 			"-attribute": complete.PredictAnything,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -1004,9 +1010,10 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 			"-f":         complete.PredictNothing,
 			"-c":         complete.PredictAnything,
 			"-csigner":   complete.PredictAnything,
-			"-signerkey": complete.PredictAnything,
+			"-signerkey": predictIdentityKey,
 			"-entryhash": complete.PredictAnything,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args

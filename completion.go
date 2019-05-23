@@ -41,3 +41,16 @@ var predictAddress = complete.PredictFunc(func(args complete.Args) []string {
 	}
 	return s
 })
+
+var predictIdentityKey = complete.PredictFunc(func(args complete.Args) []string {
+	ks, err := factom.FetchIdentityKeys()
+	if err != nil {
+		return nil
+	}
+
+	s := make([]string, 0)
+	for _, k := range ks {
+		s = append(s, k.String())
+	}
+	return s
+})
