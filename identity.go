@@ -23,13 +23,13 @@ var identity = func() *fctCmd {
 			"addchain":                    addIdentityChain.completion,
 			"addkeyreplacement":           addIdentityKeyReplacement.completion,
 			"addattribute":                addIdentityAttribute.completion,
-			"addattributeendorsement":     complete.Command{},
-			"composechain":                complete.Command{},
-			"composekeyreplacement":       complete.Command{},
-			"composeattribute":            complete.Command{},
-			"composeattributeendorsement": complete.Command{},
-			"getactivekeys":               complete.Command{},
-			"getactivekeysatheight":       complete.Command{},
+			"addattributeendorsement":     addIdentityAttributeEndorsement.completion,
+			"composechain":                composeIdentityChain.completion,
+			"composekeyreplacement":       composeIdentityKeyReplacement.completion,
+			"composeattribute":            composeIdentityAttribute.completion,
+			"composeattributeendorsement": composeIdentityAttributeEndorsement.completion,
+			"getactivekeys":               getActiveIdentityKeys.completion,
+			"getactivekeysatheight":       getActiveIdentityKeysAtHeight.completion,
 		},
 	}
 	cmd.execFunc = func(args []string) {
@@ -562,6 +562,19 @@ var addIdentityAttributeEndorsement = func() *fctCmd {
 		" -entryhash ENTRYHASH ECADDRESS [-CET]"
 	cmd.description = "Create a new Endorsement Entry for the Identity Attribute at the given entry hash. Uses the" +
 		" Entry Credits from the specified address. Optional output flags: -C ChainID. -E EntryHash. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":         complete.PredictNothing,
+			"-q":         complete.PredictNothing,
+			"-c":         complete.PredictAnything,
+			"-csigner":   complete.PredictAnything,
+			"-signerkey": complete.PredictAnything,
+			"-entryhash": complete.PredictAnything,
+			"-C":         complete.PredictNothing,
+			"-E":         complete.PredictNothing,
+			"-T":         complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 
@@ -712,6 +725,13 @@ var composeIdentityChain = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity composechain [-f] [-n NAME1 -n NAME2] [-k PUBKEY1 -k PUBKEY2] ECADDRESS"
 	cmd.description = "Create API calls to create a new Factom Identity Chain. Use the Entry Credits from the" +
 		" specified address."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f": complete.PredictNothing,
+			"-n": complete.PredictAnything,
+			"-k": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			nAscii namesASCII
@@ -772,6 +792,16 @@ var composeIdentityKeyReplacement = func() *fctCmd {
 	cmd.description = "Create API calls to create a new Identity key replacement entry using the Entry Credits from" +
 		" the specified address. The oldkey is replaced by the newkey, and signerkey (same or higher priority as" +
 		" oldkey) authorizes the replacement."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":          complete.PredictNothing,
+			"-c":          complete.PredictAnything,
+			"-n":          complete.PredictAnything,
+			"--oldkey":    complete.PredictAnything,
+			"--newkey":    complete.PredictAnything,
+			"--signerkey": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -855,6 +885,16 @@ var composeIdentityAttribute = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity composeattribute [-f] -c CHAINID -creceiver CHAINID -csigner CHAINID" +
 		" -signerkey PUBKEY -attribute ATTRIBUTE_JSON_ARRAY ECADDRESS"
 	cmd.description = "Create API calls to create a new Identity Attribute Entry using the Entry Credits from the specified address."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":         complete.PredictNothing,
+			"-c":         complete.PredictAnything,
+			"-creceiver": complete.PredictAnything,
+			"-csigner":   complete.PredictAnything,
+			"-signerkey": complete.PredictAnything,
+			"-attribute": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 
@@ -959,6 +999,15 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 		" -entryhash ENTRYHASH ECADDRESS"
 	cmd.description = "Compose API calls to create a new Endorsement Entry for the Identity Attribute at the given" +
 		" entry hash. Uses the Entry Credits from the specified address."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":         complete.PredictNothing,
+			"-c":         complete.PredictAnything,
+			"-csigner":   complete.PredictAnything,
+			"-signerkey": complete.PredictAnything,
+			"-entryhash": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 
@@ -1039,6 +1088,12 @@ var getActiveIdentityKeys = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity getactivekeys [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]"
 	cmd.description = "Gets the set of identity public keys that are active for the given identity chain at the" +
 		" highest known block height."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-c": complete.PredictAnything,
+			"-n": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -1083,6 +1138,12 @@ var getActiveIdentityKeysAtHeight = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity getactivekeysatheight [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN] HEIGHT"
 	cmd.description = "Gets the set of identity public keys that were valid for the given identity chain at the" +
 		" specified block height."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-c": complete.PredictAnything,
+			"-n": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
