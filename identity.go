@@ -26,10 +26,10 @@ var identity = func() *fctCmd {
 			"addattributeendorsement":     addIdentityAttributeEndorsement.completion,
 			"composechain":                composeIdentityChain.completion,
 			"composekeyreplacement":       composeIdentityKeyReplacement.completion,
-			"composeattribute":            complete.Command{},
-			"composeattributeendorsement": complete.Command{},
-			"getactivekeys":               complete.Command{},
-			"getactivekeysatheight":       complete.Command{},
+			"composeattribute":            composeIdentityAttribute.completion,
+			"composeattributeendorsement": composeIdentityAttributeEndorsement.completion,
+			"getactivekeys":               getActiveIdentityKeys.completion,
+			"getactivekeysatheight":       getActiveIdentityKeysAtHeight.completion,
 		},
 	}
 	cmd.execFunc = func(args []string) {
@@ -999,6 +999,15 @@ var composeIdentityAttributeEndorsement = func() *fctCmd {
 		" -entryhash ENTRYHASH ECADDRESS"
 	cmd.description = "Compose API calls to create a new Endorsement Entry for the Identity Attribute at the given" +
 		" entry hash. Uses the Entry Credits from the specified address."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f":         complete.PredictNothing,
+			"-c":         complete.PredictAnything,
+			"-csigner":   complete.PredictAnything,
+			"-signerkey": complete.PredictAnything,
+			"-entryhash": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 
@@ -1079,6 +1088,12 @@ var getActiveIdentityKeys = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity getactivekeys [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN]"
 	cmd.description = "Gets the set of identity public keys that are active for the given identity chain at the" +
 		" highest known block height."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-c": complete.PredictAnything,
+			"-n": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
@@ -1123,6 +1138,12 @@ var getActiveIdentityKeysAtHeight = func() *fctCmd {
 	cmd.helpMsg = "factom-cli identity getactivekeysatheight [-c CHAINID | -n NAME1 -n NAME2 ... -n NAMEN] HEIGHT"
 	cmd.description = "Gets the set of identity public keys that were valid for the given identity chain at the" +
 		" specified block height."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-c": complete.PredictAnything,
+			"-n": complete.PredictAnything,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var (
