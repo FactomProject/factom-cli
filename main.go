@@ -100,7 +100,7 @@ func main() {
 			"newfctaddress":   complete.Command{},
 			"properties":      properties.completion,
 			"receipt":         complete.Command{},
-			"rmaddress":       complete.Command{},
+			"rmaddress":       removeAddress.completion,
 			"status":          status.completion,
 			"unlockwallet":    unlockwallet.completion,
 

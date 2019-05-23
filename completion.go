@@ -12,16 +12,6 @@ import (
 // predictTxName creates command completions from the tx names in
 // factom-walletd. It predicts nothing if there is no wallet running.
 var predictTxName = complete.PredictFunc(func(args complete.Args) []string {
-	argc := 0
-	for _, arg := range args.Completed[1:] {
-		if string(arg[0]) != "-" {
-			argc++
-		}
-	}
-	if argc != 0 {
-		return nil
-	}
-
 	txs, err := factom.ListTransactionsTmp()
 	if err != nil {
 		return nil
@@ -37,16 +27,6 @@ var predictTxName = complete.PredictFunc(func(args complete.Args) []string {
 // predictAddress creates command completions from the addresses in
 // factom-walletd. It predicts nothing if there is not wallet running.
 var predictAddress = complete.PredictFunc(func(args complete.Args) []string {
-	argc := 0
-	for _, arg := range args.Completed[1:] {
-		if string(arg[0]) != "-" {
-			argc++
-		}
-	}
-	if argc != 0 {
-		return nil
-	}
-
 	fcs, ecs, err := factom.FetchAddresses()
 	if err != nil {
 		return nil
@@ -56,8 +36,8 @@ var predictAddress = complete.PredictFunc(func(args complete.Args) []string {
 	for _, fc := range fcs {
 		s = append(s, fc.String())
 	}
-    for _, ec := range ecs {
-        s = append(s, ec.String())
-    }
+	for _, ec := range ecs {
+		s = append(s, ec.String())
+	}
 	return s
 })

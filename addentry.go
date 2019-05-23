@@ -34,6 +34,7 @@ var addentry = func() *fctCmd {
 			"-E": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -210,6 +211,7 @@ var composeentry = func() *fctCmd {
 			"-n": complete.PredictAnything,
 			"-h": complete.PredictAnything,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args

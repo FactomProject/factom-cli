@@ -33,6 +33,7 @@ var addchain = func() *fctCmd {
 			"-E": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		var (
@@ -183,6 +184,7 @@ var composechain = func() *fctCmd {
 			"-n": complete.PredictAnything,
 			"-h": complete.PredictAnything,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		var (

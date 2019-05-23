@@ -24,6 +24,7 @@ var newtx = func() *fctCmd {
 		Flags: complete.Flags{
 			"-q": complete.PredictNothing,
 		},
+		Args: predictTxName,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -59,6 +60,9 @@ var rmtx = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli rmtx TXNAME"
 	cmd.description = "Remove a transaction in the wallet"
+	cmd.completion = complete.Command{
+		Args: predictTxName,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -87,6 +91,17 @@ var addtxinput = func() *fctCmd {
 		Flags: complete.Flags{
 			"-q": complete.PredictNothing,
 		},
+		Args: complete.PredictFunc(func(args complete.Args) []string {
+			// predict an address or a transaction name
+			s := make([]string, 0)
+			for _, a := range predictAddress.Predict(args) {
+				s = append(s, a)
+			}
+			for _, n := range predictTxName.Predict(args) {
+				s = append(s, n)
+			}
+			return s
+		}),
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -131,6 +146,17 @@ var addtxoutput = func() *fctCmd {
 			"-r": complete.PredictNothing,
 			"-q": complete.PredictNothing,
 		},
+		Args: complete.PredictFunc(func(args complete.Args) []string {
+			// predict an address or a transaction name
+			s := make([]string, 0)
+			for _, a := range predictAddress.Predict(args) {
+				s = append(s, a)
+			}
+			for _, n := range predictTxName.Predict(args) {
+				s = append(s, n)
+			}
+			return s
+		}),
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -188,6 +214,17 @@ var addtxecoutput = func() *fctCmd {
 			"-r": complete.PredictNothing,
 			"-q": complete.PredictNothing,
 		},
+		Args: complete.PredictFunc(func(args complete.Args) []string {
+			// predict an address or a transaction name
+			s := make([]string, 0)
+			for _, a := range predictAddress.Predict(args) {
+				s = append(s, a)
+			}
+			for _, n := range predictTxName.Predict(args) {
+				s = append(s, n)
+			}
+			return s
+		}),
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -244,6 +281,17 @@ var addtxfee = func() *fctCmd {
 		Flags: complete.Flags{
 			"-q": complete.PredictNothing,
 		},
+		Args: complete.PredictFunc(func(args complete.Args) []string {
+			// predict an address or a transaction name
+			s := make([]string, 0)
+			for _, a := range predictAddress.Predict(args) {
+				s = append(s, a)
+			}
+			for _, n := range predictTxName.Predict(args) {
+				s = append(s, n)
+			}
+			return s
+		}),
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -281,7 +329,7 @@ var listtxs = func() *fctCmd {
 	cmd.description = "List transactions from the wallet or the Factoid Chain"
 	cmd.completion = complete.Command{
 		Sub: complete.Commands{
-			"address": complete.Command{},
+			"address": listtxsaddress.completion,
 			"all":     listtxsall.completion,
 			"id":      listtxsid.completion,
 			"name":    listtxsname.completion,
@@ -364,6 +412,7 @@ var listtxsaddress = func() *fctCmd {
 		Flags: complete.Flags{
 			"-T": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -442,6 +491,7 @@ var listtxsname = func() *fctCmd {
 		Flags: complete.Flags{
 			"-T": complete.PredictNothing,
 		},
+		Args: predictTxName,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -564,6 +614,17 @@ var subtxfee = func() *fctCmd {
 		Flags: complete.Flags{
 			"-q": complete.PredictNothing,
 		},
+		Args: complete.PredictFunc(func(args complete.Args) []string {
+			// predict an address or a transaction name
+			s := make([]string, 0)
+			for _, a := range predictAddress.Predict(args) {
+				s = append(s, a)
+			}
+			for _, n := range predictTxName.Predict(args) {
+				s = append(s, n)
+			}
+			return s
+		}),
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -604,6 +665,7 @@ var signtx = func() *fctCmd {
 			"-q": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictTxName,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -649,6 +711,9 @@ var composetx = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli composetx TXNAME"
 	cmd.description = "Compose a wallet transaction into a json rpc object"
+	cmd.completion = complete.Command{
+		Args: predictTxName,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -687,6 +752,7 @@ var sendtx = func() *fctCmd {
 			"-q": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictTxName,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -749,6 +815,7 @@ var sendfct = func() *fctCmd {
 			"-r": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -833,6 +900,7 @@ var buyec = func() *fctCmd {
 			"-r": complete.PredictNothing,
 			"-T": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args

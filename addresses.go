@@ -22,6 +22,7 @@ var balance = func() *fctCmd {
 		Flags: complete.Flags{
 			"-r": complete.PredictNothing,
 		},
+		Args: predictAddress,
 	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
@@ -319,6 +320,9 @@ var removeAddress = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli rmaddress ADDRESS"
 	cmd.description = "Removes the public and private key from the wallet for the address specified."
+	cmd.completion = complete.Command{
+		Args: predictAddress,
+	}
 	cmd.execFunc = func(args []string) {
 		if len(args) < 2 {
 			fmt.Println(cmd.helpMsg)
