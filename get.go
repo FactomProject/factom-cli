@@ -18,8 +18,8 @@ import (
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|" +
-		"firstentry|head|heights|walletheight|pendingentries|" +
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|ecblock|" +
+		"entry|firstentry|head|heights|walletheight|pendingentries|" +
 		"pendingtransactions|raw|dbheight|abheight|fbheight|ecbheight"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
 	cmd.completion = complete.Command{
@@ -31,6 +31,7 @@ var get = func() *fctCmd {
 			"ablock":              getABlock.completion,
 			"dblock":              getDBlock.completion,
 			"eblock":              getEBlock.completion,
+			"ecblock":             getECBlock.completion,
 			"fblock":              getFBlock.completion,
 			"entry":               getEntry.completion,
 			"firstentry":          getFirstEntry.completion,
@@ -49,19 +50,16 @@ var get = func() *fctCmd {
 		args = flag.Args()
 
 		c := cli.New()
-		// c.Handle("abheight", Abheight)
 		c.Handle("allentries", getAllEntries)
 		c.Handle("authorities", getAuthorities)
 		c.Handle("chainhead", getChainHead)
 		c.Handle("currentminute", getCurrentMinute)
-		// c.Handle("dbheight", Dbheight)
 		c.Handle("ablock", getABlock)
 		c.Handle("dblock", getDBlock)
 		c.Handle("eblock", getEBlock)
+		c.Handle("ecblock", getECBlock)
 		c.Handle("fblock", getFBlock)
-		// c.Handle("ecbheight", Ecbheight)
 		c.Handle("entry", getEntry)
-		// c.Handle("fbheight", Fbheight)
 		c.Handle("firstentry", getFirstEntry)
 		c.Handle("head", getHead)
 		c.Handle("heights", getHeights)
@@ -482,6 +480,80 @@ var getEBlock = func() *fctCmd {
 		fmt.Println(eblock)
 	}
 	help.Add("get eblock", cmd)
+	return cmd
+}()
+
+var getECBlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get ecblock [-RBPLDAHF] HEIGHT|KEYMR"
+	cmd.description = "Get an Entry Credit Block by Key Merkle Root or by " +
+		"height"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-A": complete.PredictNothing,
+			"-H": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+		},
+	}
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry Credit Block")
+		bdisp := flag.Bool("B", false, "display only the Body Hash")
+		pdisp := flag.Bool("P", false, "display only the Previous Header Hash")
+		ldisp := flag.Bool("L", false, "display only the Previous Full Hash")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		adisp := flag.Bool("A", false, "display only the Head Expantion Area")
+		hdisp := flag.Bool("H", false, "display only the Header Hash")
+		fdisp := flag.Bool("F", false, "display only the Full Hash")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		ecblock, raw, err := func() (ecblock *factom.ECBlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetECBlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetECBlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *bdisp:
+			fmt.Println(ecblock.Header.BodyHash)
+		case *pdisp:
+			fmt.Println(ecblock.Header.PrevHeaderHash)
+		case *ldisp:
+			fmt.Println(ecblock.Header.PrevFullHash)
+		case *ddisp:
+			fmt.Println(ecblock.Header.DBHeight)
+		case *adisp:
+			fmt.Println(ecblock.Header.HeaderExpansionArea)
+		case *hdisp:
+			fmt.Println(ecblock.HeaderHash)
+		case *fdisp:
+			fmt.Println(ecblock.FullHash)
+		default:
+			fmt.Println(ecblock)
+		}
+	}
+	help.Add("get ecblock", cmd)
 	return cmd
 }()
 
