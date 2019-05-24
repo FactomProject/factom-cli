@@ -80,6 +80,8 @@ func main() {
 		)
 	)
 
+	// setup cli autocomplete for the shell. Run `$ factom-cli -complete` to
+	// install the completion in the local environment.
 	cliCompletion := complete.New("factom-cli", complete.Command{
 		Sub: complete.Commands{
 			"addchain":        addchain.completion,
