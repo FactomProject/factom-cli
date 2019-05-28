@@ -97,11 +97,7 @@ var getAllEntries = func() *fctCmd {
 			nHex  namesHex
 		)
 		os.Args = args
-		edisp := flag.Bool(
-			"E",
-			false,
-			"display only the EntryHashes",
-		)
+		edisp := flag.Bool("E", false, "display only the EntryHashes")
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
 		flag.Var(&nHex, "h", "hex binary name component")
