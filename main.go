@@ -107,7 +107,7 @@ func main() {
 			"unlockwallet":    unlockwallet.completion,
 
 			"newtx":         newtx.completion,
-			"rmtx":          complete.Command{},
+			"rmtx":          rmtx.completion,
 			"listtxs":       listtxs.completion,
 			"addtxinput":    addtxinput.completion,
 			"addtxoutput":   addtxoutput.completion,
