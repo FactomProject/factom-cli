@@ -142,7 +142,7 @@ func main() {
 	// strings
 	filename := util.ConfigFilename()
 
-	//instead of giving warnings, check that the file exists before attempting
+	// instead of giving warnings, check that the file exists before attempting
 	// to read it.
 	if _, err := os.Stat(filename); err == nil {
 		cfg := util.ReadConfig(filename)
@@ -173,7 +173,7 @@ func main() {
 			}
 		}
 
-		//if a config file is found, and the wallet will start with TLS,
+		// if a config file is found, and the wallet will start with TLS,
 		// factom-cli should use TLS too
 		if cfg.Walletd.WalletTlsEnabled == true {
 			*walletTLSflag = true
@@ -187,7 +187,7 @@ func main() {
 			}
 		}
 
-		//if a config file is found, and the factomd will start with TLS,
+		// if a config file is found, and the factomd will start with TLS,
 		// factom-cli should use TLS too
 		if cfg.App.FactomdTlsEnabled == true {
 			*factomdTLSflag = true
@@ -202,7 +202,7 @@ func main() {
 		}
 	}
 
-	//if all defaults were specified on both the command line and config file
+	// if all defaults were specified on both the command line and config file
 	if *walletTLSCert == "" {
 		*walletTLSCert = fmt.Sprint(
 			util.GetHomeDir(),
@@ -210,7 +210,7 @@ func main() {
 		)
 	}
 
-	//if all defaults were specified on both the command line and config file
+	// if all defaults were specified on both the command line and config file
 	if *factomdTLSCert == "" {
 		*factomdTLSCert = fmt.Sprint(
 			util.GetHomeDir(),
@@ -218,7 +218,7 @@ func main() {
 		)
 	}
 
-	//set the default if a config file doesn't exist
+	// set the default if a config file doesn't exist
 	if *factomdLocation == "" {
 		*factomdLocation = "localhost:8088"
 	}
