@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
@@ -32,6 +33,7 @@ var get = func() *fctCmd {
 		c.Handle("currentminute", getCurrentMinute)
 		// c.Handle("dbheight", Dbheight)
 		c.Handle("dblock", getDBlock)
+		c.Handle("ablock", getABlock)
 		c.Handle("eblock", getEBlock)
 		// c.Handle("ecbheight", Ecbheight)
 		c.Handle("entry", getEntry)
@@ -228,6 +230,59 @@ var getCurrentMinute = func() *fctCmd {
 		}
 	}
 	help.Add("get currentminute", cmd)
+	return cmd
+}()
+
+var getABlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
+	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
+		"or by its Height"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
+		ddisp := flag.Bool("D", false, "display only the Directory Block height")
+		bdisp := flag.Bool("B", false, "display only the Backreference Hash")
+		pdisp := flag.Bool("P", false, "display only the Previous Backreference Hash")
+		ldisp := flag.Bool("L", false, "display only the Lookup Hash")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		ablock, raw, err := func() (dblock *factom.ABlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetABlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetABlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *ddisp:
+			fmt.Println(ablock.DBHeight)
+		case *bdisp:
+			fmt.Println(ablock.BackReverenceHash)
+		case *pdisp:
+			fmt.Println(ablock.PrevBackreferenceHash)
+		case *ldisp:
+			fmt.Println(ablock.LookupHash)
+		default:
+			fmt.Println(ablock)
+		}
+	}
+	help.Add("get ablock", cmd)
 	return cmd
 }()
 
