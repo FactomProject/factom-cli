@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
@@ -30,9 +31,12 @@ var get = func() *fctCmd {
 		c.Handle("allentries", getAllEntries)
 		c.Handle("authorities", getAuthorities)
 		c.Handle("chainhead", getChainHead)
+		c.Handle("currentminute", getCurrentMinute)
 		// c.Handle("dbheight", Dbheight)
 		c.Handle("dblock", getDBlock)
+		c.Handle("ablock", getABlock)
 		c.Handle("eblock", getEBlock)
+		c.Handle("fblock", getFBlock)
 		// c.Handle("ecbheight", Ecbheight)
 		c.Handle("entry", getEntry)
 		// c.Handle("fbheight", Fbheight)
@@ -42,6 +46,7 @@ var get = func() *fctCmd {
 		c.Handle("pendingentries", getPendingEntries)
 		c.Handle("pendingtransactions", getPendingTransactions)
 		c.Handle("raw", getraw)
+		c.Handle("tps", getTPS)
 		c.Handle("walletheight", getWalletHeight)
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
@@ -196,6 +201,113 @@ var getChainHead = func() *fctCmd {
 	return cmd
 }()
 
+var getCurrentMinute = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get currentminute [-LDMBNTSXFR]"
+	cmd.description = "Get information about the current minute and other properties of the factom network."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		ldisp := flag.Bool("L", false, "display only the Leader height")
+		ddisp := flag.Bool("D", false, "display only the Directory Block height")
+		mdisp := flag.Bool("M", false, "display only the current minute")
+		bdisp := flag.Bool("B", false, "display only the Block start time")
+		ndisp := flag.Bool("N", false, "display only the minute start time")
+		tdisp := flag.Bool("T", false, "display only the current time")
+		sdisp := flag.Bool("S", false, "display only the Directorty Block in seconds")
+		xdisp := flag.Bool("X", false, "display only the stall detected value")
+		fdisp := flag.Bool("F", false, "display only the Fault timeout")
+		rdisp := flag.Bool("R", false, "display only the round timeout")
+		flag.Parse()
+		args = flag.Args()
+
+		info, err := factom.GetCurrentMinute()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *ldisp:
+			fmt.Println(info.LeaderHeight)
+		case *ddisp:
+			fmt.Println(info.DirectoryBlockHeight)
+		case *mdisp:
+			fmt.Println(info.Minute)
+		case *bdisp:
+			fmt.Println(info.CurrentBlockStartTime)
+		case *ndisp:
+			fmt.Println(info.CurrentMinuteStartTime)
+		case *tdisp:
+			fmt.Println(info.CurrentTime)
+		case *sdisp:
+			fmt.Println(info.DirectoryBlockInSeconds)
+		case *xdisp:
+			fmt.Println(info.StallDetected)
+		case *fdisp:
+			fmt.Println(info.FaultTimeout)
+		case *rdisp:
+			fmt.Println(info.RoundTimeout)
+		default:
+			fmt.Println(info)
+		}
+	}
+	help.Add("get currentminute", cmd)
+	return cmd
+}()
+
+var getABlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
+	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
+		"or by its Height"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
+		ddisp := flag.Bool("D", false, "display only the Directory Block height")
+		bdisp := flag.Bool("B", false, "display only the Backreference Hash")
+		pdisp := flag.Bool("P", false, "display only the Previous Backreference Hash")
+		ldisp := flag.Bool("L", false, "display only the Lookup Hash")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		ablock, raw, err := func() (dblock *factom.ABlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetABlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetABlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *ddisp:
+			fmt.Println(ablock.DBHeight)
+		case *bdisp:
+			fmt.Println(ablock.BackReverenceHash)
+		case *pdisp:
+			fmt.Println(ablock.PrevBackreferenceHash)
+		case *ldisp:
+			fmt.Println(ablock.LookupHash)
+		default:
+			fmt.Println(ablock)
+		}
+	}
+	help.Add("get ablock", cmd)
+	return cmd
+}()
+
 var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get dblock [-r] KEYMR"
@@ -254,6 +366,61 @@ var getEBlock = func() *fctCmd {
 		fmt.Println(eblock)
 	}
 	help.Add("get eblock", cmd)
+	return cmd
+}()
+
+var getFBlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get fblock [-RBPLED] KEYMR|HEIGHT"
+	cmd.description = "Get a Factoid Block by its Key Merkle Root or Height"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Factoid Block")
+		bdisp := flag.Bool("B", false, "display only the Body Merkel Root")
+		pdisp := flag.Bool("P", false, "display only the Previous Key Merkel Root")
+		ldisp := flag.Bool("L", false, "display only the Previous Ledger Key Merkel Root")
+		edisp := flag.Bool("E", false, "display only the Exchange Rate")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		fblock, raw, err := func() (fblock *factom.FBlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetFBlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetFBlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *bdisp:
+			fmt.Println(fblock.BodyMR)
+		case *pdisp:
+			fmt.Println(fblock.PrevKeyMR)
+		case *ldisp:
+			fmt.Println(fblock.PrevLedgerKeyMR)
+		case *edisp:
+			fmt.Println(fblock.ExchRate)
+		case *ddisp:
+			fmt.Println(fblock.DBHeight)
+		default:
+			fmt.Println(fblock)
+		}
+	}
+	help.Add("get fblock", cmd)
 	return cmd
 }()
 
@@ -590,5 +757,36 @@ var getPendingTransactions = func() *fctCmd {
 
 	}
 	help.Add("get pendingtransactions", cmd)
+	return cmd
+}()
+
+var getTPS = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get tps [-IT]"
+	cmd.description = "Get the current instant and total average rate of " +
+		"Transactions Per Second."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		idisp := flag.Bool("I", false, "display only the instant TPS rate")
+		tdisp := flag.Bool("T", false, "display only the total averaged TPS rate")
+		flag.Parse()
+
+		i, t, err := factom.GetTPS()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *idisp:
+			fmt.Println(i)
+		case *tdisp:
+			fmt.Println(t)
+		default:
+			fmt.Println("Instant:", i)
+			fmt.Println("Total:", t)
+		}
+	}
+	help.Add("get tps", cmd)
 	return cmd
 }()
