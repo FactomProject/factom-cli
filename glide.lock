@@ -1,5 +1,5 @@
-hash: 214b30f22eb6eeb9ad89d0431e16efccd43be5aaa56f8e883e3ac8c92061cdc8
-updated: 2019-06-10T16:50:57.714879028-05:00
+hash: 6b2f51f56c3b62261c207d6d9d46aaf94ec3f367cfc6e9957efd0b1f534730bf
+updated: 2019-06-10T16:39:43.432918739-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -51,8 +51,6 @@ imports:
   version: 426acb535e66cc2f9e6226ae254555e3572fd142
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
-- name: github.com/michaelbeam/cli
-  version: e3284e1e16c445cf7b514a5e64e24a0cef25e196
 - name: github.com/sirupsen/logrus
   version: 566a5f690849162ff53cf98f3c42135389d63f95
 - name: golang.org/x/crypto
