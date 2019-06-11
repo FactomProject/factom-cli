@@ -55,8 +55,6 @@ imports:
   version: 886a7fbe3eb1c874d46f623bfa70af45f425b3d1
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
-- name: github.com/michaelbeam/cli
-  version: e3284e1e16c445cf7b514a5e64e24a0cef25e196
 - name: github.com/posener/complete
   version: 60e9d0a237999e714fb4d04727fe7ffa1b377c6e
   subpackages:
