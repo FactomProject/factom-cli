@@ -1,5 +1,5 @@
-hash: 214b30f22eb6eeb9ad89d0431e16efccd43be5aaa56f8e883e3ac8c92061cdc8
-updated: 2019-06-10T17:09:59.360156822-05:00
+hash: 6b2f51f56c3b62261c207d6d9d46aaf94ec3f367cfc6e9957efd0b1f534730bf
+updated: 2019-06-11T10:51:40.443940701-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
