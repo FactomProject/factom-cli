@@ -29,6 +29,7 @@ var get = func() *fctCmd {
 		c := cli.New()
 		// c.Handle("abheight", Abheight)
 		c.Handle("allentries", getAllEntries)
+		c.Handle("authorities", getAuthorities)
 		c.Handle("chainhead", getChainHead)
 		c.Handle("currentminute", getCurrentMinute)
 		// c.Handle("dbheight", Dbheight)
@@ -115,6 +116,25 @@ var getAllEntries = func() *fctCmd {
 		}
 	}
 	help.Add("get allentries", cmd)
+	return cmd
+}()
+
+var getAuthorities = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get authorities"
+	cmd.description = "Get information about the authority servers on the " +
+		"Factom network"
+	cmd.execFunc = func(args []string) {
+		as, err := factom.GetAuthorities()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		for _, a := range as {
+			fmt.Println(a)
+		}
+	}
+	help.Add("get authorities", cmd)
 	return cmd
 }()
 
