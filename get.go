@@ -13,33 +13,53 @@ import (
 
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 var get = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|entry|" +
-		"firstentry|head|heights|walletheight|pendingentries|" +
+	cmd.helpMsg = "factom-cli get allentries|chainhead|dblock|eblock|ecblock|" +
+		"entry|firstentry|head|heights|walletheight|pendingentries|" +
 		"pendingtransactions|raw|dbheight|abheight|fbheight|ecbheight"
 	cmd.description = "Get data about Factom Chains, Entries, and Blocks"
+	cmd.completion = complete.Command{
+		Sub: complete.Commands{
+			"allentries":          getAllEntries.completion,
+			"authorities":         complete.Command{},
+			"chainhead":           getChainHead.completion,
+			"currentminute":       getCurrentMinute.completion,
+			"ablock":              getABlock.completion,
+			"dblock":              getDBlock.completion,
+			"eblock":              getEBlock.completion,
+			"ecblock":             getECBlock.completion,
+			"fblock":              getFBlock.completion,
+			"entry":               getEntry.completion,
+			"firstentry":          getFirstEntry.completion,
+			"head":                getHead.completion,
+			"heights":             getHeights.completion,
+			"pendingentries":      getPendingEntries.completion,
+			"pendingtransactions": getPendingTransactions.completion,
+			"raw":                 getraw.completion,
+			"tps":                 getTPS.completion,
+			"walletheight":        complete.Command{},
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
 		args = flag.Args()
 
 		c := cli.New()
-		// c.Handle("abheight", Abheight)
 		c.Handle("allentries", getAllEntries)
 		c.Handle("authorities", getAuthorities)
 		c.Handle("chainhead", getChainHead)
 		c.Handle("currentminute", getCurrentMinute)
-		// c.Handle("dbheight", Dbheight)
-		c.Handle("dblock", getDBlock)
 		c.Handle("ablock", getABlock)
+		c.Handle("dblock", getDBlock)
 		c.Handle("eblock", getEBlock)
+		c.Handle("ecblock", getECBlock)
 		c.Handle("fblock", getFBlock)
-		// c.Handle("ecbheight", Ecbheight)
 		c.Handle("entry", getEntry)
-		// c.Handle("fbheight", Fbheight)
 		c.Handle("firstentry", getFirstEntry)
 		c.Handle("head", getHead)
 		c.Handle("heights", getHeights)
@@ -63,17 +83,21 @@ var getAllEntries = func() *fctCmd {
 		" ...|CHAINID] [-E]"
 	cmd.description = "Get all of the Entries confirmed in a Chain. -n and" +
 		" -h to specify the chain name. -E EntryHash."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+
+			"-E": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
-		edisp := flag.Bool(
-			"E",
-			false,
-			"display only the EntryHashes",
-		)
+		edisp := flag.Bool("E", false, "display only the EntryHashes")
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
 		flag.Var(&nHex, "h", "hex binary name component")
@@ -141,19 +165,24 @@ var getAuthorities = func() *fctCmd {
 var getChainHead = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get chainhead [-n NAME1 -h HEXNAME2 ...|CHAINID] [-K]"
-	cmd.description = "Get the latest Entry Block of the specified Chain. -n" +
-		" and -h to specify the chain name. -K KeyMR."
+	cmd.description = "Get the latest Entry Block of the specified Chain. -n " +
+		"and -h to specify the chain name. -K KeyMR."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+
+			"-K": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
-		kdisp := flag.Bool(
-			"K",
-			false,
-			"display only the KeyMR of the entry block",
-		)
+		kdisp := flag.Bool("K", false, "display only the Entry Block Key Merkel Root")
+
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
 		flag.Var(&nHex, "h", "hex binary name component")
@@ -193,7 +222,6 @@ var getChainHead = func() *fctCmd {
 		case *kdisp:
 			fmt.Println(head)
 		default:
-			fmt.Println("EBlock:", head)
 			fmt.Println(eblock)
 		}
 	}
@@ -201,10 +229,87 @@ var getChainHead = func() *fctCmd {
 	return cmd
 }()
 
+var getABlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
+	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
+		"or by its Height"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+		},
+		Args: complete.PredictNothing,
+	}
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
+		ddisp := flag.Bool("D", false, "display only the Directory Block height")
+		bdisp := flag.Bool("B", false, "display only the Backreference Hash")
+		pdisp := flag.Bool("P", false, "display only the Previous Backreference Hash")
+		ldisp := flag.Bool("L", false, "display only the Lookup Hash")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		ablock, raw, err := func() (dblock *factom.ABlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetABlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetABlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *ddisp:
+			fmt.Println(ablock.DBHeight)
+		case *bdisp:
+			fmt.Println(ablock.BackReverenceHash)
+		case *pdisp:
+			fmt.Println(ablock.PrevBackreferenceHash)
+		case *ldisp:
+			fmt.Println(ablock.LookupHash)
+		default:
+			fmt.Println(ablock)
+		}
+	}
+	help.Add("get ablock", cmd)
+	return cmd
+}()
+
 var getCurrentMinute = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get currentminute [-LDMBNTSXFR]"
 	cmd.description = "Get information about the current minute and other properties of the factom network."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-L": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-M": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-N": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+			"-S": complete.PredictNothing,
+			"-X": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+			"-R": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		ldisp := flag.Bool("L", false, "display only the Leader height")
@@ -255,18 +360,42 @@ var getCurrentMinute = func() *fctCmd {
 	return cmd
 }()
 
-var getABlock = func() *fctCmd {
+var getDBlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
-	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
-		"or by its Height"
+	cmd.helpMsg = "factom-cli get dblock [-RHKAVNBPFTDC] HEIGHT|KEYMR"
+	cmd.description = "Get a Directory Block from factom by its Key Merkel " +
+		"Root or by its Height"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-H": complete.PredictNothing,
+			"-K": complete.PredictNothing,
+			"-A": complete.PredictNothing,
+			"-V": complete.PredictNothing,
+			"-N": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-C": complete.PredictNothing,
+		},
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
-		ddisp := flag.Bool("D", false, "display only the Directory Block height")
-		bdisp := flag.Bool("B", false, "display only the Backreference Hash")
-		pdisp := flag.Bool("P", false, "display only the Previous Backreference Hash")
-		ldisp := flag.Bool("L", false, "display only the Lookup Hash")
+		hdisp := flag.Bool("H", false, "display only the Directory Block Hash")
+		kdisp := flag.Bool("K", false, "display only the Directory Block Key Merkel Root")
+		adisp := flag.Bool("A", false, "display only the Directory Block Header Hash")
+		vdisp := flag.Bool("V", false, "display only the Directory Block Header Version")
+		ndisp := flag.Bool("N", false, "display only the Network ID")
+		bdisp := flag.Bool("B", false, "display only the Directory Block Body Merkel Root")
+		pdisp := flag.Bool("P", false, "display only the Previous Directory Block Key Merkel Root")
+		fdisp := flag.Bool("F", false, "display only the Previous Directory Block Full Hash")
+		tdisp := flag.Bool("T", false, "display only the Directory Block Timestamp")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		cdisp := flag.Bool("C", false, "display only the Directory Block Count")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
@@ -274,15 +403,15 @@ var getABlock = func() *fctCmd {
 			return
 		}
 
-		ablock, raw, err := func() (dblock *factom.ABlock, raw []byte, err error) {
+		dblock, raw, err := func() (dblock *factom.DBlock, raw []byte, err error) {
 			if len(args[0]) == 64 {
-				return factom.GetABlock(args[0])
+				return factom.GetDBlock(args[0])
 			}
 			i, err := strconv.ParseInt(args[0], 10, 64)
 			if err != nil {
 				return nil, nil, err
 			}
-			return factom.GetABlockByHeight(i)
+			return factom.GetDBlockByHeight(i)
 		}()
 		if err != nil {
 			errorln(err)
@@ -292,50 +421,28 @@ var getABlock = func() *fctCmd {
 		switch {
 		case *rdisp:
 			fmt.Printf("%x\n", raw)
-		case *ddisp:
-			fmt.Println(ablock.DBHeight)
+		case *hdisp:
+			fmt.Println(dblock.DBHash)
+		case *kdisp:
+			fmt.Println(dblock.KeyMR)
+		case *adisp:
+			fmt.Println(dblock.HeaderHash)
+		case *vdisp:
+			fmt.Println(dblock.Header.Version)
+		case *ndisp:
+			fmt.Println(dblock.Header.NetworkID)
 		case *bdisp:
-			fmt.Println(ablock.BackReverenceHash)
+			fmt.Println(dblock.Header.BodyMR)
 		case *pdisp:
-			fmt.Println(ablock.PrevBackreferenceHash)
-		case *ldisp:
-			fmt.Println(ablock.LookupHash)
-		default:
-			fmt.Println(ablock)
-		}
-	}
-	help.Add("get ablock", cmd)
-	return cmd
-}()
-
-var getDBlock = func() *fctCmd {
-	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get dblock [-r] KEYMR"
-	cmd.description = "Get dblock contents by Key Merkle Root."
-	cmd.execFunc = func(args []string) {
-		os.Args = args
-		rawout := flag.Bool(
-			"r",
-			false,
-			"display the hex encoding of the raw Directory Block",
-		)
-		flag.Parse()
-		args = flag.Args()
-		if len(args) < 1 {
-			fmt.Println(cmd.helpMsg)
-			return
-		}
-
-		keymr := args[0]
-		dblock, raw, err := factom.GetDBlock(keymr)
-		if err != nil {
-			errorln(err)
-			return
-		}
-
-		switch {
-		case *rawout:
-			fmt.Printf("%x\n", raw)
+			fmt.Println(dblock.Header.PrevKeyMR)
+		case *fdisp:
+			fmt.Println(dblock.Header.PrevFullHash)
+		case *tdisp:
+			fmt.Println(dblock.Header.Timestamp)
+		case *ddisp:
+			fmt.Println(dblock.Header.DBHeight)
+		case *cdisp:
+			fmt.Println(dblock.Header.BlockCount)
 		default:
 			fmt.Println(dblock)
 		}
@@ -348,6 +455,9 @@ var getEBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get eblock KEYMR"
 	cmd.description = "Get Entry Block by Key Merkle Root"
+	cmd.completion = complete.Command{
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()
@@ -369,10 +479,95 @@ var getEBlock = func() *fctCmd {
 	return cmd
 }()
 
+var getECBlock = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli get ecblock [-RBPLDAHF] HEIGHT|KEYMR"
+	cmd.description = "Get an Entry Credit Block by Key Merkle Root or by " +
+		"height"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-A": complete.PredictNothing,
+			"-H": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+		},
+	}
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry Credit Block")
+		bdisp := flag.Bool("B", false, "display only the Body Hash")
+		pdisp := flag.Bool("P", false, "display only the Previous Header Hash")
+		ldisp := flag.Bool("L", false, "display only the Previous Full Hash")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		adisp := flag.Bool("A", false, "display only the Head Expantion Area")
+		hdisp := flag.Bool("H", false, "display only the Header Hash")
+		fdisp := flag.Bool("F", false, "display only the Full Hash")
+		flag.Parse()
+		args = flag.Args()
+		if len(args) < 1 {
+			fmt.Println(cmd.helpMsg)
+			return
+		}
+
+		ecblock, raw, err := func() (ecblock *factom.ECBlock, raw []byte, err error) {
+			if len(args[0]) == 64 {
+				return factom.GetECBlock(args[0])
+			}
+			i, err := strconv.ParseInt(args[0], 10, 64)
+			if err != nil {
+				return nil, nil, err
+			}
+			return factom.GetECBlockByHeight(i)
+		}()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		switch {
+		case *rdisp:
+			fmt.Printf("%x\n", raw)
+		case *bdisp:
+			fmt.Println(ecblock.Header.BodyHash)
+		case *pdisp:
+			fmt.Println(ecblock.Header.PrevHeaderHash)
+		case *ldisp:
+			fmt.Println(ecblock.Header.PrevFullHash)
+		case *ddisp:
+			fmt.Println(ecblock.Header.DBHeight)
+		case *adisp:
+			fmt.Println(ecblock.Header.HeaderExpansionArea)
+		case *hdisp:
+			fmt.Println(ecblock.HeaderHash)
+		case *fdisp:
+			fmt.Println(ecblock.FullHash)
+		default:
+			fmt.Println(ecblock)
+		}
+	}
+	help.Add("get ecblock", cmd)
+	return cmd
+}()
+
 var getFBlock = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get fblock [-RBPLED] KEYMR|HEIGHT"
 	cmd.description = "Get a Factoid Block by its Key Merkle Root or Height"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+			"-E": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+		},
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Factoid Block")
@@ -426,10 +621,19 @@ var getFBlock = func() *fctCmd {
 
 var getEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get entry HASH"
-	cmd.description = "Get Entry by Hash"
+	cmd.helpMsg = "factom-cli get entry [-RC] HASH"
+	cmd.description = "Get Entry by Hash. -R raw entry. -C ChainID"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-C": complete.PredictNothing,
+		},
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry")
+		cdisp := flag.Bool("C", false, "display only the Chain ID")
 		flag.Parse()
 		args = flag.Args()
 		if len(args) < 1 {
@@ -443,7 +647,19 @@ var getEntry = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		fmt.Println(entry)
+		switch {
+		case *rdisp:
+			b, err := entry.MarshalBinary()
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Printf("%x\n", b)
+		case *cdisp:
+			fmt.Println(entry.ChainID)
+		default:
+			fmt.Println(entry)
+		}
 	}
 	help.Add("get entry", cmd)
 	return cmd
@@ -451,19 +667,29 @@ var getEntry = func() *fctCmd {
 
 var getFirstEntry = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...|CHAINID] [-E]"
-	cmd.description = "Get the first Entry in a Chain. -E EntryHash"
+	cmd.helpMsg = "factom-cli get firstentry [-n NAME1 -h HEXNAME2 ...|CHAINID] [-REC]"
+	cmd.description = "Get the first Entry in a Chain. -R RawEntry. -E EntryHash. -C ChainID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+
+			"-R": complete.PredictNothing,
+			"-E": complete.PredictNothing,
+			"-C": complete.PredictNothing,
+		},
+		Args: complete.PredictNothing,
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			nAcii namesASCII
 			nHex  namesHex
 		)
 		os.Args = args
-		edisp := flag.Bool(
-			"E",
-			false,
-			"display only the EntryHash of the first entry",
-		)
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Entry")
+		edisp := flag.Bool("E", false, "display only the EntryHash")
+		cdisp := flag.Bool("C", false, "display only the ChainID")
+
 		nameCollector = make([][]byte, 0)
 		flag.Var(&nAcii, "n", "ascii name component")
 		flag.Var(&nHex, "h", "hex binary name component")
@@ -489,12 +715,20 @@ var getFirstEntry = func() *fctCmd {
 		}
 
 		switch {
+		case *rdisp:
+			b, err := entry.MarshalBinary()
+			if err != nil {
+				errorln(err)
+				return
+			}
+			fmt.Printf("%x\n", b)
 		case *edisp:
 			fmt.Printf("%x\n", entry.Hash())
+		case *cdisp:
+			fmt.Println(entry.ChainID)
 		default:
 			fmt.Println(entry)
 		}
-
 	}
 	help.Add("get firstentry", cmd)
 	return cmd
@@ -502,20 +736,38 @@ var getFirstEntry = func() *fctCmd {
 
 var getHead = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get head [-r][-K]"
-	cmd.description = "Get the latest completed Directory Block. -K KeyMR."
+	cmd.helpMsg = "factom-cli get head [-RHKAVNBPFTDC]"
+	cmd.description = "Get the latest completed Directory Block"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-R": complete.PredictNothing,
+			"-H": complete.PredictNothing,
+			"-K": complete.PredictNothing,
+			"-A": complete.PredictNothing,
+			"-V": complete.PredictNothing,
+			"-N": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-P": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+			"-C": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
-		kdisp := flag.Bool(
-			"K",
-			false,
-			"display only the KeyMR of the directory block",
-		)
-		rawout := flag.Bool(
-			"r",
-			false,
-			"display the hex encoding of the raw Directory Block",
-		)
+		rdisp := flag.Bool("R", false, "display the hex encoding of the raw Directory Block")
+		hdisp := flag.Bool("H", false, "display only the Directory Block Hash")
+		kdisp := flag.Bool("K", false, "display only the Directory Block Key Merkel Root")
+		adisp := flag.Bool("A", false, "display only the Directory Block Header Hash")
+		vdisp := flag.Bool("V", false, "display only the Directory Block Header Version")
+		ndisp := flag.Bool("N", false, "display only the Network ID")
+		bdisp := flag.Bool("B", false, "display only the Directory Block Body Merkel Root")
+		pdisp := flag.Bool("P", false, "display only the Previous Directory Block Key Merkel Root")
+		fdisp := flag.Bool("F", false, "display only the Previous Directory Block Full Hash")
+		tdisp := flag.Bool("T", false, "display only the Directory Block Timestamp")
+		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
+		cdisp := flag.Bool("C", false, "display only the Directory Block Count")
 		flag.Parse()
 		args = flag.Args()
 
@@ -524,7 +776,6 @@ var getHead = func() *fctCmd {
 			errorln(err)
 			return
 		}
-
 		dblock, raw, err := factom.GetDBlock(head)
 		if err != nil {
 			errorln(err)
@@ -532,12 +783,31 @@ var getHead = func() *fctCmd {
 		}
 
 		switch {
-		case *kdisp:
-			fmt.Println(head)
-		case *rawout:
+		case *rdisp:
 			fmt.Printf("%x\n", raw)
+		case *hdisp:
+			fmt.Println(dblock.DBHash)
+		case *kdisp:
+			fmt.Println(dblock.KeyMR)
+		case *adisp:
+			fmt.Println(dblock.HeaderHash)
+		case *vdisp:
+			fmt.Println(dblock.Header.Version)
+		case *ndisp:
+			fmt.Println(dblock.Header.NetworkID)
+		case *bdisp:
+			fmt.Println(dblock.Header.BodyMR)
+		case *pdisp:
+			fmt.Println(dblock.Header.PrevKeyMR)
+		case *fdisp:
+			fmt.Println(dblock.Header.PrevFullHash)
+		case *tdisp:
+			fmt.Println(dblock.Header.Timestamp)
+		case *ddisp:
+			fmt.Println(dblock.Header.DBHeight)
+		case *cdisp:
+			fmt.Println(dblock.Header.BlockCount)
 		default:
-			fmt.Println("DBlock:", head)
 			fmt.Println(dblock)
 		}
 	}
@@ -549,6 +819,14 @@ var getHeights = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get heights [-DLBE]"
 	cmd.description = "Get the current heights of various items in factomd."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-D": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+			"-B": complete.PredictNothing,
+			"-E": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		ddisp := flag.Bool("D", false, "display only the Directory Block height")
@@ -601,6 +879,15 @@ var properties = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli properties [-CFAWL]"
 	cmd.description = "Get version information about factomd and the factom wallet"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-C": complete.PredictNothing,
+			"-F": complete.PredictNothing,
+			"-A": complete.PredictNothing,
+			"-W": complete.PredictNothing,
+			"-L": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		cdisp := flag.Bool("C", false, "display only the CLI version")
@@ -647,6 +934,11 @@ var getPendingEntries = func() *fctCmd {
 	cmd.helpMsg = "factom-cli get pendingentries [-E]"
 	cmd.description = "Get all pending entries, which may not yet be written" +
 		" to blockchain. -E EntryHash."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-E": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		edisp := flag.Bool(
@@ -702,6 +994,11 @@ var getPendingTransactions = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingtransactions [-T]"
 	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-T": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool(
@@ -765,6 +1062,12 @@ var getTPS = func() *fctCmd {
 	cmd.helpMsg = "factom-cli get tps [-IT]"
 	cmd.description = "Get the current instant and total average rate of " +
 		"Transactions Per Second."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-I": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		idisp := flag.Bool("I", false, "display only the instant TPS rate")

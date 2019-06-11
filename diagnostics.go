@@ -11,12 +11,22 @@ import (
 
 	"github.com/FactomProject/factom"
 	"github.com/michaelbeam/cli"
+	"github.com/posener/complete"
 )
 
 var diagnostics = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli diagnostics [server|network|sync|election|authset]"
 	cmd.description = "Get diagnostic information about the Factom network"
+	cmd.completion = complete.Command{
+		Sub: complete.Commands{
+			"server":   complete.Command{},
+			"network":  complete.Command{},
+			"sync":     complete.Command{},
+			"election": complete.Command{},
+			"authset":  complete.Command{},
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()

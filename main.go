@@ -12,6 +12,7 @@ import (
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 	"github.com/FactomProject/factomd/util"
+	"github.com/posener/complete"
 )
 
 // Version of factom-cli
@@ -78,7 +79,64 @@ func main() {
 				" (default ~/.factom/m2/factomdAPIpub.cert)",
 		)
 	)
+
+	// setup cli autocomplete for the shell. Run `$ factom-cli -complete` to
+	// install the completion in the local environment.
+	cliCompletion := complete.New("factom-cli", complete.Command{
+		Sub: complete.Commands{
+			"addchain":        addchain.completion,
+			"addentry":        addentry.completion,
+			"backupwallet":    backupwallet.completion,
+			"balance":         balance.completion,
+			"balancetotals":   balancetotals.completion,
+			"composechain":    composechain.completion,
+			"composeentry":    composeentry.completion,
+			"diagnostics":     diagnostics.completion,
+			"ecrate":          complete.Command{},
+			"exportaddresses": complete.Command{},
+			"get":             get.completion,
+			"importaddresses": complete.Command{},
+			"importkoinify":   complete.Command{},
+			"listaddresses":   complete.Command{},
+			"newecaddress":    complete.Command{},
+			"newfctaddress":   complete.Command{},
+			"properties":      properties.completion,
+			"receipt":         complete.Command{},
+			"rmaddress":       removeAddress.completion,
+			"status":          status.completion,
+			"unlockwallet":    unlockwallet.completion,
+
+			"newtx":         newtx.completion,
+			"rmtx":          complete.Command{},
+			"listtxs":       listtxs.completion,
+			"addtxinput":    addtxinput.completion,
+			"addtxoutput":   addtxoutput.completion,
+			"addtxecoutput": addtxecoutput.completion,
+			"addtxfee":      addtxfee.completion,
+			"subtxfee":      subtxfee.completion,
+			"signtx":        signtx.completion,
+			"composetx":     complete.Command{},
+			"sendtx":        sendtx.completion,
+			"sendfct":       sendfct.completion,
+			"buyec":         buyec.completion,
+
+			"newidentitykey":     complete.Command{},
+			"importidentitykeys": complete.Command{},
+			"exportidentitykeys": complete.Command{},
+			"listidentitykeys":   complete.Command{},
+			"rmidentitykey":      removeIdentityKey.completion,
+			"identity":           identity.completion,
+		},
+	})
+	cliCompletion.CLI.InstallName = "complete"
+	cliCompletion.CLI.UninstallName = "uncomplete"
+	cliCompletion.AddFlags(nil)
+
 	flag.Parse()
+
+	if cliCompletion.Complete() {
+		return
+	}
 
 	// see if the config file has values which should be used instead of null
 	// strings
@@ -176,9 +234,9 @@ func main() {
 	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
 	factom.SetWalletEncryption(*walletTLSflag, *walletTLSCert)
 	factom.SetFactomdEncryption(*factomdTLSflag, *factomdTLSCert)
+
 	c := cli.New()
 	c.Handle("help", help)
-	c.Handle("status", status)
 	c.Handle("addchain", addchain)
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
@@ -197,8 +255,8 @@ func main() {
 	c.Handle("newfctaddress", newfctaddress)
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
-	c.Handle("backupwallet", backupwallet)
 	c.Handle("rmaddress", removeAddress)
+	c.Handle("status", status)
 	c.Handle("unlockwallet", unlockwallet)
 
 	// transaction commands
