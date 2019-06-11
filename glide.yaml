@@ -10,4 +10,3 @@ import:
   version: ^6.3.2
   subpackages:
   - util
-- package: github.com/michaelbeam/cli
