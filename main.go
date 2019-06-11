@@ -186,6 +186,7 @@ func main() {
 	c.Handle("balancetotals", balancetotals)
 	c.Handle("composechain", composechain)
 	c.Handle("composeentry", composeentry)
+	c.Handle("diagnostics", diagnostics)
 	c.Handle("ecrate", ecrate)
 	c.Handle("exportaddresses", exportaddresses)
 	c.Handle("get", get)
