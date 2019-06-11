@@ -1,0 +1,15 @@
+package: github.com/FactomProject/factom-cli
+import:
+- package: github.com/FactomProject/btcutil
+  subpackages:
+  - base58
+- package: github.com/FactomProject/cli
+- package: github.com/FactomProject/factom
+  version: ^0.3.5
+- package: github.com/FactomProject/factomd
+  version: ^6.3.2
+  subpackages:
+  - util
+- package: github.com/michaelbeam/cli
+- package: github.com/posener/complete
+  version: ^1.2.1
