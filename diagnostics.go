@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
-	"github.com/michaelbeam/cli"
 	"github.com/posener/complete"
 )
 
