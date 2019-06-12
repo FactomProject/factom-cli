@@ -1,5 +1,5 @@
 hash: 6440fbb001c9acaeba825a1e889f03eaa8f0f6f6b579432ec96eaaa1b553c81f
-updated: 2019-06-12T10:12:56.545433903-05:00
+updated: 2019-06-12T10:14:34.741707088-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -55,8 +55,6 @@ imports:
   version: 886a7fbe3eb1c874d46f623bfa70af45f425b3d1
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
-- name: github.com/michaelbeam/cli
-  version: e3284e1e16c445cf7b514a5e64e24a0cef25e196
 - name: github.com/posener/complete
   version: 3ef9b31a6a0613ae832e7ecf208374027c3b2343
   subpackages:
