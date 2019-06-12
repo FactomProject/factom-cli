@@ -153,7 +153,7 @@ var diagnosticsSync = func() *fctCmd {
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		sdisp := flag.Bool("S", false, "display only the syncing status")
-		rdisp := flag.Bool("R", false, "display only the recieved status")
+		rdisp := flag.Bool("R", false, "display only the received status")
 		edisp := flag.Bool("E", false, "display only the expected status")
 		flag.Parse()
 		args = flag.Args()
@@ -173,7 +173,7 @@ var diagnosticsSync = func() *fctCmd {
 			fmt.Println(d.SyncInfo.Expected)
 		default:
 			fmt.Println("Status:", d.SyncInfo.Status)
-			fmt.Println("Recieved:", d.SyncInfo.Received)
+			fmt.Println("Received:", d.SyncInfo.Received)
 			fmt.Println("Expected:", d.SyncInfo.Expected)
 			for _, m := range d.SyncInfo.Missing {
 				fmt.Println("Missing:", m)
