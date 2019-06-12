@@ -231,7 +231,7 @@ var getChainHead = func() *fctCmd {
 
 var getABlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
+	cmd.helpMsg = "factom-cli get ablock [-RDBPL] HEIGHT|KEYMR"
 	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
 		"or by its Height"
 	cmd.completion = complete.Command{
