@@ -1086,8 +1086,8 @@ var getTPS = func() *fctCmd {
 		case *tdisp:
 			fmt.Println(t)
 		default:
-			fmt.Println("Instant:", i)
-			fmt.Println("Total:", t)
+			fmt.Printf("Instant: %0.2f\n", i)
+			fmt.Printf("Total: %0.2f\n", t)
 		}
 	}
 	help.Add("get tps", cmd)
