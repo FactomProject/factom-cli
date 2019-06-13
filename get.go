@@ -279,7 +279,7 @@ var getABlock = func() *fctCmd {
 		case *ddisp:
 			fmt.Println(ablock.DBHeight)
 		case *bdisp:
-			fmt.Println(ablock.BackReverenceHash)
+			fmt.Println(ablock.BackReferenceHash)
 		case *pdisp:
 			fmt.Println(ablock.PrevBackreferenceHash)
 		case *ldisp:
