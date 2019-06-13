@@ -97,7 +97,7 @@ var diagnosticsServer = func() *fctCmd {
 
 var diagnosticsNetwork = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli diagnostics network [-LMDPBTS]"
+	cmd.helpMsg = "factom-cli diagnostics network [-LMDPHTB]"
 	cmd.description = "Get diagnostic information about the Factom network"
 	cmd.execFunc = func(args []string) {
 		os.Args = args
