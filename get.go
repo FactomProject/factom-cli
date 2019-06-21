@@ -68,6 +68,13 @@ var get = func() *fctCmd {
 		c.Handle("raw", getraw)
 		c.Handle("tps", getTPS)
 		c.Handle("walletheight", getWalletHeight)
+
+		// Deprecated calls - be backwards compatible
+		c.Handle("abheight", getABlock)
+		c.Handle("dbheight", getDBlock)
+		c.Handle("ecbheight", getECBlock)
+		c.Handle("fbheight", getFBlock)
+
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
 		})
