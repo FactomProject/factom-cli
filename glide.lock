@@ -20,7 +20,7 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: 201a384d8e70e8d81b53c730b5432787cf4aeb24
+  version: c27795c3b9085472d123b2a2fe4a5e4cd4fb17e4
 - name: github.com/FactomProject/factomd
   version: c429cbf87dd732ffaf95663fa2b5ab900e33e04d
   subpackages:
