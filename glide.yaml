@@ -10,3 +10,5 @@ import:
   version: ^6.3.2
   subpackages:
   - util
+- package: github.com/posener/complete
+  version: ^1.2.1

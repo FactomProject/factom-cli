@@ -238,7 +238,7 @@ var getChainHead = func() *fctCmd {
 
 var getABlock = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli get ABlock [-RDBPL] HEIGHT|KEYMR"
+	cmd.helpMsg = "factom-cli get ablock [-RDBPL] HEIGHT|KEYMR"
 	cmd.description = "Get an Admin Block from factom by its Key Merkel Root " +
 		"or by its Height"
 	cmd.completion = complete.Command{
@@ -286,7 +286,7 @@ var getABlock = func() *fctCmd {
 		case *ddisp:
 			fmt.Println(ablock.DBHeight)
 		case *bdisp:
-			fmt.Println(ablock.BackReverenceHash)
+			fmt.Println(ablock.BackReferenceHash)
 		case *pdisp:
 			fmt.Println(ablock.PrevBackreferenceHash)
 		case *ldisp:
@@ -510,7 +510,7 @@ var getECBlock = func() *fctCmd {
 		pdisp := flag.Bool("P", false, "display only the Previous Header Hash")
 		ldisp := flag.Bool("L", false, "display only the Previous Full Hash")
 		ddisp := flag.Bool("D", false, "display only the Directory Block Height")
-		adisp := flag.Bool("A", false, "display only the Head Expantion Area")
+		adisp := flag.Bool("A", false, "display only the Head Expansion Area")
 		hdisp := flag.Bool("H", false, "display only the Header Hash")
 		fdisp := flag.Bool("F", false, "display only the Full Hash")
 		flag.Parse()

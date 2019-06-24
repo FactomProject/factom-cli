@@ -1,5 +1,5 @@
-hash: 6b2f51f56c3b62261c207d6d9d46aaf94ec3f367cfc6e9957efd0b1f534730bf
-updated: 2019-06-11T10:51:40.443940701-05:00
+hash: 6440fbb001c9acaeba825a1e889f03eaa8f0f6f6b579432ec96eaaa1b553c81f
+updated: 2019-06-12T10:14:34.741707088-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -56,7 +56,7 @@ imports:
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/posener/complete
-  version: 60e9d0a237999e714fb4d04727fe7ffa1b377c6e
+  version: 3ef9b31a6a0613ae832e7ecf208374027c3b2343
   subpackages:
   - cmd
   - cmd/install
