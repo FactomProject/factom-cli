@@ -5,7 +5,7 @@ import:
   - base58
 - package: github.com/FactomProject/cli
 - package: github.com/FactomProject/factom
-  version: v1-rollup-testing
+  version: FD-1075
 - package: github.com/FactomProject/factomd
   version: ^6.3.2
   subpackages:
