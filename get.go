@@ -70,10 +70,10 @@ var get = func() *fctCmd {
 		c.Handle("walletheight", getWalletHeight)
 
 		// Deprecated calls - be backwards compatible
-		c.Handle("abheight", getABlock)
-		c.Handle("dbheight", getDBlock)
-		c.Handle("ecbheight", getECBlock)
-		c.Handle("fbheight", getFBlock)
+		c.Handle("abheight", Abheight)
+		c.Handle("dbheight", Dbheight)
+		c.Handle("ecbheight", Ecbheight)
+		c.Handle("fbheight", Fbheight)
 
 		c.HandleDefaultFunc(func(args []string) {
 			fmt.Println(cmd.helpMsg)
