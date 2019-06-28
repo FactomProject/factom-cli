@@ -1,4 +1,3 @@
-// All functions in this file are used to return GetBlockByHeightRaw.
 // Copyright 2017 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
@@ -16,7 +15,7 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-// Abheight - public so it can be accessed by tests
+// Abheight fetches the GetBlockByHeightRaw data for admin block.
 // Deprecated: should use ablock.
 var Abheight = func() *fctCmd {
 	var supressRawData string
@@ -68,7 +67,8 @@ var Abheight = func() *fctCmd {
 	return cmd
 }()
 
-//Deprecated: should use dblock
+// Dbheight fetches the GetBlockByHeightRaw data for Directory block.
+// Deprecated: should use dblock
 var Dbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -119,7 +119,8 @@ var Dbheight = func() *fctCmd {
 	return cmd
 }()
 
-//Deprecated: should use ecblock
+// Ecbheight fetches the GetBlockByHeightRaw data for Entry Credit Block.
+// Deprecated: should use ecblock
 var Ecbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -169,7 +170,9 @@ var Ecbheight = func() *fctCmd {
 	help.Add("get ecbheight", cmd)
 	return cmd
 }()
-//Deprecated: should use fblock.
+
+// Fbheight fetches the GetBlockByHeightRaw data for Factoid Block.
+// Deprecated: should use fblock.
 var Fbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
