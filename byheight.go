@@ -1,3 +1,4 @@
+// All functions in this file are used to return GetBlockByHeightRaw.
 // Copyright 2017 Factom Foundation
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
@@ -16,9 +17,9 @@ import (
 )
 
 // Abheight - public so it can be accessed by tests
+// Deprecated: should use ablock.
 var Abheight = func() *fctCmd {
 	var supressRawData string
-	//fmt.Println("0:", os.Args[0])
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get abheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Admin Block by height"
@@ -66,6 +67,8 @@ var Abheight = func() *fctCmd {
 	help.Add("get abheight", cmd)
 	return cmd
 }()
+
+//Deprecated: should use dblock
 var Dbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -115,6 +118,8 @@ var Dbheight = func() *fctCmd {
 	help.Add("get dbheight", cmd)
 	return cmd
 }()
+
+//Deprecated: should use ecblock
 var Ecbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -164,6 +169,7 @@ var Ecbheight = func() *fctCmd {
 	help.Add("get ecbheight", cmd)
 	return cmd
 }()
+//Deprecated: should use fblock.
 var Fbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
