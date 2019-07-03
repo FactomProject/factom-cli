@@ -229,6 +229,7 @@ var getChainHead = func() *fctCmd {
 		case *kdisp:
 			fmt.Println(head)
 		default:
+			fmt.Println("EBlock:", head)
 			fmt.Println(eblock)
 		}
 	}
