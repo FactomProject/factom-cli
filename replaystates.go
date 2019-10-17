@@ -31,9 +31,9 @@ var replaydbstates = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		startheight := uint32(startHeightStr)
+		startheight := startHeightStr
 
-		var endheight uint32
+		var endheight int64
 		endheight = 0
 		if len(args) == 2 {
 			endHeightStr, err := strconv.ParseInt(args[1], 0, 32)
@@ -41,7 +41,7 @@ var replaydbstates = func() *fctCmd {
 				fmt.Println(cmd.helpMsg)
 				return
 			}
-			endheight = uint32(endHeightStr)
+			endheight = endHeightStr
 		}
 		res, err := factom.ReplayDBlockFromHeight(startheight, endheight)
 		if err != nil {
