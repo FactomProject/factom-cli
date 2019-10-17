@@ -199,6 +199,7 @@ func main() {
 	c.Handle("backupwallet", backupwallet)
 	c.Handle("rmaddress", removeAddress)
 	c.Handle("unlockwallet", unlockwallet)
+	c.Handle("replaydbstates", replaydbstates)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
