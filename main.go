@@ -12,6 +12,7 @@ import (
 	"github.com/FactomProject/cli"
 	"github.com/FactomProject/factom"
 	"github.com/FactomProject/factomd/util"
+	"github.com/posener/complete"
 )
 
 // Version of factom-cli
@@ -78,13 +79,70 @@ func main() {
 				" (default ~/.factom/m2/factomdAPIpub.cert)",
 		)
 	)
+
+	// setup cli autocomplete for the shell. Run `$ factom-cli -complete` to
+	// install the completion in the local environment.
+	cliCompletion := complete.New("factom-cli", complete.Command{
+		Sub: complete.Commands{
+			"addchain":        addchain.completion,
+			"addentry":        addentry.completion,
+			"backupwallet":    backupwallet.completion,
+			"balance":         balance.completion,
+			"balancetotals":   balancetotals.completion,
+			"composechain":    composechain.completion,
+			"composeentry":    composeentry.completion,
+			"diagnostics":     diagnostics.completion,
+			"ecrate":          complete.Command{},
+			"exportaddresses": complete.Command{},
+			"get":             get.completion,
+			"importaddresses": complete.Command{},
+			"importkoinify":   complete.Command{},
+			"listaddresses":   complete.Command{},
+			"newecaddress":    complete.Command{},
+			"newfctaddress":   complete.Command{},
+			"properties":      properties.completion,
+			"receipt":         complete.Command{},
+			"rmaddress":       removeAddress.completion,
+			"status":          status.completion,
+			"unlockwallet":    unlockwallet.completion,
+
+			"newtx":         newtx.completion,
+			"rmtx":          rmtx.completion,
+			"listtxs":       listtxs.completion,
+			"addtxinput":    addtxinput.completion,
+			"addtxoutput":   addtxoutput.completion,
+			"addtxecoutput": addtxecoutput.completion,
+			"addtxfee":      addtxfee.completion,
+			"subtxfee":      subtxfee.completion,
+			"signtx":        signtx.completion,
+			"composetx":     complete.Command{},
+			"sendtx":        sendtx.completion,
+			"sendfct":       sendfct.completion,
+			"buyec":         buyec.completion,
+
+			"newidentitykey":     complete.Command{},
+			"importidentitykeys": complete.Command{},
+			"exportidentitykeys": complete.Command{},
+			"listidentitykeys":   complete.Command{},
+			"rmidentitykey":      removeIdentityKey.completion,
+			"identity":           identity.completion,
+		},
+	})
+	cliCompletion.CLI.InstallName = "complete"
+	cliCompletion.CLI.UninstallName = "uncomplete"
+	cliCompletion.AddFlags(nil)
+
 	flag.Parse()
+
+	if cliCompletion.Complete() {
+		return
+	}
 
 	// see if the config file has values which should be used instead of null
 	// strings
 	filename := util.ConfigFilename()
 
-	//instead of giving warnings, check that the file exists before attempting
+	// instead of giving warnings, check that the file exists before attempting
 	// to read it.
 	if _, err := os.Stat(filename); err == nil {
 		cfg := util.ReadConfig(filename)
@@ -115,7 +173,7 @@ func main() {
 			}
 		}
 
-		//if a config file is found, and the wallet will start with TLS,
+		// if a config file is found, and the wallet will start with TLS,
 		// factom-cli should use TLS too
 		if cfg.Walletd.WalletTlsEnabled == true {
 			*walletTLSflag = true
@@ -129,7 +187,7 @@ func main() {
 			}
 		}
 
-		//if a config file is found, and the factomd will start with TLS,
+		// if a config file is found, and the factomd will start with TLS,
 		// factom-cli should use TLS too
 		if cfg.App.FactomdTlsEnabled == true {
 			*factomdTLSflag = true
@@ -144,7 +202,7 @@ func main() {
 		}
 	}
 
-	//if all defaults were specified on both the command line and config file
+	// if all defaults were specified on both the command line and config file
 	if *walletTLSCert == "" {
 		*walletTLSCert = fmt.Sprint(
 			util.GetHomeDir(),
@@ -152,7 +210,7 @@ func main() {
 		)
 	}
 
-	//if all defaults were specified on both the command line and config file
+	// if all defaults were specified on both the command line and config file
 	if *factomdTLSCert == "" {
 		*factomdTLSCert = fmt.Sprint(
 			util.GetHomeDir(),
@@ -160,7 +218,7 @@ func main() {
 		)
 	}
 
-	//set the default if a config file doesn't exist
+	// set the default if a config file doesn't exist
 	if *factomdLocation == "" {
 		*factomdLocation = "localhost:8088"
 	}
@@ -176,9 +234,9 @@ func main() {
 	factom.SetWalletRpcConfig(*walletRpcUser, *walletRpcPassword)
 	factom.SetWalletEncryption(*walletTLSflag, *walletTLSCert)
 	factom.SetFactomdEncryption(*factomdTLSflag, *factomdTLSCert)
+
 	c := cli.New()
 	c.Handle("help", help)
-	c.Handle("status", status)
 	c.Handle("addchain", addchain)
 	c.Handle("addentry", addentry)
 	c.Handle("backupwallet", backupwallet)
@@ -186,6 +244,7 @@ func main() {
 	c.Handle("balancetotals", balancetotals)
 	c.Handle("composechain", composechain)
 	c.Handle("composeentry", composeentry)
+	c.Handle("diagnostics", diagnostics)
 	c.Handle("ecrate", ecrate)
 	c.Handle("exportaddresses", exportaddresses)
 	c.Handle("get", get)
@@ -196,8 +255,8 @@ func main() {
 	c.Handle("newfctaddress", newfctaddress)
 	c.Handle("properties", properties)
 	c.Handle("receipt", receipt)
-	c.Handle("backupwallet", backupwallet)
 	c.Handle("rmaddress", removeAddress)
+	c.Handle("status", status)
 	c.Handle("unlockwallet", unlockwallet)
 
 	// transaction commands

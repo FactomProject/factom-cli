@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 // balance prints the current balance of the specified address
@@ -17,6 +18,12 @@ var balance = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli balance [-r] ADDRESS"
 	cmd.description = "If this is an EC Address, returns number of Entry Credits. If this is a Factoid Address, returns the Factoid balance."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-r": complete.PredictNothing,
+		},
+		Args: predictAddress,
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var res = flag.Bool("r", false, "resolve dns address")
@@ -72,6 +79,14 @@ var balancetotals = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli balancetotals [-FS -FA -ES -EA]"
 	cmd.description = "This is the total number of Factoids and Entry Credits in the wallet"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-FS": complete.PredictNothing,
+			"-FA": complete.PredictNothing,
+			"-ES": complete.PredictNothing,
+			"-EA": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		var fsdisp = flag.Bool("FS", false, "Display only the savedFCT value")
@@ -113,7 +128,7 @@ var ecrate = func() *fctCmd {
 	cmd.helpMsg = "factom-cli ecrate"
 	cmd.description = "It takes this many Factoids to buy an Entry Credit.  Displays the larger between current and future rates. Also used to set Factoid fees."
 	cmd.execFunc = func(args []string) {
-		rate, err := factom.GetRate()
+		rate, err := factom.GetECRate()
 		if err != nil {
 			errorln(err)
 			return
@@ -305,6 +320,9 @@ var removeAddress = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli rmaddress ADDRESS"
 	cmd.description = "Removes the public and private key from the wallet for the address specified."
+	cmd.completion = complete.Command{
+		Args: predictAddress,
+	}
 	cmd.execFunc = func(args []string) {
 		if len(args) < 2 {
 			fmt.Println(cmd.helpMsg)

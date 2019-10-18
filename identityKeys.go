@@ -1,3 +1,7 @@
+// Copyright 2017 Factom Foundation
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -6,6 +10,7 @@ import (
 	"os"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 // newIdentityKey generates a new identity key in the wallet
@@ -108,6 +113,9 @@ var removeIdentityKey = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli rmidentitykey PUBKEY"
 	cmd.description = "Removes the identity key pair from the wallet for the specified idpub key."
+	cmd.completion = complete.Command{
+		Args: predictIdentityKey,
+	}
 	cmd.execFunc = func(args []string) {
 		if len(args) < 2 {
 			fmt.Println(cmd.helpMsg)

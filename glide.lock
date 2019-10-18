@@ -1,5 +1,5 @@
-hash: 2270e472db082f69c2266ce850d6a6e85258d578fccf0ac5375c5d3a60d8ca12
-updated: 2018-10-31T11:45:09.205563696-05:00
+hash: 6b2f51f56c3b62261c207d6d9d46aaf94ec3f367cfc6e9957efd0b1f534730bf
+updated: 2019-06-11T10:51:40.443940701-05:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -20,9 +20,9 @@ imports:
   subpackages:
   - edwards25519
 - name: github.com/FactomProject/factom
-  version: e10bd8fdb9baee9e59b397a77fa1d7139d3990c8
+  version: 06dcca87be7f4da540493b113ec4c94e75f4c814
 - name: github.com/FactomProject/factomd
-  version: 5f787fc9bf067dac6df2c36803e03e2a1a3b3186
+  version: c429cbf87dd732ffaf95663fa2b5ab900e33e04d
   subpackages:
   - activations
   - common/constants
@@ -32,6 +32,7 @@ imports:
   - common/primitives/random
   - log
   - util
+  - util/atomic
 - name: github.com/FactomProject/go-bip32
   version: 3b593af1c415abc1017648e4eb24a88c32fee0f3
 - name: github.com/FactomProject/go-bip39
@@ -48,10 +49,20 @@ imports:
   - leveldb/util
 - name: github.com/FactomProject/netki-go-partner-client
   version: 426acb535e66cc2f9e6226ae254555e3572fd142
+- name: github.com/hashicorp/errwrap
+  version: 8a6fb523712970c966eefc6b39ed2c5e74880354
+- name: github.com/hashicorp/go-multierror
+  version: 886a7fbe3eb1c874d46f623bfa70af45f425b3d1
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
+- name: github.com/posener/complete
+  version: 60e9d0a237999e714fb4d04727fe7ffa1b377c6e
+  subpackages:
+  - cmd
+  - cmd/install
+  - match
 - name: github.com/sirupsen/logrus
-  version: fd2308367ebd427ec910c1ac82f3805db3de1918
+  version: 566a5f690849162ff53cf98f3c42135389d63f95
 - name: golang.org/x/crypto
   version: 4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06
   subpackages:
@@ -59,7 +70,7 @@ imports:
   - ripemd160
   - ssh/terminal
 - name: golang.org/x/sys
-  version: 9b800f95dbbc54abff0acf7ee32d88ba4e328c89
+  version: 7e31e0c00fa05cb5fbf4347b585621d6709e19a4
   subpackages:
   - unix
   - windows
