@@ -26,9 +26,10 @@ var replaydbstates = func() *fctCmd {
 			return
 		}
 
-		startHeightStr, err := strconv.ParseInt(args[0], 0, 32)
+		startHeightStr, err := strconv.ParseInt(args[0], 10, 32)
 		if err != nil {
-			fmt.Println(cmd.helpMsg)
+			// fmt.Println(cmd.helpMsg)
+			errorln(err)
 			return
 		}
 		startheight := startHeightStr
@@ -36,9 +37,10 @@ var replaydbstates = func() *fctCmd {
 		var endheight int64
 		endheight = 0
 		if len(args) == 2 {
-			endHeightStr, err := strconv.ParseInt(args[1], 0, 32)
+			endHeightStr, err := strconv.ParseInt(args[1], 10, 32)
 			if err != nil {
-				fmt.Println(cmd.helpMsg)
+				// fmt.Println(cmd.helpMsg)
+				errorln(err)
 				return
 			}
 			endheight = endHeightStr

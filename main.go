@@ -105,6 +105,7 @@ func main() {
 			"rmaddress":       removeAddress.completion,
 			"status":          status.completion,
 			"unlockwallet":    unlockwallet.completion,
+			"replaydbstates":  replaydbstates.completion,
 
 			"newtx":         newtx.completion,
 			"rmtx":          rmtx.completion,
