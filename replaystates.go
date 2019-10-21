@@ -5,7 +5,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -21,14 +20,10 @@ var replaydbstates = func() *fctCmd {
 		Data    interface{} `json:"data,omitempty"` // Optional data object containing additional information about the error
 	}
 
-	type JSON2Response struct {
-		JSONRPC string      `json:"jsonrpc"` // version string which MUST be "2.0" (version 1.0 didn't have this field)
-		ID      interface{} `json:"id"`      // Unique client defined ID associated with incoming request. It may be a number,
-		// string, or nil. It is used by the remote to formulate a this response object
-		// containing the same ID back to the client. If nil, remote treats request object
-		// as a notification, and that the client does not expect a response object back
-		Error  *JSONError  `json:"error,omitempty"`  // Must be present if called subroutine had an error (mutually exclusive with Result)
-		Result interface{} `json:"result,omitempty"` // Must be present if called subroutine succeeded (mutually exclusive with Error)
+	type replayResponse struct {
+		Message string `json:"message"`
+		Start   int64  `json:"startheight"`
+		End     int64  `json:"endheight"`
 	}
 
 	cmd := new(fctCmd)
@@ -60,21 +55,14 @@ var replaydbstates = func() *fctCmd {
 			}
 			endheight = endHeightStr
 		}
+
 		res, err := factom.ReplayDBlockFromHeight(startheight, endheight)
 		if err != nil {
 			errorln(err)
 			return
 		}
 
-		resStr, err := json.Marshal(res)
-		if err != nil {
-			errorln(err)
-			return
-		}
-
-		response := JSON2Response{}
-		json.Unmarshal([]byte(resStr), &response)
-		fmt.Println(response.Result.(interface{}).(map[string]interface{})["message"])
+		fmt.Println(res.Message)
 	}
 	help.Add("replaydbstates", cmd)
 	return cmd
