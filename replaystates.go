@@ -14,18 +14,6 @@ import (
 )
 
 var replaydbstates = func() *fctCmd {
-	type JSONError struct {
-		Code    int         `json:"code"`           // The error code associated with the error type
-		Message string      `json:"message"`        // The error message as a concise single sentence
-		Data    interface{} `json:"data,omitempty"` // Optional data object containing additional information about the error
-	}
-
-	type replayResponse struct {
-		Message string `json:"message"`
-		Start   int64  `json:"startheight"`
-		End     int64  `json:"endheight"`
-	}
-
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli replaydbstates STARTHEIGHT ENDHEIGHT"
 	cmd.description = "Emit DBStateMsgs over the LiveFeed API between two specifed block heights"
