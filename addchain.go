@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 var addchain = func() *fctCmd {
@@ -20,6 +21,20 @@ var addchain = func() *fctCmd {
 	cmd.description = "Create a new Factom Chain. Read data for the First" +
 		" Entry from stdin. Use the Entry Credits from the specified address." +
 		" -C ChainID. -E EntryHash. -T TxID."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f": complete.PredictNothing,
+			"-q": complete.PredictNothing,
+
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+
+			"-C": complete.PredictNothing,
+			"-E": complete.PredictNothing,
+			"-T": complete.PredictNothing,
+		},
+		Args: predictAddress,
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			eAcii extidsASCII
@@ -162,6 +177,15 @@ var composechain = func() *fctCmd {
 	cmd.description = "Create API calls to create a new Factom Chain. Read" +
 		" data for the First Entry from stdin. Use the Entry Credits from the" +
 		" specified address."
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-f": complete.PredictNothing,
+
+			"-n": complete.PredictAnything,
+			"-h": complete.PredictAnything,
+		},
+		Args: predictAddress,
+	}
 	cmd.execFunc = func(args []string) {
 		var (
 			eAcii extidsASCII

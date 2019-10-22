@@ -15,10 +15,10 @@ import (
 	"github.com/FactomProject/factom"
 )
 
-// Abheight - public so it can be accessed by tests
+// Abheight fetches the GetBlockByHeightRaw data for admin block.
+// Deprecated: should use ablock.
 var Abheight = func() *fctCmd {
 	var supressRawData string
-	//fmt.Println("0:", os.Args[0])
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get abheight HEIGHT -r (to suppress Raw Data)"
 	cmd.description = "Get Admin Block by height"
@@ -66,6 +66,9 @@ var Abheight = func() *fctCmd {
 	help.Add("get abheight", cmd)
 	return cmd
 }()
+
+// Dbheight fetches the GetBlockByHeightRaw data for Directory block.
+// Deprecated: should use dblock
 var Dbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -115,6 +118,9 @@ var Dbheight = func() *fctCmd {
 	help.Add("get dbheight", cmd)
 	return cmd
 }()
+
+// Ecbheight fetches the GetBlockByHeightRaw data for Entry Credit Block.
+// Deprecated: should use ecblock
 var Ecbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
@@ -164,6 +170,9 @@ var Ecbheight = func() *fctCmd {
 	help.Add("get ecbheight", cmd)
 	return cmd
 }()
+
+// Fbheight fetches the GetBlockByHeightRaw data for Factoid Block.
+// Deprecated: should use fblock.
 var Fbheight = func() *fctCmd {
 	var supressRawData string
 	cmd := new(fctCmd)
