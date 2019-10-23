@@ -105,6 +105,7 @@ func main() {
 			"rmaddress":       removeAddress.completion,
 			"status":          status.completion,
 			"unlockwallet":    unlockwallet.completion,
+			"replaydbstates":  replaydbstates.completion,
 
 			"newtx":         newtx.completion,
 			"rmtx":          rmtx.completion,
@@ -258,6 +259,7 @@ func main() {
 	c.Handle("rmaddress", removeAddress)
 	c.Handle("status", status)
 	c.Handle("unlockwallet", unlockwallet)
+	c.Handle("replaydbstates", replaydbstates)
 
 	// transaction commands
 	c.Handle("newtx", newtx)
