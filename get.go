@@ -5,6 +5,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -620,7 +621,14 @@ var getFBlock = func() *fctCmd {
 		case *ddisp:
 			fmt.Println(fblock.DBHeight)
 		default:
-			fmt.Println(fblock)
+			data, err := json.Marshal(fblock)
+			if err != nil {
+				errorln(err)
+				return
+			}
+			var out bytes.Buffer
+			json.Indent(&out, data, "", "\t")
+			fmt.Printf("%s\n", out.Bytes())
 		}
 	}
 	help.Add("get fblock", cmd)
