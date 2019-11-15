@@ -37,6 +37,9 @@ var balance = func() *fctCmd {
 		addr := args[0]
 
 		switch factom.AddressStringType(addr) {
+		case factom.EthFA:
+			addr = addr[1:]
+			fallthrough
 		case factom.FactoidPub:
 			b, err := factom.GetFactoidBalance(addr)
 			if err != nil {
@@ -150,13 +153,16 @@ var exportaddresses = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		fs, es, err := factom.FetchAddresses()
+		fs, es, eths, err := factom.FetchAllAddressTypes()
 		if err != nil {
 			errorln(err)
 			return
 		}
 		for _, a := range fs {
 			fmt.Println(a.SecString(), a.String())
+		}
+		for _, e := range eths {
+			fmt.Println(e.SecString(), e.String())
 		}
 		for _, a := range es {
 			fmt.Println(a.SecString(), a.String())
@@ -180,12 +186,15 @@ var importaddresses = func() *fctCmd {
 			fmt.Println(cmd.helpMsg)
 			return
 		}
-		fs, es, err := factom.ImportAddresses(args...)
+		fs, es, eths, err := factom.ImportAddresses(args...)
 		if err != nil {
 			errorln(err)
 			return
 		}
 		for _, a := range fs {
+			fmt.Println(a)
+		}
+		for _, a := range eths {
 			fmt.Println(a)
 		}
 		for _, a := range es {
@@ -262,6 +271,27 @@ var newfctaddress = func() *fctCmd {
 	return cmd
 }()
 
+// newethaddress generates a new eth address in the wallet
+var newethaddress = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli newethaddress"
+	cmd.description = "Generate a new Ether linked Address in the wallet"
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		a, err := factom.GenerateEtherAddress()
+		if err != nil {
+			errorln(err)
+			return
+		}
+		fmt.Println(a)
+	}
+	help.Add("newethaddress", cmd)
+	return cmd
+}()
+
 // listaddresses lists the addresses in the wallet
 var listaddresses = func() *fctCmd {
 	cmd := new(fctCmd)
@@ -277,7 +307,7 @@ var listaddresses = func() *fctCmd {
 		flag.Parse()
 		args = flag.Args()
 
-		fs, es, err := factom.FetchAddresses()
+		fs, es, eths, err := factom.FetchAllAddressTypes()
 		if err != nil {
 			errorln(err)
 			return
@@ -286,6 +316,9 @@ var listaddresses = func() *fctCmd {
 		if *adisp {
 			for _, a := range fs {
 				fmt.Println(a)
+			}
+			for _, e := range eths {
+				fmt.Println(e)
 			}
 			for _, a := range es {
 				fmt.Println(a)
@@ -300,6 +333,15 @@ var listaddresses = func() *fctCmd {
 					fmt.Println(a, factoshiToFactoid(b))
 				}
 			}
+			for _, e := range eths {
+				b, err := factom.GetFactoidBalance(e.FAString())
+				if err != nil {
+					errorln(err)
+					fmt.Println(e)
+				} else {
+					fmt.Println(e, factoshiToFactoid(b))
+				}
+			}
 			for _, a := range es {
 				c, err := factom.GetECBalance(a.String())
 				if err != nil {
@@ -312,6 +354,43 @@ var listaddresses = func() *fctCmd {
 		}
 	}
 	help.Add("listaddresses", cmd)
+	return cmd
+}()
+
+// linkedaddresses lists the linked addresses on other blockchains
+var linkedaddresses = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli linkedaddresses"
+	cmd.description = "List the addresses that have links to other addresses " +
+		"on other blockchains. These addresses share the private key with another" +
+		"blockchains."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		fas, ecs, eths, err := factom.FetchAllAddressTypes()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		format := "%-53s %-42s\n"
+		fmt.Printf(format, "Factom", "Etheruem")
+		for _, e := range eths {
+			fmt.Printf(format, e.String(), e.EthAddress())
+		}
+
+		fmt.Printf(format, "Factom", "")
+		for _, a := range fas {
+			fmt.Printf(format, a.String(), "")
+		}
+
+		for _, a := range ecs {
+			fmt.Printf(format, a.String(), "")
+		}
+	}
+	help.Add("linkedaddresses", cmd)
 	return cmd
 }()
 
