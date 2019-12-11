@@ -86,6 +86,8 @@ jobs:
           paths:
             - vendor
 
+  # Coveralls configuration is unused as most of the unit testing
+  # lies in the dependency repos.
   coveralls:
     working_directory: /go/src/github.com/FactomProject/factomd-cli
     docker:
@@ -275,12 +277,13 @@ workflows:
               only: /.*/
           requires:
             - build
-      - coveralls:
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - test
+#     Disabling coveralls for cli repo
+#      - coveralls:
+#          filters:
+#            tags:
+#              only: /.*/
+#          requires:
+#            - test
       - docker_build:
           filters:
             tags:
@@ -301,9 +304,10 @@ workflows:
       - test:
           requires:
             - build
-      - coveralls:
-          requires:
-            - test
+#     Disabling coveralls for cli repo
+#      - coveralls:
+#          requires:
+#            - test
       - docker_build:
           context: org-global
           requires:

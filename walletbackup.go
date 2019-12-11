@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 // backupwallet returns the wallet seed and all of the addresses from the
@@ -18,6 +19,7 @@ var backupwallet = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli backupwallet"
 	cmd.description = "Backup the running wallet"
+	cmd.completion = complete.Command{}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		flag.Parse()

@@ -12,22 +12,27 @@ import (
 	"strings"
 
 	"github.com/FactomProject/factom"
+	"github.com/posener/complete"
 )
 
 var status = func() *fctCmd {
 	cmd := new(fctCmd)
-	cmd.helpMsg = "factom-cli status TxID|FullTx"
+	cmd.helpMsg = "factom-cli status [-TSUD] TxID|FullTx"
 	cmd.description = "Returns information about a factoid transaction, or an" +
 		" entry / entry credit transaction"
+	cmd.completion = complete.Command{
+		Flags: complete.Flags{
+			"-T": complete.PredictNothing,
+			"-S": complete.PredictNothing,
+			"-U": complete.PredictNothing,
+			"-D": complete.PredictNothing,
+		},
+	}
 	cmd.execFunc = func(args []string) {
 		os.Args = args
 		tdisp := flag.Bool("T", false, "display the transaction id only")
 		sdisp := flag.Bool("S", false, "display the transaction status only")
-		udisp := flag.Bool(
-			"U",
-			false,
-			"display the unix time of the transaction",
-		)
+		udisp := flag.Bool("U", false, "display the unix time of the transaction")
 		ddisp := flag.Bool("D", false, "display the time of the transaction")
 		flag.Parse()
 		args = flag.Args()

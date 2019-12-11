@@ -4,10 +4,15 @@
 
 package main
 
+import (
+	"github.com/posener/complete"
+)
+
 type fctCmd struct {
 	execFunc    func([]string)
 	helpMsg     string
 	description string
+	completion  complete.Command
 }
 
 func (c *fctCmd) Execute(args []string) {
