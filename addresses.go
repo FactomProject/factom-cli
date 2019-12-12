@@ -357,7 +357,50 @@ var listaddresses = func() *fctCmd {
 	return cmd
 }()
 
-// linkedaddresses lists the linked addresses on other blockchains
+// alternativeEncoding is a developer function. It returns all encoding types
+// for ethereum addresses
+var alternativeEncoding = func() *fctCmd {
+	cmd := new(fctCmd)
+	cmd.helpMsg = "factom-cli alternativeEncoding"
+	cmd.description = "This function is intended for developer use. There is" +
+		"no use case for this function outside development purposes and regular" +
+		"users should not need to use this. It returns all the encoding options" +
+		"for addresses."
+	cmd.execFunc = func(args []string) {
+		os.Args = args
+		flag.Parse()
+		args = flag.Args()
+
+		fas, ecs, eths, err := factom.FetchAllAddressTypes()
+		if err != nil {
+			errorln(err)
+			return
+		}
+
+		fmt.Println("Eth Linked Addresses")
+		format := "%-53s %-53s %-53s\n"
+		fmt.Printf(format, "FA", "Fe", "FE")
+		for _, e := range eths {
+			fmt.Printf(format, e.FAString(), e.String(), e.GateWayAddress())
+		}
+
+		fmt.Println()
+		fmt.Println("Pure Factom Addresses")
+		format = "%-53s\n"
+		fmt.Printf(format, "FA/EC")
+		for _, a := range fas {
+			fmt.Printf(format, a.String())
+		}
+
+		for _, a := range ecs {
+			fmt.Printf(format, a.String())
+		}
+	}
+	help.Add("altencoding", cmd)
+	return cmd
+}()
+
+//  linkedaddresses lists the linked addresses on other blockchains
 var linkedaddresses = func() *fctCmd {
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli linkedaddresses"

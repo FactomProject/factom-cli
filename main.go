@@ -252,6 +252,7 @@ func main() {
 	c.Handle("importaddress", importaddresses)
 	c.Handle("importkoinify", importkoinify)
 	c.Handle("listaddresses", listaddresses)
+	c.Handle("altencoding", alternativeEncoding)
 	c.Handle("linkedaddresses", linkedaddresses)
 	c.Handle("newecaddress", newecaddress)
 	c.Handle("newfctaddress", newfctaddress)
