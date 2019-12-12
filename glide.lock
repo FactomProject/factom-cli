@@ -1,5 +1,5 @@
-hash: 6b2f51f56c3b62261c207d6d9d46aaf94ec3f367cfc6e9957efd0b1f534730bf
-updated: 2019-06-11T10:51:40.443940701-05:00
+hash: 7f1e3f96aed528657d4e68113da6ff0c8ee303546829074636974335dc314c21
+updated: 2019-12-12T09:40:04.704993054-06:00
 imports:
 - name: github.com/btcsuitereleases/btcutil
   version: f2b1058a82554c0c7c3b8809c5956c38374604d8
@@ -19,13 +19,18 @@ imports:
   version: 38002c4fe7b609c2fa3144a3cc29b997b756bb4c
   subpackages:
   - edwards25519
+- name: github.com/ethereum/go-ethereum
+  version: 738b51ae31c48a598b7c5bad37c054976a41025f
+  subpackages:
+  - crypto
 - name: github.com/FactomProject/factom
-  version: ecf4bbd6645c008e3d7c7991fe6c2a26f0f7ada5
+  version: 2e529e304e8d03213e4857a223ed10b284aabdc3
 - name: github.com/FactomProject/factomd
-  version: c429cbf87dd732ffaf95663fa2b5ab900e33e04d
+  version: a75f1091860894ebbb49d0eff5bd034a9ed5da03
   subpackages:
   - activations
   - common/constants
+  - common/constants/runstate
   - common/globals
   - common/interfaces
   - common/primitives
@@ -56,11 +61,10 @@ imports:
 - name: github.com/konsorten/go-windows-terminal-sequences
   version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
 - name: github.com/posener/complete
-  version: 60e9d0a237999e714fb4d04727fe7ffa1b377c6e
+  version: 05b68ffc813dd10c420993cb1cf927b346c057b8
   subpackages:
   - cmd
   - cmd/install
-  - match
 - name: github.com/sirupsen/logrus
   version: 566a5f690849162ff53cf98f3c42135389d63f95
 - name: golang.org/x/crypto
