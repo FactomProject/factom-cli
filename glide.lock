@@ -24,9 +24,9 @@ imports:
   subpackages:
   - crypto
 - name: github.com/FactomProject/factom
-  version: 2e529e304e8d03213e4857a223ed10b284aabdc3
+  version: 62a7f694f4d9ba593453c899e0af730e26bfaca6
 - name: github.com/FactomProject/factomd
-  version: a75f1091860894ebbb49d0eff5bd034a9ed5da03
+  version: 3878db2801e2153f636c732dd0701984bf43b532
   subpackages:
   - activations
   - common/constants
