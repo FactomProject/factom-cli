@@ -267,15 +267,23 @@ var getABlock = func() *fctCmd {
 			return
 		}
 
-		ablock, raw, err := func() (dblock *factom.ABlock, raw []byte, err error) {
+		ablock, raw, err := func() (ablock *factom.ABlock, raw []byte, err error) {
+			// By KMR
 			if len(args[0]) == 64 {
-				return factom.GetABlock(args[0])
+				ablock, err = factom.GetABlock(args[0])
+			} else {
+				// By height
+				i, err := strconv.ParseInt(args[0], 10, 64)
+				if err != nil {
+					return nil, nil, err
+				}
+				ablock, err = factom.GetABlockByHeight(i)
 			}
-			i, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				return nil, nil, err
+			if *rdisp && err == nil {
+				raw, err = factom.GetRaw(ablock.LookupHash)
 			}
-			return factom.GetABlockByHeight(i)
+
+			return ablock, raw, err
 		}()
 		if err != nil {
 			errorln(err)
@@ -414,13 +422,19 @@ var getDBlock = func() *fctCmd {
 
 		dblock, raw, err := func() (dblock *factom.DBlock, raw []byte, err error) {
 			if len(args[0]) == 64 {
-				return factom.GetDBlock(args[0])
+				dblock, err = factom.GetDBlock(args[0])
+			} else {
+				i, err := strconv.ParseInt(args[0], 10, 64)
+				if err != nil {
+					return nil, nil, err
+				}
+				dblock, err = factom.GetDBlockByHeight(i)
 			}
-			i, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				return nil, nil, err
+			if *rdisp && err == nil {
+				raw, err = factom.GetRaw(dblock.KeyMR)
 			}
-			return factom.GetDBlockByHeight(i)
+
+			return dblock, raw, err
 		}()
 		if err != nil {
 			errorln(err)
@@ -524,13 +538,19 @@ var getECBlock = func() *fctCmd {
 
 		ecblock, raw, err := func() (ecblock *factom.ECBlock, raw []byte, err error) {
 			if len(args[0]) == 64 {
-				return factom.GetECBlock(args[0])
+				ecblock, err = factom.GetECBlock(args[0])
+			} else {
+				i, err := strconv.ParseInt(args[0], 10, 64)
+				if err != nil {
+					return nil, nil, err
+				}
+				ecblock, err = factom.GetECBlockByHeight(i)
 			}
-			i, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				return nil, nil, err
+			if *rdisp && err == nil {
+				raw, err = factom.GetRaw(ecblock.FullHash)
 			}
-			return factom.GetECBlockByHeight(i)
+
+			return ecblock, raw, err
 		}()
 		if err != nil {
 			errorln(err)
@@ -594,13 +614,19 @@ var getFBlock = func() *fctCmd {
 
 		fblock, raw, err := func() (fblock *factom.FBlock, raw []byte, err error) {
 			if len(args[0]) == 64 {
-				return factom.GetFBlock(args[0])
+				fblock, err = factom.GetFBlock(args[0])
+			} else {
+				i, err := strconv.ParseInt(args[0], 10, 64)
+				if err != nil {
+					return nil, nil, err
+				}
+				fblock, err = factom.GetFBlockByHeight(i)
 			}
-			i, err := strconv.ParseInt(args[0], 10, 64)
-			if err != nil {
-				return nil, nil, err
+			if *rdisp && err == nil {
+				raw, err = factom.GetRaw(fblock.KeyMR)
 			}
-			return factom.GetFBlockByHeight(i)
+
+			return fblock, raw, err
 		}()
 		if err != nil {
 			errorln(err)
@@ -792,7 +818,7 @@ var getHead = func() *fctCmd {
 			errorln(err)
 			return
 		}
-		dblock, raw, err := factom.GetDBlock(head)
+		dblock, err := factom.GetDBlock(head)
 		if err != nil {
 			errorln(err)
 			return
@@ -800,6 +826,11 @@ var getHead = func() *fctCmd {
 
 		switch {
 		case *rdisp:
+			raw, err := factom.GetRaw(head)
+			if err != nil {
+				errorln(err)
+				return
+			}
 			fmt.Printf("%x\n", raw)
 		case *hdisp:
 			fmt.Println(dblock.DBHash)
@@ -941,11 +972,6 @@ var properties = func() *fctCmd {
 }()
 
 var getPendingEntries = func() *fctCmd {
-	type pendingEntry struct {
-		EntryHash string
-		ChainID   string
-	}
-
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingentries [-E]"
 	cmd.description = "Get all pending entries, which may not yet be written" +
@@ -971,13 +997,7 @@ var getPendingEntries = func() *fctCmd {
 			return
 		}
 
-		var entList []pendingEntry
-		err = json.Unmarshal([]byte(entries), &entList)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		for _, ents := range entList {
+		for _, ents := range entries {
 			switch {
 			case *edisp:
 				fmt.Println(ents.EntryHash)
@@ -993,20 +1013,6 @@ var getPendingEntries = func() *fctCmd {
 }()
 
 var getPendingTransactions = func() *fctCmd {
-	type LineItem struct {
-		Amount      float64
-		Address     string
-		UserAddress string
-	}
-
-	type pendingTransaction struct {
-		TransactionID string
-		Inputs        []LineItem
-		Outputs       []LineItem
-		ECOutputs     []LineItem
-		Fees          int64
-	}
-
 	cmd := new(fctCmd)
 	cmd.helpMsg = "factom-cli get pendingtransactions [-T]"
 	cmd.description = "Get all pending factoid transacitons, which may not yet be written to blockchain. -T TxID."
@@ -1031,33 +1037,27 @@ var getPendingTransactions = func() *fctCmd {
 			return
 		}
 
-		var transList []pendingTransaction
-		err = json.Unmarshal([]byte(trans), &transList)
-		if err != nil {
-			errorln(err)
-			return
-		}
-		for _, tran := range transList {
+		for _, tran := range trans {
 			if len(tran.Inputs) != 0 {
 				switch {
 				case *tdisp:
-					fmt.Println(tran.TransactionID)
+					fmt.Println(tran.TxID)
 				default:
-					fmt.Println("TxID:", tran.TransactionID)
+					fmt.Println("TxID:", tran.TxID)
 					for _, in := range tran.Inputs {
-						fmt.Println("Input:", in.UserAddress, in.Amount/1e9)
+						fmt.Println("Input:", in.Address, in.Amount/1e9)
 					}
 
 					if len(tran.Outputs) != 0 {
 
 						for _, out := range tran.Outputs {
-							fmt.Println("Output:", out.UserAddress, out.Amount/1e9)
+							fmt.Println("Output:", out.Address, out.Amount/1e9)
 						}
 					}
 
 					if len(tran.ECOutputs) != 0 {
 						for _, ecout := range tran.ECOutputs {
-							fmt.Println("ECOutput:", ecout.UserAddress, ecout.Amount/1e9)
+							fmt.Println("ECOutput:", ecout.Address, ecout.Amount/1e9)
 						}
 					}
 					if tran.Fees != 0 {
