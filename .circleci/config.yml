@@ -5,72 +5,23 @@ jobs:
   build:
     working_directory: /go/src/github.com/FactomProject/factom-cli
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.15
 
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v1-factom-cli-go-build-cache-{{ checksum "glide.lock" }}
-
-      - run:
-          name: Get glide
-          command: |
-            go get -v github.com/Masterminds/glide
-            cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.13.1
-            go install
-      - run:
-          name: Get goveralls
-          command: |
-            go get github.com/mattn/goveralls
-            cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.13.1
-            go install
-      - run:
-          name: Get the dependencies
-          command: |
-            glide install
       - run:
           name: Build and install the executable
           command: go install -v
 
-      - save_cache:
-          key: v1-factom-cli-go-build-cache-{{ checksum "glide.lock" }}
-          paths:
-            - vendor
-
   test:
     working_directory: /go/src/github.com/FactomProject/factom-cli
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.15
 
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v1-factom-cli-go-build-cache-{{ checksum "glide.lock" }}
-
-      - run:
-          name: Get glide
-          command: |
-            go get -v github.com/Masterminds/glide
-            cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.13.1
-            go install
-      - run:
-          name: Get goveralls
-          command: |
-            go get github.com/mattn/goveralls
-            cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.13.1
-            go install
-      - run:
-          name: Get the dependencies
-          command: |
-            glide install
       - run:
           name: Build and install the executable
           command: go install -v
@@ -78,62 +29,7 @@ jobs:
       - run:
           name: Run tests!
           no_output_timeout: 2400
-          command: go test -v $(glide nv)
-
-
-      - save_cache:
-          key: v1-factom-cli-go-build-cache-{{ checksum "glide.lock" }}
-          paths:
-            - vendor
-
-  # Coveralls configuration is unused as most of the unit testing
-  # lies in the dependency repos.
-  coveralls:
-    working_directory: /go/src/github.com/FactomProject/factomd-cli
-    docker:
-      - image: circleci/golang:1.10
-
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-            - v1-factom-cli-go-build-cache-{{ checksum "glide.lock" }}
-
-      - run:
-          name: Get glide
-          command: |
-            go get -v github.com/Masterminds/glide
-            cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.13.1
-            go install
-      - run:
-          name: Get goveralls
-          command: |
-            go get github.com/mattn/goveralls
-            cd $GOPATH/src/github.com/Masterminds/glide
-            git checkout tags/v0.13.1
-            go install
-      - run:
-          name: Get the dependencies
-          command: |
-            glide install
-      - run:
-          name: Build and install the executable
-          command: go install -v
-
-      - run:
-          name: Coveralls!
-          no_output_timeout: 2400
-          command: goveralls -v -ignore=$(paste -sd, .coverignore) -service=circle-ci -repotoken=$COVERALLS_TOKEN
-
-
-      - save_cache:
-          key: v1-factom-cli-go-build-cache-{{ checksum "glide.lock" }}
-          paths:
-            - vendor
-
-
+          command: go test -v ./...
 
   # Docker builds
   docker_build:
@@ -147,12 +43,6 @@ jobs:
 
       - setup_remote_docker:
           version: 17.06.0-ce
-
-      # The main (only) thing we care about is caching the /vendor dir.
-      #   Hence, checksumming glide.lock
-      - restore_cache:
-          keys:
-            - v2-factom-cli-docker-cache-{{ checksum "glide.lock" }}
 
       # Load the images if the cache hit
       - run:
@@ -247,17 +137,11 @@ jobs:
             docker save -o /images/factom-cli-alpine.tar factom-cli-alpine $(docker history -q factom-cli-alpine |grep -v missing | grep -v none)
             docker save -o /images/factom-cli.tar factom-cli $(docker history -q factom-cli |grep -v missing | grep -v none)
 
-      - save_cache:
-          key: v2-factom-cli-docker-cache-{{ checksum "glide.lock" }}
-          paths:
-            - /images
 
 # The flow is
 #    build
 #      |
 #      ---------- test
-#                   |
-#                   ---------- coveralls
 #                   |
 #                   ---------- docker_build
 #
@@ -267,48 +151,16 @@ workflows:
   version: 2
   commit-workflow:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
-      - test:
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-#     Disabling coveralls for cli repo
-#      - coveralls:
-#          filters:
-#            tags:
-#              only: /.*/
-#          requires:
-#            - test
-      - docker_build:
-          filters:
-            tags:
-              only: /.*/
-          context: org-global
-          requires:
-            - test
-
-  scheduled-workflow:
-    triggers:
-      - schedule:
-          cron: "30 5 * * *"
-          filters:
-            branches:
-              only: develop
-    jobs:
       - build
       - test:
           requires:
             - build
-#     Disabling coveralls for cli repo
-#      - coveralls:
-#          requires:
-#            - test
       - docker_build:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
           context: org-global
           requires:
             - test
