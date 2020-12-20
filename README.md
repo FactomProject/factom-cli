@@ -9,7 +9,7 @@ and transactions on the Factom blockchain by calling out to both
 
 ## Dependencies
 ### Build Dependencies
-- Go 1.10 or higher
+- Go 1.13 or higher
 
 ### External Dependencies
 - Access to a `factomd` API endpoint
@@ -26,6 +26,5 @@ and transactions on the Factom blockchain by calling out to both
 
 ## Build and install
 ```
-go get -u github.com/FactomProject/factom-cli
-go install github.com/FactomProject/factom-cli
+./build.sh
 ```
