@@ -20,11 +20,16 @@ and transactions on the Factom blockchain by calling out to both
   Zsh or Fish
 
 ## Package distribution
-`factom-cli` is installed with the Factom package found
-[here](https://github.com/FactomProject/distribution). This also installs
-`factomd` and `factom-walletd`.
+
+Binaries for your platform can be downloaded from the [GitHub release page](https://github.com/FactomProject/factom-cli/releases).
 
 ## Build and install
+
 ```
-./build.sh
+make install
+```
+
+To cross compile to all supported platforms:
+```
+make all
 ```

@@ -16,6 +16,7 @@ factom-cli
 _obj
 _test
 bin
+build
 pkg
 .idea
 vendor/

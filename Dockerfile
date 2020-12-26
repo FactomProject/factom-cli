@@ -10,6 +10,6 @@ COPY . .
 ARG GOOS=linux
 
 # Build and install factom-cli
-RUN ./build.sh
+RUN make install
 
 ENTRYPOINT ["/go/bin/factom-cli"]
