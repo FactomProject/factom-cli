@@ -1,5 +1,7 @@
 FROM golang:1.15-alpine as builder
 
+RUN apk add --no-cache git make gcc libc-dev
+
 # Where factom-cli sources will live
 WORKDIR $GOPATH/src/github.com/FactomProject/factom-cli
 
@@ -9,7 +11,7 @@ COPY . .
 ARG GOOS=linux
 
 # Build and install factom-cli
-RUN ./build.sh
+RUN make install
 
 # Now squash everything
 FROM alpine:3.12
