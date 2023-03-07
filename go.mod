@@ -10,5 +10,5 @@ require (
 	github.com/michaelbeam/cli v0.0.0-20151028184746-e3284e1e16c4 // indirect
 	github.com/posener/complete v1.2.3
 	github.com/sirupsen/logrus v1.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620 // indirect
+	golang.org/x/crypto v0.1.0 // indirect
 )
